@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KRONO DUAL V.1.1</title>
+    <meta name="theme-color" content="#0b2545">
+
+    <style>
+        /* --- KRONO DUAL V.1.1 DESIGN --- */
+        :root {
+            --bg-base: #001a33;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #004488 0%, #000810 90%);
+            --panel: rgba(0, 15, 30, 0.7);
+            --border: 1px solid rgba(0, 200, 255, 0.3);
+            --cyan: #00f3ff;
+            --red: #ff3333;
+            --gold: #ffcc00;
+            --text: #ffffff;
+            --cam-bg: #00050a; 
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: var(--bg-gradient);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0; padding: 12px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; overflow-x: hidden; touch-action: manipulation;
+        }
+
+        /* UTILIDADES */
+        .flex { display: flex; } .col { flex-direction: column; } .row { flex-direction: row; }
+        .center { align-items: center; justify-content: center; } .between { justify-content: space-between; }
+        .w-full { width: 100%; } .gap-2 { gap: 8px; } .gap-4 { gap: 15px; }
+        .hidden { display: none !important; }
+        
+        .font-mono { font-family: 'Courier New', monospace; letter-spacing: -1px; font-weight: 900; }
+        .bold { font-weight: bold; }
+
+        /* NEÓN COLORS */
+        .text-c { color: var(--cyan); text-shadow: 0 0 12px rgba(0, 243, 255, 0.6); }
+        .text-r { color: var(--red); text-shadow: 0 0 12px rgba(255, 0, 0, 0.6); }
+        .text-y { color: var(--gold); text-shadow: 0 0 12px rgba(255, 204, 0, 0.6); }
+
+        /* PANELES */
+        .panel {
+            background: var(--panel); border: var(--border);
+            border-radius: 16px; padding: 15px; width: 100%; max-width: 900px;
+            box-sizing: border-box; margin-bottom: 15px;
+            box-shadow: 0 10px 40px rgba(0, 10, 30, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        /* HEADER */
+        .header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: linear-gradient(90deg, rgba(0,40,80,0.5), rgba(0,20,40,0.5)); }
+        .header-left { justify-self: start; } 
+        .header-center { justify-self: center; display:flex; gap:10px; }
+        .header-right { justify-self: end; }
+
+        .logo-box { line-height: 1.2; }
+        .logo { font-size: 24px; font-weight: 900; font-style: normal; margin: 0; letter-spacing: 1px; } 
+        .logo-sub { font-size: 11px; color: #8cf; font-weight: bold; letter-spacing: 1px; opacity: 0.8; display: block; margin-top: 2px; }
+
+        /* SEMÁFORO */
+        .lights { display: flex; gap: 6px; background: rgba(0,0,0,0.6); padding: 8px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
+        .bulb { width: 16px; height: 16px; border-radius: 50%; background: #222; border: 1px solid #444; transition: 0.1s; }
+        .bulb.red { background: #ff0000; box-shadow: 0 0 20px #ff0000; border-color: #ff5555; }
+        .bulb.green { background: #00ff00; box-shadow: 0 0 20px #00ff00; border-color: #55ff55; }
+
+        /* BOTONES HEADER */
+        .btn-head { 
+            background: rgba(0, 40, 80, 0.4); border: 1px solid var(--cyan); color: var(--cyan); 
+            border-radius: 30px; padding: 8px 18px; font-size: 11px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
+        }
+        .btn-head:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
+        .btn-head.gold { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(255,204,0,0.15); }
+        .btn-head.gold:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold); }
+
+        /* CONFIG DRAWER */
+        .config-drawer { height: 0; overflow: hidden; transition: height 0.3s ease; background: rgba(5,15,30,0.95); border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(0,200,255,0.3); }
+        .config-drawer.open { height: auto; padding: 20px; }
+        label { font-size: 10px; color: #8cf; display: block; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
+        input, select { background: rgba(0,0,0,0.4); border: 1px solid #357; color: white; padding: 10px; width: 100%; border-radius: 6px; outline: none; margin-bottom: 10px; font-size: 13px; }
+        input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,243,255,0.2); }
+
+        /* TIMER */
+        .timer-box { 
+            text-align: center; padding: 20px; 
+            background: radial-gradient(circle at center, rgba(20,50,90,0.4) 0%, rgba(5,10,20,0.8) 90%); 
+            border: 1px solid rgba(100,200,255,0.2); position: relative; 
+        }
+        #main-timer { 
+            font-family: Arial, sans-serif; font-size: 75px; font-weight: 900; font-style: normal;
+            color: white; line-height: 1; margin: 5px 0; 
+            text-shadow: 0 0 30px rgba(0, 180, 255, 0.5); z-index: 2; position: relative; 
+            font-variant-numeric: tabular-nums;
+        }
+        .lap-info { color: var(--gold); font-size: 14px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; z-index: 2; position: relative; }
+
+        /* VIDEO */
+        .vid-wrapper {
+            position: relative; background: var(--cam-bg); border: 2px solid #234;
+            border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; margin-bottom: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+        video { width: 100%; height: 100%; object-fit: fill; display: none; }
+        .cam-msg { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #579; text-align: center; }
+
+        /* ROIs */
+        .roi { position: absolute; width: 15%; height: 15%; border: 2px dashed rgba(255,255,255,0.5); display: none; cursor: move; z-index: 20; touch-action: none; box-sizing: border-box; }
+        .roi.active { border-style: solid; border-width: 4px; background: rgba(255,255,255,0.2); box-shadow: 0 0 20px currentColor; }
+        #roi1 { border-color: var(--cyan); top: 30%; left: 20%; color: var(--cyan); }
+        #roi2 { border-color: var(--red); top: 30%; left: 60%; color: var(--red); }
+        .roi-tag { position: absolute; top: -22px; left: -2px; font-size: 10px; font-weight: bold; background: currentColor; color: #000; padding: 2px 6px; border-radius: 2px; }
+        .handle { position: absolute; bottom: 0; right: 0; width: 25px; height: 25px; background: linear-gradient(135deg, transparent 50%, white 50%); cursor: nwse-resize; opacity: 0.8; }
+
+        /* RECORD OVERLAY (ARIAL) */
+        #record-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--gold);
+            padding: 20px 40px; border-radius: 12px; text-align: center;
+            opacity: 0; pointer-events: none; transition: all 0.3s;
+            z-index: 50; box-shadow: 0 0 60px rgba(255, 215, 0, 0.4);
+        }
+        #record-overlay.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .rec-title { color: var(--gold); font-weight: 900; font-size: 24px; margin-bottom: 5px; text-transform: uppercase; font-family: Arial, sans-serif; font-style: normal; }
+        .rec-val { color: white; font-size: 20px; font-weight: bold; font-family: Arial, sans-serif; font-style: normal; }
+
+        /* BOTONES NEÓN */
+        .btn-neon {
+            background: transparent; color: var(--cyan); border: 2px solid var(--cyan);
+            padding: 14px 28px; border-radius: 50px; font-weight: 900; letter-spacing: 1px;
+            cursor: pointer; text-transform: uppercase; font-size: 13px;
+            width: 100%; transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
+            text-shadow: 0 0 8px var(--cyan);
+        }
+        .btn-neon:active { transform: scale(0.96); background: rgba(0, 243, 255, 0.15); }
+        .btn-neon:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 30px var(--cyan); color: white; border-color:white; }
+        .btn-neon:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); box-shadow: none; border-color: #555; color:#555; }
+        
+        .btn-neon-red {
+            color: var(--red); border-color: var(--red);
+            box-shadow: 0 0 15px rgba(255, 50, 50, 0.3), inset 0 0 10px rgba(255, 50, 50, 0.1);
+            text-shadow: 0 0 8px var(--red);
+        }
+        .btn-neon-red:hover { background: rgba(255, 50, 50, 0.15); box-shadow: 0 0 30px var(--red); color: white; }
+        .btn-cam { width: auto; padding: 10px 25px; font-size: 11px; }
+
+        /* TELEMETRÍA */
+        .tele-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: linear-gradient(160deg, #0e1520, #050508); border-left: 3px solid #333; padding: 12px; border-radius: 6px; position: relative; overflow: hidden; }
+        .card.p1 { border-color: var(--cyan); box-shadow: inset 10px 0 20px -15px rgba(0, 243, 255, 0.2); }
+        .card.p2 { border-color: var(--red); box-shadow: inset 10px 0 20px -15px rgba(255, 42, 42, 0.2); }
+        .driver { font-size: 18px; font-weight: 900; margin: 0; line-height: 1; text-transform: uppercase; font-style: normal; }
+        .car { font-size: 10px; color: #568; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; font-weight: bold; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 10px; color: #679; font-weight: bold; text-transform: uppercase; }
+        .val { font-size: 15px; font-weight: bold; color: white; font-family: monospace; float: right; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
+
+        /* GRÁFICA DE COLUMNAS (SVG NATIVO) */
+        .chart-box { 
+            height: 160px; background: rgba(0, 10, 20, 0.4); border: 1px solid rgba(255,255,255,0.1); 
+            margin-top: 15px; padding: 15px 15px 15px 40px; position: relative; border-radius: 6px;
+        }
+        svg { width: 100%; height: 100%; overflow: visible; }
+        .grid-line { stroke: rgba(255,255,255,0.1); stroke-width: 1; }
+        .chart-labels { position: absolute; left: 5px; top: 15px; bottom: 15px; width: 30px; display: flex; flex-direction: column; justify-content: space-between; color: #8af; font-size: 9px; font-weight: bold; pointer-events: none; }
+
+        /* MODALES */
+        .modal { position: fixed; inset: 0; background: rgba(0,5,15,0.95); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal.show { display: flex; }
+        .modal-content { 
+            background: #0a1018; border: 1px solid #246; width: 95%; max-width: 700px; 
+            max-height: 90vh; border-radius: 12px; display: flex; flex-direction: column; 
+            box-shadow: 0 0 60px rgba(0, 100, 255, 0.3);
+        }
+        .res-header { padding: 25px; text-align: center; border-bottom: 1px solid #1e3a5a; background: linear-gradient(180deg, #102a4a, #0a1018); border-radius: 20px 20px 0 0; }
+        .winner-name { font-size: 36px; font-weight: 900; color: var(--gold); text-transform: uppercase; margin: 5px 0; text-shadow: 0 0 20px rgba(255,200,0,0.6); }
+        .res-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+        .res-table td { padding: 8px; border-bottom: 1px solid #1a2a3a; color: #aef; }
+        .best-lap { color: var(--gold); font-weight: bold; background: rgba(255, 215, 0, 0.15); }
+        
+        .records-table { width: 100%; font-size: 12px; color: #ccc; border-collapse: collapse; }
+        .records-table th { text-align: left; padding: 10px; border-bottom: 1px solid #468; color: var(--cyan); }
+        .records-table td { padding: 10px; border-bottom: 1px solid #246; }
+
+        #err { background: #900; color: white; padding: 10px; text-align: center; font-size: 12px; display: none; width: 100%; }
+        
+        /* BIG DATA RESULTADOS */
+        .res-big-data { margin-top: 15px; font-size: 14px; color: #aef; }
+        .res-big-data span { display: block; margin-bottom: 5px; }
+        .res-big-val { font-size: 18px; color: white; font-weight: bold; margin-left: 5px; }
+        .res-big-best { font-size: 20px; color: var(--gold); font-weight: 900; }
+    </style>
+</head>
+<body>
+
+    <div id="err"></div>
+    <script>window.onerror=function(m){const e=document.getElementById('err');e.style.display='block';e.innerHTML='ERROR: '+m;}</script>
+
+    <!-- HEADER -->
+    <div class="panel header">
+        <div class="header-left logo-box">
+            <h1 class="logo">KRONO <span class="text-c">DUAL</span></h1>
+            <span class="logo-sub">V.1.0</span>
+            <span class="logo-sub" style="font-size:8px; margin-top:2px;">by Albert Closa</span>
+        </div>
+        
+        <div class="header-center">
+            <button class="btn-head" onclick="toggleConfig()">⚙️ AJUSTES</button>
+            <button class="btn-head gold" onclick="showRecords()">🏆 RÉCORDS</button>
+        </div>
+
+        <div class="header-right">
+            <div class="lights">
+                <div id="l1" class="bulb"></div><div id="l2" class="bulb"></div><div id="l3" class="bulb"></div><div id="l4" class="bulb"></div><div id="l5" class="bulb"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIGURACIÓN -->
+    <div id="config" class="config-drawer w-full max-w-800">
+        <div class="row gap-4 flex" style="margin-bottom:15px;">
+            <div class="w-full">
+                <label class="text-c">PILOTO 1 (CIAN)</label>
+                <input id="in-p1-n" value="Piloto 1" onchange="updUI()" placeholder="Nombre">
+                <input id="in-p1-c" value="F1 RedBull" onchange="updUI()" style="margin-top:5px; color:#8af;">
+                <label style="margin-top:10px;">TONO P1</label>
+                <select id="snd-p1" onchange="testSound(this.value)">
+                    <option value="bell_h">Campana Aguda</option>
+                    <option value="bell_l">Campana Grave</option>
+                    <option value="ding">Ding-Dong</option>
+                    <option value="digi">Digital</option>
+                </select>
+            </div>
+            <div class="w-full">
+                <label class="text-r">PILOTO 2 (ROJO)</label>
+                <input id="in-p2-n" value="Piloto 2" onchange="updUI()" placeholder="Nombre">
+                <input id="in-p2-c" value="F1 Ferrari" onchange="updUI()" style="margin-top:5px; color:#8af;">
+                <label style="margin-top:10px;">TONO P2</label>
+                <select id="snd-p2" onchange="testSound(this.value)">
+                    <option value="bell_l">Campana Grave</option>
+                    <option value="bell_h">Campana Aguda</option>
+                    <option value="ding">Ding-Dong</option>
+                    <option value="digi">Digital</option>
+                </select>
+            </div>
+        </div>
+        <div class="row gap-4 flex">
+            <div class="w-full">
+                <label>VUELTAS</label>
+                <select id="in-laps" onchange="updUI()">
+                    <option value="5">5 Vueltas</option><option value="10" selected>10 Vueltas</option><option value="20">20 Vueltas</option><option value="50">50 Vueltas</option><option value="9999">Infinito</option>
+                </select>
+            </div>
+            <div class="w-full">
+                <label>SENSIBILIDAD CÁMARA</label>
+                <input type="range" id="in-sens" min="0" max="255" value="100" style="padding:0; height:35px;">
+            </div>
+        </div>
+        <div class="flex center gap-2" style="margin-top:15px; border-top:1px solid #1e3a5a; padding-top:10px;">
+            <input type="checkbox" id="voice-chk" checked style="width:auto; margin:0;">
+            <label for="voice-chk" style="margin:0; cursor:pointer; color:white;">LOCUTOR ACTIVO</label>
+        </div>
+    </div>
+
+    <!-- TIMER CENTRADO -->
+    <div class="panel timer-box">
+        <div class="grid-bg"></div>
+        <div style="font-size:12px; color:#8af; letter-spacing:4px; font-weight:bold; text-transform:uppercase; z-index:2; position:relative;">TIEMPO DE CARRERA</div>
+        <div id="main-timer">00:00.00</div>
+        <div id="lap-counter" class="lap-info">PREPARADO</div>
+    </div>
+
+    <!-- VIDEO & CONTROL -->
+    <div class="panel" style="padding:15px;">
+        <div class="flex between center" style="margin-bottom:10px;">
+            <button id="btn-cam" class="btn-neon btn-cam" onclick="toggleCam()">ENCENDER CÁMARA</button>
+            <div style="font-size:11px; font-family:monospace; background:rgba(0,0,0,0.5); padding:6px 12px; border:1px solid #246; border-radius:20px;">
+                <span class="text-c">P1: <b id="val-p1">0</b></span> | <span class="text-r">P2: <b id="val-p2">0</b></span>
+            </div>
+        </div>
+
+        <div class="vid-wrapper">
+            <div id="cam-msg" class="cam-msg">
+                <h3 style="margin:0 0 5px 0;">CÁMARA APAGADA</h3>
+                <p style="margin:0;">Pulsa el botón azul para activar</p>
+            </div>
+            <video id="webcam" autoplay playsinline muted></video>
+            
+            <div id="record-overlay">
+                <div class="rec-title">¡NUEVO RÉCORD!</div>
+                <div id="rec-data" class="rec-val">Piloto - 00.00</div>
+            </div>
+
+            <div id="roi1" class="roi"><div class="roi-tag text-c">P1</div><div class="handle"></div></div>
+            <div id="roi2" class="roi"><div class="roi-tag text-r">P2</div><div class="handle"></div></div>
+        </div>
+
+        <div class="flex gap-4">
+            <button id="btn-start" class="btn-neon w-full" onclick="toggleRace()" disabled>INICIAR</button>
+            <button id="btn-reset" class="btn-neon btn-neon-red w-full" onclick="resetRace()" disabled>RESET</button>
+        </div>
+    </div>
+
+    <!-- TELEMETRÍA -->
+    <div class="panel">
+        <div class="tele-grid">
+            <div class="card p1">
+                <h3 class="driver text-c" id="disp-p1-n">P1</h3>
+                <span class="car" id="disp-p1-c">CAR 1</span>
+                <div class="stats">
+                    <div>Vueltas <span class="val" id="disp-p1-l">0</span></div>
+                    <div>Última <span class="val" id="disp-p1-last">--.--</span></div>
+                    <div>Mejor <span class="val text-c" id="disp-p1-best">--.--</span></div>
+                    <div>Total <span class="val" id="disp-p1-tot">00:00</span></div>
+                </div>
+            </div>
+            <div class="card p2">
+                <h3 class="driver text-r" id="disp-p2-n">P2</h3>
+                <span class="car" id="disp-p2-c">CAR 2</span>
+                <div class="stats">
+                    <div>Vueltas <span class="val" id="disp-p2-l">0</span></div>
+                    <div>Última <span class="val" id="disp-p2-last">--.--</span></div>
+                    <div>Mejor <span class="val text-r" id="disp-p2-best">--.--</span></div>
+                    <div>Total <span class="val" id="disp-p2-tot">00:00</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- GRÁFICA DE COLUMNAS -->
+        <div style="margin-top:20px;">
+            <div style="font-size:12px; color:#8cf; font-weight:bold; letter-spacing:2px; margin-bottom:10px; text-transform:uppercase; text-align:center;">RITMO DE CARRERA</div>
+            <div class="chart-box">
+                <div class="chart-labels">
+                    <span id="chart-max">10s</span>
+                    <span id="chart-mid">5s</span>
+                    <span>0s</span>
+                </div>
+                <svg id="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <line x1="0" y1="25" x2="100" y2="25" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                    <line x1="0" y1="50" x2="100" y2="50" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                    <line x1="0" y1="75" x2="100" y2="75" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FINAL (BIG DATA) -->
+    <div id="res-modal" class="modal">
+        <div class="modal-content">
+            <div class="res-header">
+                <div style="font-size:40px;">🏆</div>
+                <div style="font-size:12px; color:#8ab; font-weight:bold; letter-spacing:2px; margin-bottom:5px;">VICTORIA</div>
+                <h1 class="winner-name" id="res-winner">NOMBRE</h1>
+                <div class="res-big-data">
+                    <span>TIEMPO TOTAL: <b id="res-total" class="res-big-val">--:--</b></span>
+                    <span>MEJOR VUELTA: <b class="res-big-best" id="res-best">--.--</b></span>
+                    <span>TIEMPO MEDIO: <b id="res-avg" class="res-big-val">--.--</b></span>
+                </div>
+            </div>
+            
+            <div class="row gap-4 flex" style="padding:20px; overflow-y:auto; flex:1;">
+                <div class="w-full">
+                    <h4 class="text-c" style="margin:0 0 10px 0; border-bottom:1px solid #1e3a5a; font-size:12px;">P1 TIEMPOS</h4>
+                    <table class="res-table"><tbody id="tb-p1"></tbody></table>
+                </div>
+                <div class="w-full">
+                    <h4 class="text-r" style="margin:0 0 10px 0; border-bottom:1px solid #1e3a5a; font-size:12px;">P2 TIEMPOS</h4>
+                    <table class="res-table"><tbody id="tb-p2"></tbody></table>
+                </div>
+            </div>
+
+            <div style="padding:15px; border-top:1px solid #1e3a5a; display:flex; gap:10px; background:#08101a;">
+                <button class="btn-neon" onclick="closeModal('res-modal')">Cerrar</button>
+                <button class="btn-neon" onclick="newRace()">Nueva Carrera</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RÉCORDS -->
+    <div id="rec-modal" class="modal">
+        <div class="modal-content">
+            <div class="res-header" style="background: linear-gradient(180deg, #2a1b00, #0a0a0a); border-color:var(--gold);">
+                <div style="font-size:40px;">👑</div>
+                <div style="font-size:12px; color:var(--gold); font-weight:bold; letter-spacing:2px; margin-bottom:5px;">HALL OF FAME</div>
+                <div class="winner-name" style="font-size:24px; color:var(--gold);">MEJORES TIEMPOS</div>
+            </div>
+            
+            <div class="row gap-4 flex" style="padding:20px; overflow-y:auto; flex:1; flex-direction:column;">
+                <table class="records-table">
+                    <thead>
+                        <tr><th class="text-c">PILOTO</th><th>COCHE</th><th class="text-y" style="text-align:right;">TIEMPO</th></tr>
+                    </thead>
+                    <tbody id="records-list"></tbody>
+                </table>
+            </div>
+
+            <div style="padding:15px; border-top:1px solid #333; display:flex; gap:10px; background:#08101a;">
+                <button class="btn-neon" style="color:var(--gold); border-color:var(--gold); box-shadow:none;" onclick="closeModal('rec-modal')">Cerrar</button>
+                <button class="btn-neon btn-neon-red" onclick="clearRecords()">Borrar Historial</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="cv" class="hidden"></canvas>
+
+    <script>
+        const get = (id) => document.getElementById(id);
+        const set = (id, txt) => { const el = get(id); if(el) el.innerText = txt; }
+
+        const state = {
+            race: false, cam: false, start: 0, timer: null,
+            p1: { n:'P1', c:'C1', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0 },
+            p2: { n:'P2', c:'C2', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0 },
+            cfg: { laps:10, sens:100 }
+        };
+
+        const vid = get('webcam');
+        const cv = get('cv');
+        const ctx = cv.getContext('2d', { willReadFrequently: true });
+        const aud = new (window.AudioContext || window.webkitAudioContext)();
+
+        // --- RECORDS SYSTEM ---
+        function loadRecords() { return JSON.parse(localStorage.getItem('krono_recs') || '[]'); }
+        function saveRecord(name, car, time) {
+            let recs = loadRecords();
+            let exist = recs.find(r => r.name === name);
+            if(exist) {
+                if(time < exist.time) { exist.time = time; exist.car = car; }
+            } else {
+                recs.push({name, car, time});
+            }
+            recs.sort((a,b)=>a.time-b.time);
+            localStorage.setItem('krono_recs', JSON.stringify(recs));
+        }
+        function showRecords() {
+            const list = get('records-list');
+            list.innerHTML = '';
+            const recs = loadRecords();
+            if(!recs.length) list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:10px;">Sin récords</td></tr>';
+            else recs.forEach((r,i) => {
+                const med = i===0?'🥇':(i===1?'🥈':(i===2?'🥉':''));
+                list.innerHTML += `<tr><td style="color:white; font-weight:bold;">${med} ${r.name}</td><td>${r.car}</td><td class="text-y" style="text-align:right; font-family:monospace;">${fmt(r.time)}</td></tr>`;
+            });
+            get('rec-modal').classList.add('show');
+        }
+        // FIX: Clear and Refresh
+        function clearRecords() { 
+            if(confirm("¿Borrar historial?")) { 
+                localStorage.removeItem('krono_recs'); 
+                const list = get('records-list');
+                list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:10px;">Sin récords</td></tr>';
+            } 
+        }
+
+        // --- AUDIO ENGINE ---
+        function playTone(type) {
+            if(aud.state==='suspended') aud.resume();
+            const t = aud.currentTime;
+            
+            if(type === 'bell_h') { 
+               osc('sine', 800, 0.5, 0.8, t); osc('sine', 1600, 0.2, 0.6, t); 
+            } else if(type === 'bell_l') { 
+               osc('sine', 400, 0.5, 1.0, t); osc('sine', 800, 0.2, 0.8, t);
+            } else if(type === 'ding') { 
+               osc('sine', 800, 0.3, 0.1, t); osc('sine', 600, 0.5, 0.4, t+0.15);
+            } else { 
+               osc('square', 800, 0.1, 0.1, t);
+            }
+        }
+
+        function testSound(val) { playTone(val); }
+
+        function osc(type, freq, vol, dur, t) {
+            const o = aud.createOscillator(); const g = aud.createGain();
+            o.type=type; o.frequency.value=freq; 
+            g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+            o.connect(g); g.connect(aud.destination); o.start(t); o.stop(t+dur);
+        }
+
+        function playStartSeq(i) {
+            if(aud.state==='suspended') aud.resume();
+            const t = aud.currentTime;
+            if(i<5) { osc('square', 300, 0.2, 0.15, t); } 
+            else { osc('sawtooth', 600, 0.5, 0.8, t); osc('sawtooth', 300, 0.5, 0.8, t); }
+        }
+
+        function speak(txt) {
+            if(get('voice-chk').checked && 'speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(txt);
+                u.rate = 1.2; window.speechSynthesis.speak(u);
+            }
+        }
+
+        window.onload = () => { setupDrag('roi1'); setupDrag('roi2'); updUI(); };
+
+        // --- CÁMARA ---
+        async function toggleCam() {
+            const btn = get('btn-cam');
+            if(!state.cam) {
+                try {
+                    let stream;
+                    try { stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
+                    catch(e) { stream = await navigator.mediaDevices.getUserMedia({video:true}); }
+                    vid.srcObject = stream;
+                    vid.onloadedmetadata = () => {
+                        vid.play();
+                        cv.width = 320; cv.height = 240;
+                        state.cam = true;
+                        vid.style.display='block';
+                        get('cam-msg').style.display='none';
+                        get('roi1').style.display='flex'; get('roi2').style.display='flex';
+                        btn.innerText = "APAGAR CÁMARA"; btn.classList.add('btn-neon-red');
+                        get('btn-start').disabled = false;
+                        loop();
+                    };
+                } catch(e) { alert("Error Cam: "+e); }
+            } else {
+                if(vid.srcObject) vid.srcObject.getTracks().forEach(t=>t.stop());
+                state.cam = false; vid.style.display='none';
+                get('cam-msg').style.display='flex';
+                get('roi1').style.display='none'; get('roi2').style.display='none';
+                btn.innerText = "ENCENDER CÁMARA"; btn.classList.remove('btn-neon-red');
+                get('btn-start').disabled = true;
+            }
+        }
+
+        function loop() {
+            if(!state.cam) return;
+            ctx.drawImage(vid, 0, 0, cv.width, cv.height);
+            check(1); check(2);
+            requestAnimationFrame(loop);
+        }
+
+        function check(id) {
+            const roi = get('roi'+id);
+            const l = parseFloat(roi.style.left)||20, t=parseFloat(roi.style.top)||40, w=parseFloat(roi.style.width)||15, h=parseFloat(roi.style.height)||15;
+            const rx = Math.floor((l/100)*cv.width), ry = Math.floor((t/100)*cv.height), rw = Math.floor((w/100)*cv.width), rh = Math.floor((h/100)*cv.height);
+            if(rw<=0 || rh<=0) return;
+            const d = ctx.getImageData(rx, ry, rw, rh).data;
+            let s=0, c=0;
+            for(let i=0; i<d.length; i+=16) { s+=(d[i]+d[i+1]+d[i+2])/3; c++; }
+            const avg = Math.floor(s/c);
+            set('val-p'+id, avg);
+            const sens = parseInt(get('in-sens').value);
+            if(avg < sens) {
+                roi.classList.add('active');
+                if(state.race && !state['p'+id].blk && !state['p'+id].fin) {
+                    state['p'+id].blk = true; lap(id);
+                }
+            } else {
+                roi.classList.remove('active');
+                state['p'+id].blk = false;
+            }
+        }
+
+        async function toggleRace() {
+            const btn = get('btn-start');
+            if(state.race) { stopRace(); btn.innerText="INICIAR"; btn.classList.remove('btn-neon-red'); }
+            else {
+                get('config').classList.remove('open');
+                btn.disabled=true; get('btn-reset').disabled=true;
+                const lbs = [1,2,3,4,5].map(i=>get('l'+i));
+                lbs.forEach(l=>l.className='bulb');
+                
+                speak("Pilotos preparados");
+                for(let i=0; i<5; i++) { 
+                    lbs[i].className='bulb red'; playStartSeq(i);
+                    await new Promise(r=>setTimeout(r,900)); 
+                }
+                await new Promise(r=>setTimeout(r, Math.random()*1000+500));
+                lbs.forEach(l=>l.className='bulb green'); playStartSeq(5);
+                
+                state.race = true; state.start = Date.now();
+                resetData();
+                state.timer = setInterval(()=>{
+                    set('main-timer', fmtTime(Date.now()-state.start));
+                },37);
+                btn.disabled=false; btn.innerText="PARAR"; btn.classList.add('btn-neon-red');
+            }
+        }
+
+        function stopRace() {
+            state.race = false; clearInterval(state.timer);
+            get('btn-reset').disabled=false;
+        }
+
+        function lap(id) {
+            const now = Date.now();
+            if(now - state['p'+id].last < 1500) return;
+            const t = now - state['p'+id].last;
+            state['p'+id].last = now;
+            state['p'+id].laps++;
+            state['p'+id].h.push(t);
+            
+            saveRecord(state['p'+id].n, state['p'+id].c, t);
+
+            if(t < state['p'+id].best) {
+                state['p'+id].best = t;
+                const name = get(`in-p${id}-n`).value;
+                const txt = fmt(t);
+                speak(`Récord ${name}, ${txt}`);
+                
+                const ov = get('record-overlay');
+                get('rec-data').innerText = `${name} - ${txt}`;
+                ov.classList.add('show');
+                setTimeout(()=>ov.classList.remove('show'), 2000);
+            } else {
+                 const car = get(`in-p${id}-c`).value;
+                 speak(car);
+            }
+            
+            playTone(get('snd-p'+id).value);
+            updUI(); drawChart();
+            
+            const max = parseInt(get('in-laps').value);
+            if(max !== 9999 && state['p'+id].laps >= max) {
+                state['p'+id].fin = true;
+                state['p'+id].total = now - state.start;
+                const oid = id===1?2:1;
+                if(!state['p'+oid].fin) { 
+                    stopRace(); 
+                    speak(`Victoria para ${get(`in-p${id}-n`).value}`);
+                    showRes(id); 
+                }
+            }
+        }
+
+        function resetData() {
+            [1,2].forEach(id=>{ state['p'+id].laps=0; state['p'+id].best=999999; state['p'+id].h=[]; state['p'+id].last=state.start; state['p'+id].fin=false; });
+            updUI(); drawChart();
+        }
+        function resetRace() {
+            stopRace(); set('main-timer', "00:00.00");
+            const btn = get('btn-start'); btn.innerText="INICIAR"; btn.classList.remove('btn-neon-red');
+            resetData();
+        }
+
+        function updUI() {
+            const max = get('in-laps').value;
+            [1,2].forEach(id=>{
+                state['p'+id].n = get('in-p'+id+'-n').value;
+                state['p'+id].c = get('in-p'+id+'-c').value;
+                set('disp-p'+id+'-n', state['p'+id].n);
+                set('disp-p'+id+'-c', state['p'+id].c);
+                const p = state['p'+id];
+                set('disp-p'+id+'-l', p.laps);
+                set('disp-p'+id+'-last', p.h.length?fmt(p.h[p.h.length-1]):"--.--");
+                set('disp-p'+id+'-best', p.best<999999?fmt(p.best):"--.--");
+                const total = p.h.length ? p.h.reduce((a,b)=>a+b,0) : 0;
+                set('disp-p'+id+'-tot', total ? fmtTime(total) : "00:00");
+            });
+            const lead = Math.max(state.p1.laps, state.p2.laps);
+            set('lap-counter', `VUELTA ${lead} / ${max==='9999'?'∞':max}`);
+        }
+
+        // --- GRÁFICA DE COLUMNAS ---
+        function drawChart() {
+            const svg = get('chart-svg');
+            svg.innerHTML = `
+                <line x1="0" y1="25" x2="100" y2="25" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                <line x1="0" y1="50" x2="100" y2="50" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                <line x1="0" y1="75" x2="100" y2="75" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+            `;
+            
+            const h1 = state.p1.h, h2 = state.p2.h;
+            const len = Math.max(h1.length, h2.length);
+            if(len === 0) return;
+            const maxT = Math.max(...h1, ...h2, 1000); 
+            
+            set('chart-max', (maxT/1000).toFixed(1) + 's');
+            set('chart-mid', (maxT/2000).toFixed(1) + 's');
+
+            const barW = 40 / len; 
+
+            for(let i=0; i<len; i++) {
+                const x = (i / len) * 100;
+                if(h1[i]) {
+                    const h = (h1[i]/maxT) * 90;
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    rect.setAttribute("x", x + 2); rect.setAttribute("y", 100-h);
+                    rect.setAttribute("width", barW); rect.setAttribute("height", h);
+                    rect.setAttribute("fill", "var(--cyan)"); rect.setAttribute("opacity", "0.8");
+                    rect.setAttribute("rx", "1");
+                    svg.appendChild(rect);
+                }
+                if(h2[i]) {
+                    const h = (h2[i]/maxT) * 90;
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    rect.setAttribute("x", x + 2 + barW + 1); rect.setAttribute("y", 100-h);
+                    rect.setAttribute("width", barW); rect.setAttribute("height", h);
+                    rect.setAttribute("fill", "var(--red)"); rect.setAttribute("opacity", "0.8");
+                    rect.setAttribute("rx", "1");
+                    svg.appendChild(rect);
+                }
+            }
+        }
+
+        function showRes(wid) {
+            set('res-winner', get(`in-p${wid}-n`).value);
+            const w = state['p'+wid];
+            set('res-total', fmtTime(w.total));
+            set('res-best', fmt(w.best));
+            const avg = w.h.length ? w.total/w.h.length : 0;
+            set('res-avg', fmt(avg));
+
+            [1,2].forEach(id=>{
+                const tb = get('tb-p'+id); tb.innerHTML = '';
+                state['p'+id].h.forEach((t,i)=>{
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${i+1}</td><td style="text-align:right" class="${t===state['p'+id].best?'best-lap':''}">${fmt(t)}</td>`;
+                    tb.appendChild(tr);
+                });
+            });
+            get('res-modal').classList.add('show');
+        }
+        function closeModal(id) { get(id).classList.remove('show'); }
+        function newRace() { closeModal('res-modal'); resetRace(); }
+        function toggleConfig() { get('config').classList.toggle('open'); }
+        function fmt(ms) { return (ms/1000).toFixed(2); }
+        function fmtTime(ms) {
+            let m=Math.floor(ms/60000), s=Math.floor((ms%60000)/1000), i=Math.floor((ms%1000)/10);
+            return (m<10?'0':'')+m+":"+(s<10?'0':'')+s+"."+(i<10?'0':'')+i;
+        }
+
+        function setupDrag(id) {
+            const el = get(id);
+            const handle = el.querySelector('.handle');
+            let m=null, s={};
+            const down = (e) => {
+                if(state.race) return;
+                e.preventDefault(); e.stopPropagation();
+                el.setPointerCapture(e.pointerId);
+                m = (e.target === handle) ? 'size' : 'move';
+                const r = el.getBoundingClientRect();
+                const p = el.parentElement.getBoundingClientRect();
+                s = { x:e.clientX, y:e.clientY, l:(el.offsetLeft/p.width)*100, t:(el.offsetTop/p.height)*100, w:(r.width/p.width)*100, h:(r.height/p.height)*100, pw:p.width, ph:p.height };
+            };
+            const move = (e) => {
+                if(!m) return;
+                e.preventDefault();
+                const dx = ((e.clientX - s.x) / s.pw) * 100;
+                const dy = ((e.clientY - s.y) / s.ph) * 100;
+                if(m === 'move') { el.style.left = Math.max(0, s.l+dx)+'%'; el.style.top = Math.max(0, s.t+dy)+'%'; }
+                else { el.style.width = Math.max(5, s.w+dx)+'%'; el.style.height = Math.max(5, s.h+dy)+'%'; }
+            };
+            const up = (e) => { if(m) { m = null; el.releasePointerCapture(e.pointerId); } };
+            el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move); el.addEventListener('pointerup', up);
+        }
+    </script>
+</body>
+</html>
