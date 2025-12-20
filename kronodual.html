@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#0b2545">
 
     <style>
-        /* --- KRONO DUAL V.1.0 DESIGN --- */
+        /* --- KRONO DUAL V.1.0 DESIGN (NO-SCROLL EDITION) --- */
         :root {
             --bg-base: #001a33;
             --bg-gradient: radial-gradient(circle at 50% 0%, #004488 0%, #000810 90%);
@@ -25,9 +25,17 @@
             background-image: var(--bg-gradient);
             color: var(--text);
             font-family: Arial, Helvetica, sans-serif;
-            margin: 0; padding: 10px;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow-x: hidden; touch-action: manipulation;
+            margin: 0; 
+            /* AJUSTE: Altura fija al 100% de la pantalla y sin scroll */
+            height: 100vh; 
+            height: 100dvh; /* Soporte mejorado para móviles */
+            overflow: hidden; 
+            padding: 6px;
+            box-sizing: border-box;
+            display: flex; 
+            flex-direction: column; 
+            align-items: stretch;
+            gap: 6px; /* Espacio uniforme entre paneles */
         }
 
         /* UTILIDADES */
@@ -45,137 +53,171 @@
         /* PANELES */
         .panel {
             background: var(--panel); border: var(--border);
-            border-radius: 16px; padding: 12px;
+            border-radius: 12px; padding: 8px; /* Padding reducido ligeramente */
             width: 100%; max-width: 900px;
-            box-sizing: border-box; margin-bottom: 10px;
-            box-shadow: 0 10px 40px rgba(0, 10, 30, 0.4);
+            margin: 0 auto; /* Centrado pero sin margin-bottom, usa gap del body */
+            box-sizing: border-box;
+            box-shadow: 0 5px 20px rgba(0, 10, 30, 0.4);
             backdrop-filter: blur(8px);
+            flex-shrink: 0; /* Por defecto no encoger */
         }
 
         /* HEADER */
-        .header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: linear-gradient(90deg, rgba(0,40,80,0.5), rgba(0,20,40,0.5)); }
+        .header { 
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; 
+            background: linear-gradient(90deg, rgba(0,40,80,0.5), rgba(0,20,40,0.5)); 
+            height: 44px; /* Altura compacta */
+        }
         .header-left { justify-self: start; } 
         .header-center { justify-self: center; display:flex; gap:10px; }
         .header-right { justify-self: end; }
 
-        .logo-box { line-height: 1.2; }
-        .logo { font-size: 20px; font-weight: 900; font-style: normal; margin: 0; letter-spacing: 1px; } 
-        .logo-sub { font-size: 10px; color: #8cf; font-weight: bold; letter-spacing: 1px; opacity: 0.8; display: block; margin-top: 2px; }
+        .logo-box { line-height: 1.1; }
+        .logo { font-size: 18px; font-weight: 900; font-style: normal; margin: 0; letter-spacing: 1px; } 
+        .logo-sub { font-size: 8px; color: #8cf; font-weight: bold; letter-spacing: 1px; opacity: 0.8; display: block; }
 
         /* SEMÁFORO */
-        .lights { display: flex; gap: 6px; background: rgba(0,0,0,0.6); padding: 6px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
-        .bulb { width: 14px; height: 14px; border-radius: 50%; background: #222; border: 1px solid #444; transition: 0.1s; }
+        .lights { display: flex; gap: 4px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
+        .bulb { width: 10px; height: 10px; border-radius: 50%; background: #222; border: 1px solid #444; transition: 0.1s; }
         .bulb.red { background: #ff0000; box-shadow: 0 0 20px #ff0000; border-color: #ff5555; }
         .bulb.green { background: #00ff00; box-shadow: 0 0 20px #00ff00; border-color: #55ff55; }
 
         /* BOTONES HEADER */
         .btn-head { 
             background: rgba(0, 40, 80, 0.4); border: 1px solid var(--cyan); color: var(--cyan); 
-            border-radius: 30px; padding: 6px 14px; font-size: 10px; font-weight: bold;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 5px;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
+            border-radius: 30px; padding: 4px 10px; font-size: 9px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 4px;
         }
         .btn-head:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-        .btn-head.gold { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(255,204,0,0.15); }
-        .btn-head.gold:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold); }
+        .btn-head.gold { border-color: var(--gold); color: var(--gold); }
+        .btn-head.gold:hover { background: var(--gold); color: #000; }
 
-        /* CONFIG DRAWER */
-        .config-drawer { height: 0; overflow: hidden; transition: height 0.3s ease; background: rgba(5,15,30,0.95); border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(0,200,255,0.3); }
+        /* CONFIG DRAWER - Overlay absoluto para no empujar el diseño */
+        .config-drawer { 
+            position: absolute; top: 60px; left: 10px; right: 10px; z-index: 50;
+            height: 0; overflow: hidden; transition: height 0.3s ease; 
+            background: rgba(5,15,30,0.98); border-radius: 12px; 
+            border: 1px solid rgba(0,200,255,0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
         .config-drawer.open { height: auto; padding: 20px; }
         label { font-size: 10px; color: #8cf; display: block; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
-        input, select { background: rgba(0,0,0,0.4); border: 1px solid #357; color: white; padding: 10px; width: 100%; border-radius: 6px; outline: none; margin-bottom: 10px; font-size: 13px; }
-        input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,243,255,0.2); }
+        input, select { background: rgba(0,0,0,0.4); border: 1px solid #357; color: white; padding: 8px; width: 100%; border-radius: 6px; outline: none; margin-bottom: 8px; font-size: 12px; }
 
         /* TIMER */
         .timer-box { 
-            text-align: center; padding: 15px; 
+            text-align: center; padding: 5px; 
             background: radial-gradient(circle at center, rgba(20,50,90,0.4) 0%, rgba(5,10,20,0.8) 90%); 
             border: 1px solid rgba(100,200,255,0.2); position: relative; 
+            flex-shrink: 0;
         }
         #main-timer { 
-            font-family: Arial, sans-serif; font-size: 60px; font-weight: 900; font-style: normal;
-            color: white; line-height: 1; margin: 2px 0; 
+            font-family: Arial, sans-serif; 
+            /* Fuente responsiva: se ajusta a la altura de pantalla */
+            font-size: clamp(30px, 8vh, 60px); 
+            font-weight: 900; color: white; line-height: 1; margin: 0; 
             text-shadow: 0 0 30px rgba(0, 180, 255, 0.5); z-index: 2; position: relative; 
             font-variant-numeric: tabular-nums;
         }
-        .lap-info { color: var(--gold); font-size: 12px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; z-index: 2; position: relative; }
+        .lap-info { color: var(--gold); font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; z-index: 2; position: relative; }
 
-        /* VIDEO */
+        /* PANEL VIDEO: Flexibilidad inteligente */
+        /* Seleccionamos el panel del video por estructura para darle flexibilidad */
+        body > div.panel:nth-of-type(4) {
+            flex: 2 1 0; /* Crecer x2, prioridad alta */
+            display: flex; flex-direction: column;
+            min-height: 0; /* Permitir encoger si es necesario */
+            padding-bottom: 5px;
+        }
+
         .vid-wrapper {
             position: relative; background: var(--cam-bg); border: 2px solid #234;
             border-radius: 8px; overflow: hidden; 
             width: 100%;
-            /* AJUSTE: Altura al 45% del viewport */
-            height: 45vh; 
-            margin-bottom: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            /* AJUSTE: Altura automática y flexible para llenar espacio */
+            height: auto !important; 
+            flex-grow: 1; 
+            margin-bottom: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+            min-height: 0; /* Crucial para flexbox */
         }
-        video { width: 100%; height: 100%; object-fit: fill; display: none; }
-        .cam-msg { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #579; text-align: center; }
+        video { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .cam-msg { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #579; text-align: center; font-size: 12px; }
+
+        /* PANEL TELEMETRÍA: Flexibilidad ajustada */
+        body > div.panel:nth-of-type(5) {
+            flex: 1 1 0; /* Crecer x1, prioridad menor */
+            display: flex; flex-direction: column;
+            min-height: 0; /* Permitir encoger */
+            overflow: hidden;
+            padding-bottom: 2px;
+        }
 
         /* ROIs */
         .roi { position: absolute; width: 15%; height: 20%; border: 2px dashed rgba(255,255,255,0.5); display: none; cursor: move; z-index: 20; touch-action: none; box-sizing: border-box; }
-        .roi.active { border-style: solid; border-width: 4px; background: rgba(255,255,255,0.2); box-shadow: 0 0 20px currentColor; }
+        .roi.active { border-style: solid; border-width: 3px; background: rgba(255,255,255,0.2); box-shadow: 0 0 20px currentColor; }
         #roi1 { border-color: var(--cyan); top: 30%; left: 20%; color: var(--cyan); }
         #roi2 { border-color: var(--red); top: 30%; left: 60%; color: var(--red); }
-        .roi-tag { position: absolute; top: -22px; left: -2px; font-size: 10px; font-weight: bold; background: currentColor; color: #000; padding: 2px 6px; border-radius: 2px; }
-        .handle { position: absolute; bottom: 0; right: 0; width: 25px; height: 25px; background: linear-gradient(135deg, transparent 50%, white 50%); cursor: nwse-resize; opacity: 0.8; }
+        .roi-tag { position: absolute; top: -18px; left: -2px; font-size: 9px; font-weight: bold; background: currentColor; color: #000; padding: 1px 4px; border-radius: 2px; }
+        .handle { position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; background: linear-gradient(135deg, transparent 50%, white 50%); cursor: nwse-resize; opacity: 0.8; }
 
         /* RECORD OVERLAY */
         #record-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
             background: rgba(0, 0, 0, 0.9); border: 2px solid var(--gold);
-            padding: 20px 40px; border-radius: 12px; text-align: center;
+            padding: 15px 30px; border-radius: 12px; text-align: center;
             opacity: 0; pointer-events: none; transition: all 0.3s;
             z-index: 50; box-shadow: 0 0 60px rgba(255, 215, 0, 0.4);
         }
         #record-overlay.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        .rec-title { color: var(--gold); font-weight: 900; font-size: 24px; margin-bottom: 5px; text-transform: uppercase; font-family: Arial, sans-serif; font-style: normal; }
-        .rec-val { color: white; font-size: 20px; font-weight: bold; font-family: Arial, sans-serif; font-style: normal; }
+        .rec-title { color: var(--gold); font-weight: 900; font-size: 20px; margin-bottom: 2px; text-transform: uppercase; font-family: Arial, sans-serif; font-style: normal; }
+        .rec-val { color: white; font-size: 16px; font-weight: bold; font-family: Arial, sans-serif; font-style: normal; }
 
         /* BOTONES NEÓN */
         .btn-neon {
             background: transparent; color: var(--cyan); border: 2px solid var(--cyan);
-            padding: 10px 20px; border-radius: 50px; font-weight: 900; letter-spacing: 1px;
-            cursor: pointer; text-transform: uppercase; font-size: 12px;
+            padding: 8px 10px; border-radius: 50px; font-weight: 900; letter-spacing: 1px;
+            cursor: pointer; text-transform: uppercase; font-size: 10px;
             width: 100%; transition: all 0.2s;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
-            text-shadow: 0 0 8px var(--cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2), inset 0 0 5px rgba(0, 243, 255, 0.1);
+            text-shadow: 0 0 5px var(--cyan);
         }
         .btn-neon:active { transform: scale(0.96); background: rgba(0, 243, 255, 0.15); }
-        .btn-neon:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 30px var(--cyan); color: white; border-color:white; }
+        .btn-neon:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 20px var(--cyan); color: white; border-color:white; }
         .btn-neon:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); box-shadow: none; border-color: #555; color:#555; }
         
         .btn-neon-red {
             color: var(--red); border-color: var(--red);
-            box-shadow: 0 0 15px rgba(255, 50, 50, 0.3), inset 0 0 10px rgba(255, 50, 50, 0.1);
-            text-shadow: 0 0 8px var(--red);
+            box-shadow: 0 0 10px rgba(255, 50, 50, 0.3), inset 0 0 5px rgba(255, 50, 50, 0.1);
+            text-shadow: 0 0 5px var(--red);
         }
-        .btn-neon-red:hover { background: rgba(255, 50, 50, 0.15); box-shadow: 0 0 30px var(--red); color: white; }
-        .btn-cam { width: auto; padding: 8px 18px; font-size: 10px; }
+        .btn-neon-red:hover { background: rgba(255, 50, 50, 0.15); box-shadow: 0 0 20px var(--red); color: white; }
+        .btn-cam { width: auto; padding: 6px 14px; font-size: 9px; }
 
         /* TELEMETRÍA */
         .neon-title {
-            color: var(--cyan); text-align: center; font-size: 14px; font-weight: 900; letter-spacing: 3px;
-            text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-            margin: 0 0 10px 0; border-bottom: 1px solid rgba(0, 243, 255, 0.3); padding-bottom: 5px;
+            color: var(--cyan); text-align: center; font-size: 11px; font-weight: 900; letter-spacing: 2px;
+            text-transform: uppercase; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            margin: 0 0 6px 0; border-bottom: 1px solid rgba(0, 243, 255, 0.3); padding-bottom: 2px;
+            flex-shrink: 0;
         }
 
-        .tele-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { background: linear-gradient(160deg, #0e1520, #050508); border-left: 3px solid #333; padding: 10px; border-radius: 6px; position: relative; overflow: hidden; }
+        .tele-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex-shrink: 0; }
+        .card { background: linear-gradient(160deg, #0e1520, #050508); border-left: 3px solid #333; padding: 6px; border-radius: 6px; position: relative; overflow: hidden; }
         .card.p1 { border-color: var(--cyan); box-shadow: inset 10px 0 20px -15px rgba(0, 243, 255, 0.2); }
         .card.p2 { border-color: var(--red); box-shadow: inset 10px 0 20px -15px rgba(255, 42, 42, 0.2); }
-        .driver { font-size: 16px; font-weight: 900; margin: 0; line-height: 1; text-transform: uppercase; font-style: normal; }
-        .car { font-size: 9px; color: #568; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; font-weight: bold; }
         
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        /* Ajuste de fuentes para pantallas pequeñas */
+        .driver { font-size: clamp(12px, 2vh, 16px); font-weight: 900; margin: 0; line-height: 1; text-transform: uppercase; font-style: normal; }
+        .car { font-size: 8px; color: #568; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block; font-weight: bold; }
+        
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
         .stat-box { 
             background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 6px; padding: 4px 6px; display: flex; flex-direction: column;
+            border-radius: 4px; padding: 3px 5px; display: flex; flex-direction: column;
         }
-        .stat-lbl { font-size: 8px; color: #8cf; text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
+        .stat-lbl { font-size: 7px; color: #8cf; text-transform: uppercase; font-weight: bold; margin-bottom: 1px; }
         .val { 
-            font-size: 14px; font-weight: 900; color: white; font-family: Arial, sans-serif;
+            font-size: clamp(12px, 2vh, 16px); font-weight: 900; color: white; font-family: Arial, sans-serif;
             text-shadow: 0 0 5px rgba(255,255,255,0.3); align-self: flex-end;
         }
 
@@ -183,24 +225,31 @@
             grid-column: span 2; 
             background: rgba(0, 243, 255, 0.15); border: 1px solid var(--cyan); 
             text-align: center; justify-content: center; align-items: center;
-            padding: 8px; margin-top: 4px;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+            padding: 4px; margin-top: 2px;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
         }
-        .card.p2 .box-highlight { background: rgba(255, 50, 50, 0.15); border-color: var(--red); box-shadow: 0 0 15px rgba(255, 50, 50, 0.1); }
-        
-        .box-highlight .stat-lbl { font-size: 10px; margin-bottom: 0; opacity: 0.9; color: white; letter-spacing: 1px; }
-        .box-highlight .val { font-size: 24px; align-self: center; text-shadow: 0 0 10px currentColor; }
+        .card.p2 .box-highlight { background: rgba(255, 50, 50, 0.15); border-color: var(--red); box-shadow: 0 0 10px rgba(255, 50, 50, 0.1); }
+        .box-highlight .val { font-size: clamp(16px, 3vh, 22px); }
 
-        /* GRÁFICA DE COLUMNAS */
+        /* GRÁFICA DE COLUMNAS FLEXIBLE */
+        .chart-container {
+            margin-top: 6px; 
+            flex-grow: 1; 
+            display: flex; flex-direction: column; 
+            min-height: 0;
+            overflow: hidden;
+        }
         .chart-box { 
-            /* RESTAURADO: Tamaño cómodo para que no se achate */
-            height: 140px; 
+            /* AJUSTE: Altura flexible en lugar de fija */
+            height: auto !important; 
+            flex-grow: 1; 
+            min-height: 40px; /* Mínimo viable */
             background: rgba(0, 10, 20, 0.4); border: 1px solid rgba(255,255,255,0.1); 
-            margin-top: 10px; padding: 10px 10px 10px 30px; position: relative; border-radius: 6px;
+            padding: 5px 5px 5px 25px; position: relative; border-radius: 6px;
         }
         svg { width: 100%; height: 100%; overflow: visible; }
         .grid-line { stroke: rgba(255,255,255,0.1); stroke-width: 1; }
-        .chart-labels { position: absolute; left: 5px; top: 10px; bottom: 10px; width: 25px; display: flex; flex-direction: column; justify-content: space-between; color: #8af; font-size: 8px; font-weight: bold; pointer-events: none; }
+        .chart-labels { position: absolute; left: 4px; top: 5px; bottom: 5px; width: 20px; display: flex; flex-direction: column; justify-content: space-between; color: #8af; font-size: 7px; font-weight: bold; pointer-events: none; }
 
         /* MODALES */
         .modal { position: fixed; inset: 0; background: rgba(0,5,15,0.95); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
@@ -238,12 +287,12 @@
     <div id="err"></div>
     <script>window.onerror=function(m){const e=document.getElementById('err');e.style.display='block';e.innerHTML='ERROR: '+m;}</script>
 
-    <!-- HEADER -->
+    <!-- HEADER (Panel 1) -->
     <div class="panel header">
         <div class="header-left logo-box">
             <h1 class="logo">KRONO <span class="text-c">DUAL</span></h1>
             <span class="logo-sub">V.1.0</span>
-            <span class="logo-sub" style="font-size:8px; margin-top:2px;">by Albert Closa</span>
+            <span class="logo-sub" style="font-size:7px; margin-top:0;">by Albert Closa</span>
         </div>
         
         <div class="header-center">
@@ -258,7 +307,7 @@
         </div>
     </div>
 
-    <!-- CONFIGURACIÓN -->
+    <!-- CONFIGURACIÓN (Absolute) -->
     <div id="config" class="config-drawer w-full max-w-800">
         <div class="row gap-4 flex" style="margin-bottom:15px;">
             <div class="w-full">
@@ -304,19 +353,19 @@
         </div>
     </div>
 
-    <!-- TIMER CENTRADO -->
+    <!-- TIMER CENTRADO (Panel 2) -->
     <div class="panel timer-box">
         <div class="grid-bg"></div>
-        <div style="font-size:12px; color:#8af; letter-spacing:4px; font-weight:bold; text-transform:uppercase; z-index:2; position:relative;">TIEMPO DE CARRERA</div>
+        <div style="font-size:10px; color:#8af; letter-spacing:3px; font-weight:bold; text-transform:uppercase; z-index:2; position:relative;">TIEMPO DE CARRERA</div>
         <div id="main-timer">00:00.00</div>
         <div id="lap-counter" class="lap-info">PREPARADO</div>
     </div>
 
-    <!-- VIDEO & CONTROL -->
-    <div class="panel" style="padding:15px;">
-        <div class="flex between center" style="margin-bottom:10px;">
+    <!-- VIDEO & CONTROL (Panel 3) -->
+    <div class="panel" style="padding:8px;">
+        <div class="flex between center" style="margin-bottom:6px; flex-shrink:0;">
             <button id="btn-cam" class="btn-neon btn-cam" onclick="toggleCam()">ENCENDER CÁMARA</button>
-            <div style="font-size:11px; font-family:monospace; background:rgba(0,0,0,0.5); padding:6px 12px; border:1px solid #246; border-radius:20px;">
+            <div style="font-size:10px; font-family:monospace; background:rgba(0,0,0,0.5); padding:4px 10px; border:1px solid #246; border-radius:20px;">
                 <span class="text-c">P1: <b id="val-p1">0</b></span> | <span class="text-r">P2: <b id="val-p2">0</b></span>
             </div>
         </div>
@@ -337,13 +386,13 @@
             <div id="roi2" class="roi"><div class="roi-tag text-r">P2</div><div class="handle"></div></div>
         </div>
 
-        <div class="flex gap-4">
+        <div class="flex gap-4" style="flex-shrink:0;">
             <button id="btn-start" class="btn-neon w-full" onclick="toggleRace()" disabled>INICIAR</button>
             <button id="btn-reset" class="btn-neon btn-neon-red w-full" onclick="resetRace()" disabled>RESET</button>
         </div>
     </div>
 
-    <!-- TELEMETRÍA -->
+    <!-- TELEMETRÍA (Panel 4) -->
     <div class="panel">
         <h3 class="neon-title">TELEMETRÍA EN VIVO</h3>
         <div class="tele-grid">
@@ -378,8 +427,8 @@
         </div>
         
         <!-- GRÁFICA DE COLUMNAS -->
-        <div style="margin-top:20px;">
-            <div class="neon-title">RITMO DE CARRERA</div>
+        <div class="chart-container">
+            <div class="neon-title" style="margin-top:2px;">RITMO DE CARRERA</div>
             <div class="chart-box">
                 <div class="chart-labels">
                     <span id="chart-max">10s</span>
