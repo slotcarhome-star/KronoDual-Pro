@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONO DUAL V.1.0</title>
+    <title>KRONO DUAL V.1.1</title>
     <meta name="theme-color" content="#0b2545">
 
     <style>
-        /* --- KRONO DUAL V.1.0 DESIGN --- */
+        /* --- KRONO DUAL V.1.1 DESIGN --- */
         :root {
             --bg-base: #001a33;
             --bg-gradient: radial-gradient(circle at 50% 0%, #004488 0%, #000810 90%);
@@ -242,7 +242,7 @@
     <div class="panel header">
         <div class="header-left logo-box">
             <h1 class="logo">KRONO <span class="text-c">DUAL</span></h1>
-            <span class="logo-sub">V.1.0</span>
+            <span class="logo-sub">V.1.1</span>
             <span class="logo-sub" style="font-size:8px; margin-top:2px;">by Albert Closa</span>
         </div>
         
@@ -272,6 +272,9 @@
                     <option value="ding">Ding-Dong</option>
                     <option value="digi">Digital</option>
                 </select>
+                <!-- NUEVO: UMBRAL INDIVIDUAL P1 -->
+                <label style="margin-top:10px;">UMBRAL P1</label>
+                <input type="range" id="in-sens-p1" min="0" max="255" value="100" style="padding:0; height:35px;">
             </div>
             <div class="w-full">
                 <label class="text-r">PILOTO 2 (ROJO)</label>
@@ -284,6 +287,9 @@
                     <option value="ding">Ding-Dong</option>
                     <option value="digi">Digital</option>
                 </select>
+                <!-- NUEVO: UMBRAL INDIVIDUAL P2 -->
+                <label style="margin-top:10px;">UMBRAL P2</label>
+                <input type="range" id="in-sens-p2" min="0" max="255" value="100" style="padding:0; height:35px;">
             </div>
         </div>
         <div class="row gap-4 flex">
@@ -294,8 +300,7 @@
                 </select>
             </div>
             <div class="w-full">
-                <label>SENSIBILIDAD CÁMARA</label>
-                <input type="range" id="in-sens" min="0" max="255" value="100" style="padding:0; height:35px;">
+                <!-- Espacio libre o futuros ajustes -->
             </div>
         </div>
         <div class="flex center gap-2" style="margin-top:15px; border-top:1px solid #1e3a5a; padding-top:10px;">
@@ -484,7 +489,7 @@
             flags: { f5: false, f1: false },
             p1: { n:'P1', c:'C1', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0 },
             p2: { n:'P2', c:'C2', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0 },
-            cfg: { laps:10, sens:100 }
+            cfg: { laps:10 } // Removed old sens property
         };
 
         const vid = get('webcam');
@@ -646,7 +651,9 @@
             for(let i=0; i<d.length; i+=16) { s+=(d[i]+d[i+1]+d[i+2])/3; c++; }
             const avg = Math.floor(s/c);
             set('val-p'+id, avg);
-            const sens = parseInt(get('in-sens').value);
+            
+            // --- MODIFICACIÓN: Leer el umbral específico de cada piloto ---
+            const sens = parseInt(get('in-sens-p'+id).value);
             
             if(avg < sens) {
                 roi.classList.add('active');
