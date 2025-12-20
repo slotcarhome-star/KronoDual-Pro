@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONO DUAL V.1.8</title>
+    <title>KRONO DUAL V.1.0</title>
     <meta name="theme-color" content="#0b2545">
 
     <style>
-        /* --- KRONO DUAL V.1.8 DESIGN --- */
+        /* --- KRONO DUAL V.1.0 DESIGN --- */
         :root {
             --bg-base: #001a33;
             --bg-gradient: radial-gradient(circle at 50% 0%, #004488 0%, #000810 90%);
@@ -25,7 +25,7 @@
             background-image: var(--bg-gradient);
             color: var(--text);
             font-family: Arial, Helvetica, sans-serif;
-            margin: 0; padding: 12px;
+            margin: 0; padding: 10px;
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; overflow-x: hidden; touch-action: manipulation;
         }
@@ -45,8 +45,9 @@
         /* PANELES */
         .panel {
             background: var(--panel); border: var(--border);
-            border-radius: 16px; padding: 15px; width: 100%; max-width: 900px;
-            box-sizing: border-box; margin-bottom: 15px;
+            border-radius: 16px; padding: 12px;
+            width: 100%; max-width: 900px;
+            box-sizing: border-box; margin-bottom: 10px;
             box-shadow: 0 10px 40px rgba(0, 10, 30, 0.4);
             backdrop-filter: blur(8px);
         }
@@ -58,19 +59,19 @@
         .header-right { justify-self: end; }
 
         .logo-box { line-height: 1.2; }
-        .logo { font-size: 24px; font-weight: 900; font-style: normal; margin: 0; letter-spacing: 1px; } 
-        .logo-sub { font-size: 11px; color: #8cf; font-weight: bold; letter-spacing: 1px; opacity: 0.8; display: block; margin-top: 2px; }
+        .logo { font-size: 20px; font-weight: 900; font-style: normal; margin: 0; letter-spacing: 1px; } 
+        .logo-sub { font-size: 10px; color: #8cf; font-weight: bold; letter-spacing: 1px; opacity: 0.8; display: block; margin-top: 2px; }
 
         /* SEMÁFORO */
-        .lights { display: flex; gap: 6px; background: rgba(0,0,0,0.6); padding: 8px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
-        .bulb { width: 16px; height: 16px; border-radius: 50%; background: #222; border: 1px solid #444; transition: 0.1s; }
+        .lights { display: flex; gap: 6px; background: rgba(0,0,0,0.6); padding: 6px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
+        .bulb { width: 14px; height: 14px; border-radius: 50%; background: #222; border: 1px solid #444; transition: 0.1s; }
         .bulb.red { background: #ff0000; box-shadow: 0 0 20px #ff0000; border-color: #ff5555; }
         .bulb.green { background: #00ff00; box-shadow: 0 0 20px #00ff00; border-color: #55ff55; }
 
         /* BOTONES HEADER */
         .btn-head { 
             background: rgba(0, 40, 80, 0.4); border: 1px solid var(--cyan); color: var(--cyan); 
-            border-radius: 30px; padding: 8px 18px; font-size: 11px; font-weight: bold;
+            border-radius: 30px; padding: 6px 14px; font-size: 10px; font-weight: bold;
             cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 5px;
             box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
         }
@@ -87,29 +88,33 @@
 
         /* TIMER */
         .timer-box { 
-            text-align: center; padding: 20px; 
+            text-align: center; padding: 15px; 
             background: radial-gradient(circle at center, rgba(20,50,90,0.4) 0%, rgba(5,10,20,0.8) 90%); 
             border: 1px solid rgba(100,200,255,0.2); position: relative; 
         }
         #main-timer { 
-            font-family: Arial, sans-serif; font-size: 75px; font-weight: 900; font-style: normal;
-            color: white; line-height: 1; margin: 5px 0; 
+            font-family: Arial, sans-serif; font-size: 60px; font-weight: 900; font-style: normal;
+            color: white; line-height: 1; margin: 2px 0; 
             text-shadow: 0 0 30px rgba(0, 180, 255, 0.5); z-index: 2; position: relative; 
             font-variant-numeric: tabular-nums;
         }
-        .lap-info { color: var(--gold); font-size: 14px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; z-index: 2; position: relative; }
+        .lap-info { color: var(--gold); font-size: 12px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; z-index: 2; position: relative; }
 
         /* VIDEO */
         .vid-wrapper {
             position: relative; background: var(--cam-bg); border: 2px solid #234;
-            border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; margin-bottom: 15px;
+            border-radius: 8px; overflow: hidden; 
+            width: 100%;
+            /* AJUSTE: Altura al 45% del viewport */
+            height: 45vh; 
+            margin-bottom: 10px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
         }
         video { width: 100%; height: 100%; object-fit: fill; display: none; }
         .cam-msg { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #579; text-align: center; }
 
         /* ROIs */
-        .roi { position: absolute; width: 15%; height: 15%; border: 2px dashed rgba(255,255,255,0.5); display: none; cursor: move; z-index: 20; touch-action: none; box-sizing: border-box; }
+        .roi { position: absolute; width: 15%; height: 20%; border: 2px dashed rgba(255,255,255,0.5); display: none; cursor: move; z-index: 20; touch-action: none; box-sizing: border-box; }
         .roi.active { border-style: solid; border-width: 4px; background: rgba(255,255,255,0.2); box-shadow: 0 0 20px currentColor; }
         #roi1 { border-color: var(--cyan); top: 30%; left: 20%; color: var(--cyan); }
         #roi2 { border-color: var(--red); top: 30%; left: 60%; color: var(--red); }
@@ -131,8 +136,8 @@
         /* BOTONES NEÓN */
         .btn-neon {
             background: transparent; color: var(--cyan); border: 2px solid var(--cyan);
-            padding: 14px 28px; border-radius: 50px; font-weight: 900; letter-spacing: 1px;
-            cursor: pointer; text-transform: uppercase; font-size: 13px;
+            padding: 10px 20px; border-radius: 50px; font-weight: 900; letter-spacing: 1px;
+            cursor: pointer; text-transform: uppercase; font-size: 12px;
             width: 100%; transition: all 0.2s;
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
             text-shadow: 0 0 8px var(--cyan);
@@ -147,30 +152,30 @@
             text-shadow: 0 0 8px var(--red);
         }
         .btn-neon-red:hover { background: rgba(255, 50, 50, 0.15); box-shadow: 0 0 30px var(--red); color: white; }
-        .btn-cam { width: auto; padding: 10px 25px; font-size: 11px; }
+        .btn-cam { width: auto; padding: 8px 18px; font-size: 10px; }
 
         /* TELEMETRÍA */
         .neon-title {
-            color: var(--cyan); text-align: center; font-size: 16px; font-weight: 900; letter-spacing: 3px;
+            color: var(--cyan); text-align: center; font-size: 14px; font-weight: 900; letter-spacing: 3px;
             text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-            margin: 0 0 15px 0; border-bottom: 1px solid rgba(0, 243, 255, 0.3); padding-bottom: 10px;
+            margin: 0 0 10px 0; border-bottom: 1px solid rgba(0, 243, 255, 0.3); padding-bottom: 5px;
         }
 
-        .tele-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: linear-gradient(160deg, #0e1520, #050508); border-left: 3px solid #333; padding: 12px; border-radius: 6px; position: relative; overflow: hidden; }
+        .tele-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { background: linear-gradient(160deg, #0e1520, #050508); border-left: 3px solid #333; padding: 10px; border-radius: 6px; position: relative; overflow: hidden; }
         .card.p1 { border-color: var(--cyan); box-shadow: inset 10px 0 20px -15px rgba(0, 243, 255, 0.2); }
         .card.p2 { border-color: var(--red); box-shadow: inset 10px 0 20px -15px rgba(255, 42, 42, 0.2); }
-        .driver { font-size: 18px; font-weight: 900; margin: 0; line-height: 1; text-transform: uppercase; font-style: normal; }
-        .car { font-size: 10px; color: #568; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; font-weight: bold; }
+        .driver { font-size: 16px; font-weight: 900; margin: 0; line-height: 1; text-transform: uppercase; font-style: normal; }
+        .car { font-size: 9px; color: #568; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; font-weight: bold; }
         
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .stat-box { 
             background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 6px; padding: 6px 8px; display: flex; flex-direction: column;
+            border-radius: 6px; padding: 4px 6px; display: flex; flex-direction: column;
         }
-        .stat-lbl { font-size: 9px; color: #8cf; text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
+        .stat-lbl { font-size: 8px; color: #8cf; text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
         .val { 
-            font-size: 16px; font-weight: 900; color: white; font-family: Arial, sans-serif;
+            font-size: 14px; font-weight: 900; color: white; font-family: Arial, sans-serif;
             text-shadow: 0 0 5px rgba(255,255,255,0.3); align-self: flex-end;
         }
 
@@ -178,22 +183,24 @@
             grid-column: span 2; 
             background: rgba(0, 243, 255, 0.15); border: 1px solid var(--cyan); 
             text-align: center; justify-content: center; align-items: center;
-            padding: 10px; margin-top: 5px;
+            padding: 8px; margin-top: 4px;
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
         }
         .card.p2 .box-highlight { background: rgba(255, 50, 50, 0.15); border-color: var(--red); box-shadow: 0 0 15px rgba(255, 50, 50, 0.1); }
         
-        .box-highlight .stat-lbl { font-size: 11px; margin-bottom: 0; opacity: 0.9; color: white; letter-spacing: 1px; }
-        .box-highlight .val { font-size: 28px; align-self: center; text-shadow: 0 0 10px currentColor; }
+        .box-highlight .stat-lbl { font-size: 10px; margin-bottom: 0; opacity: 0.9; color: white; letter-spacing: 1px; }
+        .box-highlight .val { font-size: 24px; align-self: center; text-shadow: 0 0 10px currentColor; }
 
         /* GRÁFICA DE COLUMNAS */
         .chart-box { 
-            height: 160px; background: rgba(0, 10, 20, 0.4); border: 1px solid rgba(255,255,255,0.1); 
-            margin-top: 15px; padding: 15px 15px 15px 40px; position: relative; border-radius: 6px;
+            /* RESTAURADO: Tamaño cómodo para que no se achate */
+            height: 140px; 
+            background: rgba(0, 10, 20, 0.4); border: 1px solid rgba(255,255,255,0.1); 
+            margin-top: 10px; padding: 10px 10px 10px 30px; position: relative; border-radius: 6px;
         }
         svg { width: 100%; height: 100%; overflow: visible; }
         .grid-line { stroke: rgba(255,255,255,0.1); stroke-width: 1; }
-        .chart-labels { position: absolute; left: 5px; top: 15px; bottom: 15px; width: 30px; display: flex; flex-direction: column; justify-content: space-between; color: #8af; font-size: 9px; font-weight: bold; pointer-events: none; }
+        .chart-labels { position: absolute; left: 5px; top: 10px; bottom: 10px; width: 25px; display: flex; flex-direction: column; justify-content: space-between; color: #8af; font-size: 8px; font-weight: bold; pointer-events: none; }
 
         /* MODALES */
         .modal { position: fixed; inset: 0; background: rgba(0,5,15,0.95); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
@@ -235,7 +242,7 @@
     <div class="panel header">
         <div class="header-left logo-box">
             <h1 class="logo">KRONO <span class="text-c">DUAL</span></h1>
-            <span class="logo-sub">V.1.8</span>
+            <span class="logo-sub">V.1.0</span>
             <span class="logo-sub" style="font-size:8px; margin-top:2px;">by Albert Closa</span>
         </div>
         
@@ -398,22 +405,22 @@
                 <span class="winner-car" id="res-car">COCHE</span>
                 
                 <div class="res-grid">
-                     <div class="res-box main">
-                         <span class="lbl">TIEMPO TOTAL</span>
-                         <span class="val text-y" id="res-total">--:--</span>
-                     </div>
-                     <div class="res-box">
-                         <span class="lbl">MEJOR VUELTA</span>
-                         <span class="val text-c" id="res-best">--.--</span>
-                     </div>
-                     <div class="res-box">
-                         <span class="lbl">TIEMPO MEDIO</span>
-                         <span class="val" id="res-avg">--.--</span>
-                     </div>
-                     <div class="res-box">
-                         <span class="lbl">VELOCIDAD MEDIA</span>
-                         <span class="val" id="res-spd-avg">0 km/h</span>
-                     </div>
+                      <div class="res-box main">
+                          <span class="lbl">TIEMPO TOTAL</span>
+                          <span class="val text-y" id="res-total">--:--</span>
+                      </div>
+                      <div class="res-box">
+                          <span class="lbl">MEJOR VUELTA</span>
+                          <span class="val text-c" id="res-best">--.--</span>
+                      </div>
+                      <div class="res-box">
+                          <span class="lbl">TIEMPO MEDIO</span>
+                          <span class="val" id="res-avg">--.--</span>
+                      </div>
+                      <div class="res-box">
+                          <span class="lbl">VELOCIDAD MEDIA</span>
+                          <span class="val" id="res-spd-avg">0 km/h</span>
+                      </div>
                 </div>
             </div>
             
