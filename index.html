@@ -64,24 +64,26 @@
         #app-frame { width: 100vw; height: 100vh; border: none; display: none; background: white; }
         #session-alert {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 200; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.95); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px);
         }
     </style>
 </head>
 <body class="min-h-screen">
 
+    <!-- Alerta de sesión -->
     <div id="session-alert">
         <div class="glass-panel p-8 rounded-2xl max-w-sm text-center border-red-500/50">
             <i class="fas fa-shield-alt text-4xl text-red-400 mb-4"></i>
-            <h3 class="text-xl font-bold text-white mb-2">Sesión Cerrada</h3>
-            <p class="text-sm text-gray-300 mb-6">Se ha detectado acceso desde otro dispositivo.</p>
-            <button onclick="location.reload()" class="w-full bg-red-600 text-white py-3 rounded-lg font-bold uppercase">Entendido</button>
+            <h3 class="text-xl font-bold text-white mb-2">Acceso Denegado</h3>
+            <p class="text-sm text-gray-300 mb-6">Esta licencia ya está activa en otro dispositivo.</p>
+            <button onclick="location.reload()" class="w-full bg-red-600 text-white py-3 rounded-lg font-bold uppercase transition">Volver a intentar</button>
         </div>
     </div>
 
+    <!-- Contenedor Auth -->
     <div id="auth-container" class="min-h-screen flex flex-col items-center justify-center p-4">
         <div class="text-center mb-6 mt-4">
-            <h1 class="text-4xl font-black gold-text uppercase">KRONODUAL</h1>
+            <h1 class="text-4xl font-black tracking-tighter gold-text uppercase drop-shadow-lg">KRONODUAL</h1>
             <p class="text-yellow-600/80 text-[10px] uppercase tracking-[0.4em] mt-2 font-bold">Gold Edition / Professional Slot</p>
         </div>
 
@@ -94,7 +96,7 @@
         </div>
 
         <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-            <!-- CAJA 1: INFO ORIGINAL -->
+            <!-- INFO ORIGINAL -->
             <div class="gold-panel rounded-3xl p-8 relative flex flex-col justify-between">
                 <div class="absolute -top-3 -right-3 bg-black text-yellow-400 text-[10px] font-bold px-3 py-1 rounded-full border border-yellow-500">LICENCIA GOLD</div>
                 <div>
@@ -109,14 +111,14 @@
                     </div>
                 </div>
                 <div class="text-center mb-4"><span class="text-3xl font-black text-amber-950">10,00€</span></div>
-                <a id="mail-link" href="#" class="block w-full bg-black text-yellow-400 font-black py-4 rounded-xl text-center text-sm uppercase border border-yellow-600 transition hover:scale-105">
+                <button onclick="solicitar()" class="block w-full bg-black text-yellow-400 font-black py-4 rounded-xl text-center text-sm uppercase border border-yellow-600 transition hover:scale-[1.02]">
                     <i class="fas fa-gem mr-2"></i> SOLICITAR AHORA
-                </a>
+                </button>
             </div>
 
-            <!-- CAJA 2: LOGIN -->
+            <!-- LOGIN -->
             <div class="glass-panel rounded-3xl p-8 flex flex-col">
-                <h2 class="text-xl font-bold text-white mb-6 flex items-center gold-text"><i class="fas fa-fingerprint mr-3"></i> AREA CLIENTE</h2>
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gold-text uppercase"><i class="fas fa-fingerprint mr-3"></i> Area Cliente</h2>
                 <form id="login-form" class="space-y-6 flex-grow">
                     <input type="email" id="login-email" required class="w-full input-gold rounded-xl p-4 text-sm" placeholder="tu@email.com">
                     <input type="text" id="code" required class="w-full input-gold rounded-xl p-4 text-center tracking-widest uppercase font-mono text-sm" placeholder="XXX-XXX">
@@ -125,11 +127,11 @@
                 </form>
             </div>
         </div>
-        <p class="mt-12 text-[9px] text-yellow-800/50 text-center uppercase tracking-[0.2em] font-medium">KronoDual Gold v2.0 | slotcarhome@gmail.com</p>
+        <p class="mt-12 text-[9px] text-yellow-800/50 text-center uppercase tracking-[0.2em]">KronoDual Gold v2.7 | slotcarhome@gmail.com</p>
     </div>
 
     <iframe id="app-frame" src="about:blank"></iframe>
-    <button onclick="logout()" id="logout-btn" class="hidden fixed bottom-6 right-6 btn-gold w-14 h-14 rounded-full z-[100] flex items-center justify-center text-xl shadow-xl">
+    <button onclick="logout()" id="logout-btn" class="hidden fixed bottom-6 right-6 btn-gold w-14 h-14 rounded-full shadow-2xl z-[100] flex items-center justify-center text-xl border-2 border-white transition active:scale-90">
         <i class="fas fa-power-off"></i>
     </button>
 
@@ -139,15 +141,15 @@
         import { getFirestore, collection, getDocs, query, where, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDW-2Yc4kvZJYbNOVeesPZWdRThYe0noUI",
-            authDomain: "correo-95e58.firebaseapp.com",
-            projectId: "correo-95e58",
-            storageBucket: "correo-95e58.firebasestorage.app",
-            messagingSenderId: "977860532946",
-            appId: "1:977860532946:web:3738c6b7165201bce7ab0b"
+          apiKey: "AIzaSyDW-2Yc4kvZJYbNOVeesPZWdRThYe0noUI",
+          authDomain: "correo-95e58.firebaseapp.com",
+          projectId: "correo-95e58",
+          storageBucket: "correo-95e58.firebasestorage.app",
+          messagingSenderId: "977860532946",
+          appId: "1:977860532946:web:3738c6b7165201bce7ab0b"
         };
         
-        const APP_ID = "app_kronodual";
+        const appId = "app_kronodual";
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -155,50 +157,52 @@
         let currentUser = null;
         let unsubscribe = null;
 
-        // Regla: Auth antes de cualquier operación
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                const sid = localStorage.getItem('doc_id_' + APP_ID);
-                const sess = localStorage.getItem('session_' + APP_ID);
-                if (sid && sess) {
+        // REGLA 3: Auth antes de cualquier operación
+        onAuthStateChanged(auth, (u) => {
+            currentUser = u;
+            if (u) {
+                const sid = localStorage.getItem('sid_' + appId);
+                const did = localStorage.getItem('did_' + appId);
+                if (sid && did) {
                     showApp();
-                    monitorSession(sid, sess);
+                    monitorSession(did, sid);
                 }
             }
         });
-        signInAnonymously(auth);
+        signInAnonymously(auth).catch(e => console.error("Error Auth:", e));
 
         document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault();
-            if (!currentUser) return;
+            if (!currentUser) { showMessage("Conectando...", "error"); return; }
+
             const email = document.getElementById('login-email').value.toLowerCase().trim();
             const code = document.getElementById('code').value.toUpperCase().trim();
             const btn = document.getElementById('btn-login');
-            
+
             btn.disabled = true; btn.innerText = "VALIDANDO...";
             document.getElementById('msg-box').classList.add('hidden');
 
             try {
-                // Búsqueda simple por email (Regla 2: evitar índices compuestos)
-                const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), where("email", "==", email));
+                // REGLA 2: Búsqueda simple para evitar error de índices manuales
+                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'access_codes'), where("email", "==", email));
                 const snap = await getDocs(q);
 
-                let matchedDoc = null;
-                snap.forEach(d => { if(d.data().code === code) matchedDoc = d; });
+                let matched = null;
+                snap.forEach(d => { if(d.data().code === code) matched = d; });
 
-                if (matchedDoc) {
-                    const newSess = Date.now().toString();
-                    await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes', matchedDoc.id), {
-                        current_session: newSess,
+                if (matched) {
+                    const sessId = Date.now().toString() + Math.random().toString(36).substring(7);
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'access_codes', matched.id), {
+                        current_session: sessId,
                         last_login: new Date().toISOString()
                     });
-                    localStorage.setItem('session_' + APP_ID, newSess);
-                    localStorage.setItem('doc_id_' + APP_ID, matchedDoc.id);
+
+                    localStorage.setItem('sid_' + appId, sessId);
+                    localStorage.setItem('did_' + appId, matched.id);
                     showApp();
-                    monitorSession(matchedDoc.id, newSess);
+                    monitorSession(matched.id, sessId);
                 } else {
-                    showMessage("❌ Datos incorrectos.", "error");
+                    showMessage("❌ Datos incorrectos o email no registrado.", "error");
                 }
             } catch (err) { showMessage("Error: " + err.message, "error"); }
             btn.disabled = false; btn.innerText = "ENTRAR";
@@ -206,13 +210,20 @@
 
         function monitorSession(id, mySess) {
             if (unsubscribe) unsubscribe();
-            unsubscribe = onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes', id), (d) => {
+            unsubscribe = onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'access_codes', id), (d) => {
                 if (d.exists() && d.data().current_session !== mySess) {
                     document.getElementById('session-alert').style.display = 'flex';
                     localStorage.clear();
                     document.getElementById('app-frame').src = 'about:blank';
                 }
-            });
+            }, (err) => console.warn("Monitor Error:", err));
+        }
+
+        function showMessage(t, type) {
+            const b = document.getElementById('msg-box');
+            b.innerText = t;
+            b.className = `p-3 rounded-xl text-xs text-center font-bold border ${type==='error'?'bg-red-900/50 text-red-200 border-red-500':'bg-yellow-900/50 text-yellow-200 border-yellow-500'}`;
+            b.classList.remove('hidden');
         }
 
         function showApp() {
@@ -222,18 +233,10 @@
             document.getElementById('logout-btn').classList.remove('hidden');
         }
 
-        function showMessage(t, type) {
-            const b = document.getElementById('msg-box');
-            b.innerText = t;
-            b.className = `p-3 rounded-xl text-xs text-center font-bold border ${type==='error'?'bg-red-900/50 text-red-200 border-red-500':'bg-yellow-900/50 text-yellow-200'}`;
-            b.classList.remove('hidden');
-        }
-
         window.logout = () => { localStorage.clear(); location.reload(); };
-
-        document.getElementById('mail-link').onclick = () => {
+        window.solicitar = () => {
             const em = document.getElementById('login-email').value || "tu@email.com";
-            window.location.href = `mailto:slotcarhome@gmail.com?subject=Interés KronoDual GOLD&body=Hola, estoy interesado en adquirir KRONODUAL por 10 Euros. Mi email es: ${em}`;
+            window.location.href = `mailto:slotcarhome@gmail.com?subject=Interés KronoDual GOLD&body=Hola, quiero la licencia por 10€. Mi email: ${em}`;
         };
     </script>
 </body>
