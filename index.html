@@ -12,29 +12,24 @@
             font-family: sans-serif; 
             color: #fff;
         }
-
-        /* --- ESTILOS GOLD / ORO ORIGINALES --- */
         .gold-panel {
             background: linear-gradient(145deg, #FFD700 0%, #FDB931 45%, #C2920C 55%, #FFD700 100%);
             border: 1px solid #FFE5B4;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(255,255,255,0.4);
             color: #3e2723;
         }
-
         .gold-text {
             background: linear-gradient(180deg, #FFD700 0%, #FDB931 50%, #C2920C 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
-
         .glass-panel { 
             background: rgba(20, 20, 20, 0.8); 
             backdrop-filter: blur(12px); 
             border: 1px solid rgba(253, 185, 49, 0.3);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
         }
-
         .btn-gold {
             background: linear-gradient(180deg, #FFD700 0%, #d4af37 100%);
             color: #2c1810;
@@ -46,303 +41,200 @@
             transform: translateY(-2px);
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
         }
-
         .input-gold {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid #5c4d00;
             color: #FDB931;
             transition: all 0.3s;
         }
-        .input-gold:focus {
-            border-color: #FFD700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-            outline: none;
-        }
-
-        .img-container {
-            width: 100%;
-            max-width: 240px;
-            margin: 0 auto 2.5rem auto;
-            position: relative;
-        }
-
         .aspect-9-16 {
             width: 100%;
+            max-width: 240px;
             aspect-ratio: 9 / 16;
             object-fit: cover;
             border-radius: 1rem;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
             border: 3px solid #d4af37;
-            background: #000;
+            margin: 0 auto 2.5rem auto;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            background: #000;
         }
-
         #app-frame { width: 100vw; height: 100vh; border: none; display: none; background: white; }
-
         #session-alert {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 200; align-items: center; justify-content: center;
         }
     </style>
 </head>
-<body class="min-h-screen overflow-y-auto">
+<body class="min-h-screen">
 
-    <!-- Modal de Sesión Duplicada -->
     <div id="session-alert">
-        <div class="glass-panel p-8 rounded-2xl max-w-sm text-center border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+        <div class="glass-panel p-8 rounded-2xl max-w-sm text-center border-red-500/50">
             <i class="fas fa-shield-alt text-4xl text-red-400 mb-4"></i>
             <h3 class="text-xl font-bold text-white mb-2">Sesión Cerrada</h3>
-            <p class="text-sm text-gray-300 mb-6">Se ha detectado acceso desde otro dispositivo con estas credenciales.</p>
-            <button onclick="location.reload()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition">
-                Entendido
-            </button>
+            <p class="text-sm text-gray-300 mb-6">Se ha detectado acceso desde otro dispositivo.</p>
+            <button onclick="location.reload()" class="w-full bg-red-600 text-white py-3 rounded-lg font-bold uppercase">Entendido</button>
         </div>
     </div>
 
-    <!-- PANTALLA PRINCIPAL -->
-    <div id="auth-container" class="min-h-screen flex flex-col items-center justify-center p-4 py-10">
-        
-        <!-- TÍTULO GOLD -->
-        <div class="text-center mb-6">
-            <h1 class="text-4xl font-black tracking-tighter gold-text uppercase drop-shadow-lg">KRONODUAL</h1>
-            <div class="h-1 w-24 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto mt-2"></div>
+    <div id="auth-container" class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="text-center mb-6 mt-4">
+            <h1 class="text-4xl font-black gold-text uppercase">KRONODUAL</h1>
             <p class="text-yellow-600/80 text-[10px] uppercase tracking-[0.4em] mt-2 font-bold">Gold Edition / Professional Slot</p>
         </div>
 
-        <!-- IMAGEN 9:16 VERTICAL -->
-        <div class="img-container">
-            <div class="aspect-9-16">
-                <img id="user-image" src="kronoro.jpg" 
-                     alt="[KronoDual Gold]" 
-                     class="w-full h-full object-cover"
-                     onerror="this.style.display='none'; document.getElementById('placeholder').style.display='flex';">
-                
-                <div id="placeholder" class="flex flex-col items-center justify-center p-5 text-center text-yellow-700/50" style="display: none;">
-                    <i class="fas fa-trophy text-6xl mb-4 opacity-30"></i>
-                    <p class="text-xs font-bold uppercase tracking-widest text-yellow-500">KronoDual Premium</p>
-                </div>
+        <div class="aspect-9-16">
+            <img id="user-image" src="kronoro.jpg" alt="[KronoDual Gold]" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('placeholder').style.display='flex';">
+            <div id="placeholder" class="flex flex-col items-center justify-center p-5 text-center text-yellow-700/50" style="display: none;">
+                <i class="fas fa-trophy text-6xl mb-4 opacity-30"></i>
+                <p class="text-xs font-bold uppercase tracking-widest text-yellow-500">kronoro.jpg</p>
             </div>
         </div>
 
         <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-
-            <!-- CAJA 1: INFORMACIÓN Y COMPRA (ESTILO ORO ORIGINAL) -->
+            <!-- CAJA 1: INFO ORIGINAL -->
             <div class="gold-panel rounded-3xl p-8 relative flex flex-col justify-between">
-                <div class="absolute -top-3 -right-3 bg-black text-yellow-400 text-[10px] font-bold px-3 py-1 rounded-full border border-yellow-500 shadow-xl">LICENCIA GOLD</div>
-                
+                <div class="absolute -top-3 -right-3 bg-black text-yellow-400 text-[10px] font-bold px-3 py-1 rounded-full border border-yellow-500">LICENCIA GOLD</div>
                 <div>
-                    <h2 class="text-xl font-black mb-4 flex items-center text-amber-900">
-                        <i class="fas fa-crown mr-3 opacity-80"></i> ACCESO TOTAL
-                    </h2>
-                    
-                    <p class="text-amber-900/90 text-sm mb-6 leading-relaxed font-bold">
-                        Gestión dual de pistas de alto rendimiento. Máxima precisión y control absoluto.
-                    </p>
-
+                    <h2 class="text-xl font-black mb-4 flex items-center text-amber-900"><i class="fas fa-crown mr-3"></i> ACCESO TOTAL</h2>
+                    <p class="text-amber-900/90 text-sm mb-6 leading-relaxed font-bold">Gestión dual de pistas de alto rendimiento. Máxima precisión y control absoluto.</p>
                     <div class="bg-black/10 rounded-2xl p-5 border border-black/10 mb-6">
                         <ul class="text-xs space-y-3 text-amber-950 font-black">
-                            <li class="flex items-center"><i class="fas fa-star mr-2 text-amber-800"></i> Solicita acceso vía Email</li>
-                            <li class="flex items-center"><i class="fas fa-star mr-2 text-amber-800"></i> Pago único de 10,00€</li>
-                            <li class="flex items-center"><i class="fas fa-star mr-2 text-amber-800"></i> Activación Vitalicia</li>
+                            <li class="flex items-center"><i class="fas fa-star mr-2"></i> Solicita acceso vía Email</li>
+                            <li class="flex items-center"><i class="fas fa-star mr-2"></i> Pago único de 10,00€</li>
+                            <li class="flex items-center"><i class="fas fa-star mr-2"></i> Activación Vitalicia</li>
                         </ul>
                     </div>
                 </div>
-
-                <div class="text-center mb-4">
-                     <span class="text-3xl font-black text-amber-950">10,00€</span>
-                </div>
-
-                <a id="mail-link" href="#" class="block w-full bg-black hover:bg-neutral-900 text-yellow-400 font-black py-4 rounded-xl text-center shadow-2xl transition duration-300 transform hover:scale-[1.02] text-sm tracking-widest uppercase border border-yellow-600">
+                <div class="text-center mb-4"><span class="text-3xl font-black text-amber-950">10,00€</span></div>
+                <a id="mail-link" href="#" class="block w-full bg-black text-yellow-400 font-black py-4 rounded-xl text-center text-sm uppercase border border-yellow-600 transition hover:scale-105">
                     <i class="fas fa-gem mr-2"></i> SOLICITAR AHORA
                 </a>
             </div>
 
-            <!-- CAJA 2: LOGIN (ESTILO CRISTAL OSCURO ORIGINAL) -->
+            <!-- CAJA 2: LOGIN -->
             <div class="glass-panel rounded-3xl p-8 flex flex-col">
-                <h2 class="text-xl font-bold text-white mb-6 flex items-center gold-text">
-                    <i class="fas fa-fingerprint mr-3"></i> AREA CLIENTE
-                </h2>
-
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gold-text"><i class="fas fa-fingerprint mr-3"></i> AREA CLIENTE</h2>
                 <form id="login-form" class="space-y-6 flex-grow">
-                    <div>
-                        <label class="block text-[10px] font-black text-yellow-600/80 uppercase mb-2 tracking-widest">Identificación</label>
-                        <input type="email" id="login-email" required 
-                            class="w-full input-gold rounded-xl p-4 text-sm"
-                            placeholder="tu@email.com">
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-black text-yellow-600/80 uppercase mb-2 tracking-widest">Código de Activación</label>
-                        <input type="text" id="code" required 
-                            class="w-full input-gold rounded-xl p-4 text-center tracking-[0.5em] uppercase font-mono text-sm"
-                            placeholder="XXX-XXX">
-                    </div>
-                    
+                    <input type="email" id="login-email" required class="w-full input-gold rounded-xl p-4 text-sm" placeholder="tu@email.com">
+                    <input type="text" id="code" required class="w-full input-gold rounded-xl p-4 text-center tracking-widest uppercase font-mono text-sm" placeholder="XXX-XXX">
                     <div id="msg-box" class="hidden p-3 rounded-xl text-xs text-center font-bold"></div>
-
-                    <button type="submit" id="btn-login" class="btn-gold w-full font-black py-4 rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.2)] transition flex justify-center items-center text-sm tracking-widest uppercase">
-                        ENTRAR <i class="fas fa-chevron-right ml-3 text-xs"></i>
-                    </button>
+                    <button type="submit" id="btn-login" class="btn-gold w-full font-black py-4 rounded-xl text-sm uppercase">ENTRAR</button>
                 </form>
             </div>
         </div>
-        
-        <p class="mt-12 text-[9px] text-yellow-800/50 text-center max-w-lg uppercase tracking-[0.2em] font-medium">
-            KronoDual Gold v2.0 <span class="mx-2">|</span> slotcarhome@gmail.com
-        </p>
+        <p class="mt-12 text-[9px] text-yellow-800/50 text-center uppercase tracking-[0.2em] font-medium">KronoDual Gold v2.0 | slotcarhome@gmail.com</p>
     </div>
 
-    <!-- APP FRAME -->
     <iframe id="app-frame" src="about:blank"></iframe>
-    
-    <!-- BOTÓN SALIR -->
-    <button onclick="logout()" id="logout-btn" class="hidden fixed bottom-6 right-6 btn-gold w-14 h-14 rounded-full shadow-lg z-[100] flex items-center justify-center text-xl border-2 border-white transition transform active:scale-90">
+    <button onclick="logout()" id="logout-btn" class="hidden fixed bottom-6 right-6 btn-gold w-14 h-14 rounded-full z-[100] flex items-center justify-center text-xl shadow-xl">
         <i class="fas fa-power-off"></i>
     </button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, where, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
-          apiKey: "AIzaSyDW-2Yc4kvZJYbNOVeesPZWdRThYe0noUI",
-          authDomain: "correo-95e58.firebaseapp.com",
-          projectId: "correo-95e58",
-          storageBucket: "correo-95e58.firebasestorage.app",
-          messagingSenderId: "977860532946",
-          appId: "1:977860532946:web:3738c6b7165201bce7ab0b"
+            apiKey: "AIzaSyDW-2Yc4kvZJYbNOVeesPZWdRThYe0noUI",
+            authDomain: "correo-95e58.firebaseapp.com",
+            projectId: "correo-95e58",
+            storageBucket: "correo-95e58.firebasestorage.app",
+            messagingSenderId: "977860532946",
+            appId: "1:977860532946:web:3738c6b7165201bce7ab0b"
         };
         
-        const appId = "app_kronodual_gold";
+        const APP_ID = "app_kronodual";
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        const APP_URL = "kronodual.html";
-        let sessionUnsubscribe = null;
+        let currentUser = null;
+        let unsubscribe = null;
 
-        // Iniciar Auth
-        signInAnonymously(auth);
-
+        // Regla: Auth antes de cualquier operación
         onAuthStateChanged(auth, (user) => {
-            if (user) checkPersistedSession();
-        });
-
-        // Email Link
-        const emailInput = document.getElementById('login-email');
-        const mailLink = document.getElementById('mail-link');
-        const updateMail = () => {
-            const mail = emailInput.value || "[mi@email.com]";
-            const body = `Hola, slotcarhome@gmail.com,\n\nEstoy interesado en adquirir KRONODUAL por 10 Euros.\n\nMi correo: ${mail}\n\nEspero instrucciones.\nGracias.`;
-            mailLink.href = `mailto:slotcarhome@gmail.com?subject=Interés Licencia KronoDual GOLD&body=${encodeURIComponent(body)}`;
-        };
-        emailInput.addEventListener('input', updateMail);
-        updateMail();
-
-        // Login con Bloqueo de Sesión
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-login');
-            const email = emailInput.value.toLowerCase().trim();
-            const code = document.getElementById('code').value.trim();
-            
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-            hideMessage();
-
-            try {
-                const q = query(
-                    collection(db, 'artifacts', appId, 'public', 'data', 'access_codes'), 
-                    where("email", "==", email), 
-                    where("code", "==", code)
-                );
-                const snapshot = await getDocs(q);
-
-                if (snapshot.empty) {
-                    showMessage("❌ Datos incorrectos.", "error");
-                } else {
-                    const userDoc = snapshot.docs[0];
-                    if (userDoc.data().active === false) {
-                        showMessage("⛔ Licencia desactivada.", "error");
-                    } else {
-                        const newSid = crypto.randomUUID();
-                        
-                        // Guardamos el nuevo ID en Firebase (Esto desconectará a otros)
-                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'access_codes', userDoc.id), {
-                            current_session: newSid,
-                            last_login: new Date().toISOString()
-                        });
-
-                        localStorage.setItem('kd_sid', newSid);
-                        localStorage.setItem('kd_did', userDoc.id);
-                        
-                        startApp(userDoc.id, newSid);
-                    }
+            currentUser = user;
+            if (user) {
+                const sid = localStorage.getItem('doc_id_' + APP_ID);
+                const sess = localStorage.getItem('session_' + APP_ID);
+                if (sid && sess) {
+                    showApp();
+                    monitorSession(sid, sess);
                 }
-            } catch (err) {
-                showMessage("Error técnico de conexión", "error");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'ENTRAR <i class="fas fa-chevron-right ml-3 text-xs"></i>';
             }
         });
+        signInAnonymously(auth);
 
-        function startApp(docId, sid) {
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('app-frame').src = APP_URL;
-            document.getElementById('app-frame').style.display = 'block';
-            document.getElementById('logout-btn').classList.remove('hidden');
-
-            if (sessionUnsubscribe) sessionUnsubscribe();
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+            const email = document.getElementById('login-email').value.toLowerCase().trim();
+            const code = document.getElementById('code').value.toUpperCase().trim();
+            const btn = document.getElementById('btn-login');
             
-            // ESCUCHA EN TIEMPO REAL: Si el ID cambia en la nube, es que otro entró
-            sessionUnsubscribe = onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'access_codes', docId), (snap) => {
-                const data = snap.data();
-                const mySid = localStorage.getItem('kd_sid');
-                if (data && data.current_session && data.current_session !== mySid) {
-                    triggerLock();
+            btn.disabled = true; btn.innerText = "VALIDANDO...";
+            document.getElementById('msg-box').classList.add('hidden');
+
+            try {
+                // Búsqueda simple por email (Regla 2: evitar índices compuestos)
+                const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), where("email", "==", email));
+                const snap = await getDocs(q);
+
+                let matchedDoc = null;
+                snap.forEach(d => { if(d.data().code === code) matchedDoc = d; });
+
+                if (matchedDoc) {
+                    const newSess = Date.now().toString();
+                    await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes', matchedDoc.id), {
+                        current_session: newSess,
+                        last_login: new Date().toISOString()
+                    });
+                    localStorage.setItem('session_' + APP_ID, newSess);
+                    localStorage.setItem('doc_id_' + APP_ID, matchedDoc.id);
+                    showApp();
+                    monitorSession(matchedDoc.id, newSess);
+                } else {
+                    showMessage("❌ Datos incorrectos.", "error");
+                }
+            } catch (err) { showMessage("Error: " + err.message, "error"); }
+            btn.disabled = false; btn.innerText = "ENTRAR";
+        };
+
+        function monitorSession(id, mySess) {
+            if (unsubscribe) unsubscribe();
+            unsubscribe = onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes', id), (d) => {
+                if (d.exists() && d.data().current_session !== mySess) {
+                    document.getElementById('session-alert').style.display = 'flex';
+                    localStorage.clear();
+                    document.getElementById('app-frame').src = 'about:blank';
                 }
             });
         }
 
-        function triggerLock() {
-            if (sessionUnsubscribe) sessionUnsubscribe();
-            document.getElementById('session-alert').style.display = 'flex';
-            document.getElementById('app-frame').src = 'about:blank';
-            localStorage.clear();
+        function showApp() {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('app-frame').style.display = 'block';
+            document.getElementById('app-frame').src = 'kronodual.html';
+            document.getElementById('logout-btn').classList.remove('hidden');
         }
 
-        function checkPersistedSession() {
-            const sid = localStorage.getItem('kd_sid');
-            const did = localStorage.getItem('kd_did');
-            if (sid && did) startApp(did, sid);
+        function showMessage(t, type) {
+            const b = document.getElementById('msg-box');
+            b.innerText = t;
+            b.className = `p-3 rounded-xl text-xs text-center font-bold border ${type==='error'?'bg-red-900/50 text-red-200 border-red-500':'bg-yellow-900/50 text-yellow-200'}`;
+            b.classList.remove('hidden');
         }
 
-        window.logout = () => {
-            if (sessionUnsubscribe) sessionUnsubscribe();
-            localStorage.clear();
-            location.reload();
+        window.logout = () => { localStorage.clear(); location.reload(); };
+
+        document.getElementById('mail-link').onclick = () => {
+            const em = document.getElementById('login-email').value || "tu@email.com";
+            window.location.href = `mailto:slotcarhome@gmail.com?subject=Interés KronoDual GOLD&body=Hola, estoy interesado en adquirir KRONODUAL por 10 Euros. Mi email es: ${em}`;
         };
-
-        function showMessage(txt, type) {
-            const box = document.getElementById('msg-box');
-            box.textContent = txt;
-            box.className = `p-3 rounded-xl text-xs text-center font-bold ${type === 'error' ? 'bg-red-900/50 text-red-200' : 'bg-yellow-900/50 text-yellow-200'}`;
-            box.classList.remove('hidden');
-        }
-        function hideMessage() { document.getElementById('msg-box').classList.add('hidden'); }
     </script>
 </body>
 </html>
-
