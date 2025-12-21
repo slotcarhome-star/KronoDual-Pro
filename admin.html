@@ -10,20 +10,21 @@
         body { background-color: #0c0a09; font-family: sans-serif; color: white; }
         .glass { background: rgba(41, 37, 36, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(251, 191, 36, 0.2); }
         .input-dark { background: #1c1917; border: 1px solid #44403c; color: white; outline: none; transition: 0.3s; }
-        .input-dark:focus { border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
-        .gold-gradient { background: linear-gradient(to right, #fde68a, #fbbf24, #d97706); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .bg-gold { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); }
+        .input-dark:focus { border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+        .gold-text { background: linear-gradient(to bottom, #fef3c7, #fbbf24, #b45309); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-gold { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: #1c1917; font-weight: 800; }
+        .btn-gold:hover { filter: brightness(1.1); box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
     </style>
 </head>
 <body class="min-h-screen p-2">
 
     <!-- 1. PANTALLA DE BLOQUEO -->
     <div id="login-overlay" class="fixed inset-0 bg-stone-950 z-50 flex flex-col items-center justify-center p-4">
-        <div class="glass p-8 rounded-2xl w-full max-w-sm text-center shadow-2xl border border-amber-900/50">
-            <i class="fas fa-crown text-5xl text-amber-500 mb-6"></i>
-            <h2 class="text-xl font-bold mb-4 gold-gradient">Admin KronoDual PRO</h2>
-            <input type="password" id="admin-pass" class="w-full input-dark p-3 rounded-lg mb-4 text-center" placeholder="Contraseña de Acceso">
-            <button onclick="checkPass()" class="w-full bg-gold hover:opacity-90 text-stone-900 font-bold py-3 rounded-lg transition shadow-lg">ENTRAR AL SISTEMA</button>
+        <div class="glass p-8 rounded-2xl w-full max-w-sm text-center shadow-2xl border border-amber-500/30">
+            <i class="fas fa-crown text-5xl text-amber-500 mb-6 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"></i>
+            <h2 class="text-xl font-bold mb-4 gold-text uppercase tracking-widest">KronoDual Access</h2>
+            <input type="password" id="admin-pass" class="w-full input-dark p-3 rounded-lg mb-4 text-center text-lg" placeholder="Contraseña Admin">
+            <button onclick="checkPass()" class="w-full btn-gold py-3 rounded-lg transition transform active:scale-95">ACCEDER AL PANEL</button>
             <p id="login-msg" class="text-red-400 text-xs mt-3 hidden">Contraseña incorrecta</p>
         </div>
     </div>
@@ -33,15 +34,15 @@
         
         <!-- CABECERA -->
         <header class="text-center py-4">
-            <h1 class="text-3xl font-black gold-gradient uppercase tracking-tighter">KRONO DUAL MANAGER</h1>
-            <p class="text-[10px] text-amber-500/70 uppercase tracking-widest mt-1 font-bold">Gestión de Licencias Gold Edition (10€)</p>
+            <h1 class="text-3xl font-black gold-text uppercase tracking-tighter">KRONODUAL GOLD</h1>
+            <p class="text-[10px] text-amber-500/70 uppercase tracking-widest mt-1 font-bold">Gestor Pro · 10.00€ · SlotCarHome</p>
         </header>
 
         <!-- CONTADOR DE INTERESADOS -->
-        <div class="glass p-4 rounded-xl border-l-4 border-amber-500 flex items-center justify-between shadow-lg shadow-amber-900/10">
+        <div class="glass p-4 rounded-xl border-l-4 border-amber-500 flex items-center justify-between shadow-lg">
             <div>
-                <h3 class="text-xs font-bold text-amber-200/80 uppercase">Interesados en KronoDual</h3>
-                <p class="text-[10px] text-stone-500">Solicitudes de compra PRO</p>
+                <h3 class="text-xs font-bold text-amber-200/80 uppercase">Interesados Dual</h3>
+                <p class="text-[10px] text-stone-500">Solicitudes de versión Pro</p>
             </div>
             <div class="text-right">
                 <span id="clicks-counter" class="text-3xl font-black text-amber-400">--</span>
@@ -50,51 +51,51 @@
         </div>
 
         <!-- FASE 1: PEDIR PAGO -->
-        <div class="glass rounded-xl p-5 border border-amber-500/20 relative overflow-hidden">
+        <div class="glass rounded-xl p-5 border border-amber-500/20 relative">
             <div class="absolute top-0 right-0 bg-amber-600 text-stone-900 text-[10px] font-bold px-2 py-1 rounded-bl">PASO 1</div>
-            <h2 class="text-sm font-bold text-amber-100 mb-3"><i class="fas fa-coins mr-2 text-amber-500"></i>Enviar Instrucciones (10€)</h2>
+            <h2 class="text-sm font-bold text-amber-100 mb-3"><i class="fas fa-comment-dollar mr-2 text-amber-500"></i>Enviar Instrucciones (10€)</h2>
             
-            <input type="email" id="client-email-1" class="w-full input-dark rounded p-2 text-sm mb-3" placeholder="Correo del interesado...">
+            <input type="email" id="client-email-1" class="w-full input-dark rounded p-2 text-sm mb-3" placeholder="Email del interesado...">
             
-            <button onclick="sendPaymentRequest()" class="w-full bg-stone-800 hover:bg-stone-700 text-amber-400 font-bold py-2 rounded text-sm flex justify-center gap-2 border border-amber-600/50">
-                <i class="fas fa-paper-plane"></i> ENVIAR DATOS PAGO DUAL
+            <button onclick="sendPaymentRequest()" class="w-full bg-stone-800 hover:bg-stone-700 text-amber-400 font-bold py-2 rounded text-sm flex justify-center gap-2 border border-amber-600/50 transition">
+                <i class="fas fa-paper-plane"></i> ENVIAR DATOS DE PAGO
             </button>
         </div>
 
         <!-- FASE 2: ENTREGAR LICENCIA -->
-        <div class="glass rounded-xl p-5 border border-amber-500/40 relative">
+        <div class="glass rounded-xl p-5 border border-amber-500/50 relative">
             <div class="absolute top-0 right-0 bg-amber-500 text-stone-900 text-[10px] font-bold px-2 py-1 rounded-bl">PASO 2</div>
-            <h2 class="text-sm font-bold text-amber-400 mb-3"><i class="fas fa-key mr-2"></i>Generar y Entregar PRO</h2>
+            <h2 class="text-sm font-bold text-amber-400 mb-3"><i class="fas fa-magic mr-2"></i>Generar Clave de 6 Dig</h2>
             
             <div class="space-y-3">
-                <input type="hidden" id="app-id" value="app_kronodual"> <!-- ID ESPECÍFICO DUAL -->
+                <input type="hidden" id="app-id" value="app_kronodual">
                 
                 <div>
-                    <label class="text-[10px] text-amber-500/60 font-bold uppercase">Correo Cliente (Confirmado 10€)</label>
+                    <label class="text-[10px] text-amber-500/60 font-bold uppercase">Correo Cliente (Pago verificado)</label>
                     <input type="email" id="client-email-2" class="w-full input-dark rounded p-2 text-sm focus:border-amber-400 font-mono">
                 </div>
                 
-                <button onclick="generateAndSave()" id="btn-save" class="w-full bg-gold hover:opacity-90 text-stone-900 font-bold py-3 rounded shadow-xl text-sm mt-2 transition-all transform active:scale-95">
-                    <i class="fas fa-star mr-1"></i> VALIDAR Y ENTREGAR DUAL
+                <button onclick="generateAndSave()" id="btn-save" class="w-full btn-gold py-3 rounded shadow-xl text-sm mt-2 transition-all">
+                    <i class="fas fa-check-circle mr-1"></i> VALIDAR Y CREAR ACCESO
                 </button>
                 
                 <!-- ZONA DE ENTREGA (OCULTA) -->
-                <div id="delivery-section" class="hidden pt-4 mt-2 border-t border-amber-900/30">
-                    <div class="bg-stone-900 p-3 rounded mb-3 text-center border border-amber-600/30 shadow-inner">
-                        <p class="text-[10px] text-amber-500/50">CLAVE GOLD GENERADA:</p>
-                        <p id="display-code" class="text-2xl font-mono text-amber-300 font-black tracking-[0.2em] select-all">---</p>
+                <div id="delivery-section" class="hidden pt-4 mt-2 border-t border-amber-900/40">
+                    <div class="bg-black/40 p-3 rounded mb-3 text-center border border-amber-500/30">
+                        <p class="text-[10px] text-amber-500/50">TU CLAVE GOLD DE 6 CARACTERES:</p>
+                        <p id="display-code" class="text-3xl font-mono text-amber-300 font-black tracking-[0.25em] select-all">---</p>
                     </div>
 
-                    <a id="btn-send-delivery" href="#" target="_blank" class="block w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded text-center shadow-lg border border-amber-400 text-sm">
-                        <i class="fas fa-envelope-open-text mr-2"></i> ENVIAR CLAVE POR EMAIL
+                    <a id="btn-send-delivery" href="#" target="_blank" class="block w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-3 rounded text-center shadow-lg border border-blue-400 text-sm">
+                        <i class="fas fa-envelope-open-text mr-2"></i> ENVIAR LICENCIA AL CLIENTE
                     </a>
-                    <p id="status" class="text-center text-xs text-amber-400 mt-2 font-bold italic"></p>
+                    <p id="status" class="text-center text-xs text-amber-400 mt-2 font-bold"></p>
                 </div>
             </div>
         </div>
         
-        <div class="text-center pt-4 pb-8">
-             <button onclick="logout()" class="text-stone-500 hover:text-amber-500 text-xs transition-colors"><i class="fas fa-power-off mr-1"></i> Salir del Gestor</button>
+        <div class="text-center pt-4">
+             <button onclick="logout()" class="text-stone-500 hover:text-amber-500 text-xs"><i class="fas fa-power-off mr-1"></i> Cerrar Sesión</button>
         </div>
     </div>
 
@@ -103,11 +104,10 @@
         import { getFirestore, collection, addDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // CONFIGURACIÓN KRONODUAL
         const PRECIO = "10€";
-        const APP_ID = "app_kronodual"; // ID único para diferenciar de Silver
-        const GITHUB_PATH = "slotcarhome-star/KronoDual-Pro";
-        
+        const APP_ID = "app_kronodual";
+        const GITHUB_REPO = "slotcarhome-star/KronoDual-Pro";
+
         const firebaseConfig = {
           apiKey: "AIzaSyDW-2Yc4kvZJYbNOVeesPZWdRThYe0noUI",
           authDomain: "correo-95e58.firebaseapp.com",
@@ -124,10 +124,9 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            signInAnonymously(auth).catch(e => console.warn("Modo offline:", e.message));
+            signInAnonymously(auth).catch(e => console.warn("Modo local habilitado"));
         } catch(e) { console.error("Error Firebase", e); }
 
-        // --- SEGURIDAD ---
         window.checkPass = function() {
             const pass = document.getElementById('admin-pass').value;
             if(pass === "admin123") {
@@ -140,35 +139,28 @@
         }
         window.logout = function() { location.reload(); }
 
-        // --- ESTADÍSTICAS ---
         function initStats() {
             try {
-                // Escuchamos el contador específico de KronoDual
                 onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats'), (docSnap) => {
                     const count = docSnap.data()?.purchase_clicks || 0;
                     document.getElementById('clicks-counter').textContent = count;
                 }, (error) => {
-                    console.warn("Stats KronoDual no inicializadas aún");
                     document.getElementById('clicks-counter').textContent = "0";
                 });
-            } catch(e) { console.warn("Stats desactivadas"); }
+            } catch(e) {}
         }
 
-        // --- FASE 1: ENVIAR DATOS DE PAGO ---
         window.sendPaymentRequest = function() {
             const email = document.getElementById('client-email-1').value;
-            if(!email) return alert("Escribe el correo del interesado.");
+            if(!email) return alert("Escribe el correo.");
             
-            const subject = encodeURIComponent("Instrucciones Pago KronoDual PRO (GOLD)");
-            
-            // CORREO INSTRUCCIONES 10€
-            const body = `Hola,%0D%0A%0D%0APara activar tu licencia GOLD de KronoDual PRO, los pasos son:%0D%0A%0D%0A1. Importe: ${PRECIO}%0D%0A2. Realiza el pago (Bizum/Transferencia) según lo acordado.%0D%0A%0D%0AEnvíame el justificante respondiendo a este correo y recibirás tu clave de activación inmediata para la versión Dual.%0D%0A%0D%0AGracias.`;
+            const subject = encodeURIComponent("Instrucciones Pago KronoDual GOLD");
+            const body = `Hola,%0D%0A%0D%0APara activar tu licencia GOLD de KronoDual PRO (10€), los pasos son:%0D%0A%0D%0A1. Importe: ${PRECIO}%0D%0A2. Realiza el pago (Bizum/Transferencia) según lo acordado.%0D%0A%0D%0AEnvíame el justificante respondiendo a este correo y recibirás tu clave de activación inmediata.%0D%0A%0D%0AGracias.`;
             
             window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
             document.getElementById('client-email-2').value = email;
         }
 
-        // --- FASE 2: GENERAR Y GUARDAR ---
         window.generateAndSave = async function() {
             const email = document.getElementById('client-email-2').value.trim();
             const btn = document.getElementById('btn-save');
@@ -176,46 +168,41 @@
             const deliverySection = document.getElementById('delivery-section');
             const btnSend = document.getElementById('btn-send-delivery');
 
-            if(!email) return alert("Falta el correo del cliente.");
+            if(!email) return alert("Falta el correo.");
             
             btn.disabled = true; 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESANDO ORO...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> CREANDO LICENCIA...';
 
-            // Clave formato GOLD: XXXX-XXXX
+            // GENERACIÓN DE CLAVE DE 6 CARACTERES (3-3)
             const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
             let code = "";
-            for(let i=0; i<4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            for(let i=0; i<3; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
             code += "-";
-            for(let i=0; i<4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            for(let i=0; i<3; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
 
             try {
                 await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), {
                     email: email, 
                     code: code, 
-                    type: 'GOLD',
                     active: true, 
+                    type: 'GOLD',
                     createdAt: new Date().toISOString()
                 });
 
-                status.textContent = "✨ Licencia KronoDual Activada";
+                status.textContent = "✨ Licencia Guardada con Éxito";
                 document.getElementById('display-code').textContent = code;
 
-                const subject = encodeURIComponent("Tu Acceso KronoDual PRO GOLD - Activado");
-                
-                // CORREO ENTREGA DUAL
-                const bodyText = `SlotCarHome te agradece la compra de la versión KronoDual PRO.%0D%0A%0D%0APago de 10€ verificado correctamente.%0D%0A%0D%0AAQUÍ TIENES TU LICENCIA GOLD:%0D%0A%0D%0A📧 Usuario: ${email}%0D%0A🔑 CLAVE: ${code}%0D%0A%0D%0AAcceso al programa: https://github.com/${GITHUB_PATH}%0D%0A%0D%0A¡Disfruta de la mejor experiencia de cronometraje!`;
+                const subject = encodeURIComponent("Tu Licencia KronoDual GOLD - Acceso Activado");
+                const bodyText = `SlotCarHome te da las gracias por tu compra.%0D%0A%0D%0APago de 10€ recibido. Aquí tienes tu acceso exclusivo GOLD:%0D%0A%0D%0A📧 Usuario: ${email}%0D%0A🔑 CLAVE: ${code}%0D%0A%0D%0A👉 Acceso al programa: https://github.com/${GITHUB_REPO}%0D%0A%0D%0A¡Gracias por confiar en KronoDual!`;
                 
                 btnSend.href = `mailto:${email}?subject=${subject}&body=${bodyText}`;
                 deliverySection.classList.remove('hidden');
-                document.getElementById('client-email-1').value = "";
-
             } catch (error) { 
-                console.error(error); 
-                status.textContent = "❌ Error en servidor"; 
+                status.textContent = "❌ Error al guardar"; 
             }
             
             btn.disabled = false; 
-            btn.innerHTML = '<i class="fas fa-star mr-1"></i> VALIDAR Y ENTREGAR DUAL';
+            btn.innerHTML = '<i class="fas fa-check-circle mr-1"></i> VALIDAR Y CREAR ACCESO';
         }
     </script>
 </body>
