@@ -9,229 +9,110 @@
     <style>
         body { background-color: #0f172a; font-family: sans-serif; color: white; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .input-dark { background: #1e293b; border: 1px solid #475569; color: white; outline: none; transition: 0.3s; }
-        .input-dark:focus { border-color: #eab308; box-shadow: 0 0 10px rgba(234, 179, 8, 0.3); }
-        
-        /* Consola de errores visual */
-        #error-console { display: none; background: #450a0a; color: #fecaca; padding: 10px; margin-bottom: 10px; border: 1px solid #f87171; font-size: 11px; font-family: monospace; }
+        .input-dark { background: #1e293b; border: 1px solid #475569; color: white; outline: none; }
     </style>
 </head>
 <body class="min-h-screen p-2">
 
-    <!-- CONSOLA DE ERRORES -->
-    <div id="error-console"></div>
-
-    <!-- 1. PANTALLA DE BLOQUEO -->
-    <div id="login-overlay" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4">
-        <div class="glass p-8 rounded-2xl w-full max-w-sm text-center shadow-2xl border border-slate-700">
-            <i class="fas fa-user-lock text-5xl text-yellow-500 mb-6"></i>
-            <h2 class="text-xl font-bold mb-4">Admin KronoDual</h2>
+    <div id="login-overlay" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center p-4">
+        <div class="glass p-8 rounded-2xl w-full max-w-sm text-center">
+            <h2 class="text-xl font-bold mb-4 uppercase">Admin KronoDual</h2>
             <input type="password" id="admin-pass" class="w-full input-dark p-3 rounded-lg mb-4 text-center" placeholder="Contraseña">
-            <button onclick="checkPass()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition">ENTRAR</button>
-            <p id="login-msg" class="text-red-400 text-xs mt-3 hidden">Contraseña incorrecta</p>
+            <button onclick="checkPass()" class="w-full bg-yellow-600 text-black font-bold py-3 rounded-lg">ENTRAR</button>
         </div>
     </div>
 
-    <!-- 2. PANEL PRINCIPAL -->
-    <div id="main-panel" class="hidden max-w-md mx-auto space-y-6">
-        
-        <!-- CABECERA -->
-        <header class="text-center py-4">
-            <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 uppercase">KRONODUAL MANAGER</h1>
-            <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Gestión de Licencias Gold (10€)</p>
-        </header>
+    <div id="main-panel" class="hidden max-w-2xl mx-auto space-y-6">
+        <h1 class="text-2xl font-black text-yellow-500 text-center uppercase py-4">KRONODUAL MANAGER</h1>
 
-        <!-- CONTADOR DE INTERESADOS -->
-        <div class="glass p-4 rounded-xl border-l-4 border-yellow-500 flex items-center justify-between">
-            <div>
-                <h3 class="text-xs font-bold text-slate-400 uppercase">Clientes Interesados</h3>
-                <p class="text-[10px] text-slate-500">Han pulsado "Solicitar"</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="glass p-5 rounded-xl border border-yellow-600/30">
+                <h2 class="text-sm font-bold text-yellow-400 mb-4">PASO 1: Pago</h2>
+                <input type="email" id="email-pago" class="w-full input-dark rounded p-2 text-sm mb-4" placeholder="Email...">
+                <button onclick="send()" class="w-full bg-slate-700 text-white py-2 rounded text-xs">ENVIAR INFO PAGO</button>
             </div>
-            <div class="text-right">
-                <span id="clicks-counter" class="text-3xl font-black text-yellow-400">--</span>
-                <i class="fas fa-users text-yellow-600/50 ml-2"></i>
-            </div>
-        </div>
 
-        <!-- FASE 1: PEDIR PAGO -->
-        <div class="glass rounded-xl p-5 border border-yellow-600/30 relative">
-            <div class="absolute top-0 right-0 bg-yellow-600 text-black text-[10px] font-bold px-2 py-1 rounded-bl">PASO 1</div>
-            <h2 class="text-sm font-bold text-yellow-400 mb-3"><i class="fas fa-comment-dollar mr-2"></i>Enviar Instrucciones (10€)</h2>
-            
-            <input type="email" id="client-email-1" class="w-full input-dark rounded p-2 text-sm mb-3" placeholder="Correo del interesado...">
-            
-            <button onclick="sendPaymentRequest()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 rounded text-sm flex justify-center gap-2 border border-slate-600">
-                <i class="fas fa-paper-plane text-yellow-400"></i> ENVIAR DATOS PAGO
-            </button>
-        </div>
-
-        <!-- FASE 2: ENTREGAR LICENCIA -->
-        <div class="glass rounded-xl p-5 border border-green-600/30 relative">
-            <div class="absolute top-0 right-0 bg-green-600 text-[10px] font-bold px-2 py-1 rounded-bl">PASO 2</div>
-            <h2 class="text-sm font-bold text-green-400 mb-3"><i class="fas fa-gift mr-2"></i>Generar y Entregar</h2>
-            
-            <div class="space-y-3">
-                <input type="hidden" id="app-id" value="app_kronodual"> <!-- ID FIJO -->
-                
-                <div>
-                    <label class="text-[10px] text-gray-400 font-bold uppercase">Correo Cliente (Pagado)</label>
-                    <input type="email" id="client-email-2" class="w-full input-dark rounded p-2 text-sm focus:border-green-500 font-mono">
-                </div>
-                
-                <button onclick="generateAndSave()" id="btn-save" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded shadow-lg text-sm mt-2">
-                    <i class="fas fa-cogs mr-1"></i> GUARDAR Y PREPARAR ENTREGA
-                </button>
-                
-                <!-- ZONA DE ENTREGA (OCULTA) -->
-                <div id="delivery-section" class="hidden pt-4 mt-2 border-t border-slate-700/50">
-                    <div class="bg-slate-900 p-2 rounded mb-3 text-center border border-slate-700">
-                        <p class="text-[10px] text-slate-400">CLAVE GENERADA:</p>
-                        <p id="display-code" class="text-xl font-mono text-yellow-400 font-bold tracking-widest select-all">---</p>
-                    </div>
-
-                    <a id="btn-send-delivery" href="#" target="_blank" class="block w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded text-center shadow-lg border border-blue-400 text-sm">
-                        <i class="fas fa-envelope-open-text mr-2"></i> ABRIR CORREO Y ENVIAR
-                    </a>
-                    <p id="status" class="text-center text-xs text-green-400 mt-2 font-bold"></p>
+            <div class="glass p-5 rounded-xl border border-green-600/30">
+                <h2 class="text-sm font-bold text-green-400 mb-4">PASO 2: Activar</h2>
+                <input type="email" id="email-act" class="w-full input-dark rounded p-2 text-sm mb-4" placeholder="Email...">
+                <button onclick="generate()" id="btn-gen" class="w-full bg-green-700 text-white py-2 rounded text-xs font-bold">CREAR LICENCIA</button>
+                <div id="res" class="hidden mt-4 pt-4 border-t border-slate-700 text-center">
+                    <p id="code-out" class="text-xl font-mono text-yellow-400 font-bold mb-4 tracking-widest">---</p>
+                    <a id="mail-out" href="#" class="block w-full bg-blue-600 text-white py-2 rounded text-xs font-bold">ENVIAR EMAIL FINAL</a>
                 </div>
             </div>
         </div>
-        
-        <div class="text-center pt-4">
-             <button onclick="logout()" class="text-slate-500 hover:text-white text-xs"><i class="fas fa-power-off mr-1"></i> Cerrar Sesión</button>
+
+        <div class="glass p-5 rounded-xl">
+            <h3 class="text-xs font-bold text-slate-400 uppercase mb-4">Historial</h3>
+            <div id="history-list" class="space-y-2 text-[10px] font-mono"></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Capturador de errores global
-        window.onerror = function(msg, url, line) {
-            const errDiv = document.getElementById('error-console');
-            errDiv.style.display = 'block';
-            errDiv.innerHTML += `ERROR: ${msg}<br>`;
-            return false;
-        };
-
-        // DATOS FIJOS
-        const PRECIO = "10€";
-        const APP_ID = "app_kronodual";
-        
-        // Detectar URL de la App
-        const BASE_URL = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-        const CLIENT_URL = `${BASE_URL}/kronodual.html`; // <--- Asegúrate que este es el nombre del archivo del cliente
-
         const firebaseConfig = {
-          apiKey: "AIzaSyDW-2Yc4kvZJYbNOVeesPZWdRThYe0noUI",
-          authDomain: "correo-95e58.firebaseapp.com",
-          projectId: "correo-95e58",
-          storageBucket: "correo-95e58.firebasestorage.app",
-          messagingSenderId: "977860532946",
-          appId: "1:977860532946:web:3738c6b7165201bce7ab0b",
-          measurementId: "G-6DMG51VQ92"
+            apiKey: "AIzaSyDW-2Yc4kvZJYbNOVeesPZWdRThYe0noUI",
+            authDomain: "correo-95e58.firebaseapp.com",
+            projectId: "correo-95e58",
+            storageBucket: "correo-95e58.firebasestorage.app",
+            messagingSenderId: "977860532946",
+            appId: "1:977860532946:web:3738c6b7165201bce7ab0b"
         };
 
-        let app, db, auth;
+        const APP_ID = "app_kronodual";
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            signInAnonymously(auth).catch(e => console.warn("Modo offline/local:", e.message));
-        } catch(e) {
-            document.getElementById('error-console').style.display = 'block';
-            document.getElementById('error-console').textContent = "Error Inicialización Firebase: " + e.message;
-        }
-
-        // --- SEGURIDAD ---
-        window.checkPass = function() {
-            const pass = document.getElementById('admin-pass').value;
-            if(pass === "admin123") {
+        window.checkPass = async () => {
+            if(document.getElementById('admin-pass').value === "admin123") {
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('main-panel').classList.remove('hidden');
-                initStats();
-            } else {
-                document.getElementById('login-msg').classList.remove('hidden');
+                await signInAnonymously(auth);
+                load();
             }
-        }
-        window.logout = function() { location.reload(); }
+        };
 
-        // --- ESTADÍSTICAS ---
-        function initStats() {
-            try {
-                onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats'), (docSnap) => {
-                    const count = docSnap.data()?.purchase_clicks || 0;
-                    document.getElementById('clicks-counter').textContent = count;
-                }, (error) => {
-                    console.warn("No se pudieron leer estadísticas");
-                    document.getElementById('clicks-counter').textContent = "-";
+        function load() {
+            onSnapshot(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), (snap) => {
+                const list = document.getElementById('history-list');
+                list.innerHTML = "";
+                snap.docs.forEach(d => {
+                    const data = d.data();
+                    list.innerHTML += `<div class="p-2 border-b border-slate-700 flex justify-between">
+                        <span>${data.email}</span><span class="text-yellow-500">${data.code}</span>
+                    </div>`;
                 });
-            } catch(e) { console.warn("Stats desactivadas"); }
+            });
         }
 
-        // --- FASE 1: ENVIAR DATOS DE PAGO ---
-        window.sendPaymentRequest = function() {
-            const email = document.getElementById('client-email-1').value;
-            if(!email) return alert("Escribe el correo del interesado.");
-            
-            const subject = encodeURIComponent("Instrucciones Pago KronoDual GOLD");
-            
-            const body = `Hola ${email},%0D%0A%0D%0APara activar tu licencia GOLD de KronoDual, los pasos son:%0D%0A%0D%0A1. Importe: ${PRECIO}%0D%0A2. Realiza el pago (Bizum/Transferencia) según lo acordado.%0D%0A%0D%0AEnvíame el justificante respondiendo a este correo y recibirás tu clave de activación inmediata.%0D%0A%0D%0AGracias.`;
-            
-            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-            document.getElementById('client-email-2').value = email;
-        }
+        window.send = () => {
+            const em = document.getElementById('email-pago').value;
+            window.location.href = `mailto:${em}?subject=Pago KronoDual&body=Realiza el pago de 10€ y envíame justificante.`;
+        };
 
-        // --- FASE 2: GENERAR Y GUARDAR ---
-        window.generateAndSave = async function() {
-            const email = document.getElementById('client-email-2').value.trim();
-            const btn = document.getElementById('btn-save');
-            const status = document.getElementById('status');
-            const deliverySection = document.getElementById('delivery-section');
-            const btnSend = document.getElementById('btn-send-delivery');
+        window.generate = async () => {
+            const email = document.getElementById('email-act').value.toLowerCase().trim();
+            if(!email) return alert("Email necesario");
+            const btn = document.getElementById('btn-gen'); btn.disabled = true;
 
-            if(!email) return alert("Falta el correo del cliente.");
-            
-            btn.disabled = true; 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GENERANDO...';
-
-            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-            let code = "";
-            for(let i=0; i<3; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-            code += "-";
-            for(let i=0; i<3; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            const code = Math.random().toString(36).substring(2, 5).toUpperCase() + "-" + Math.random().toString(36).substring(2, 5).toUpperCase();
 
             try {
                 await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), {
-                    email: email, 
-                    code: code, 
-                    active: true, 
-                    createdAt: new Date().toISOString()
+                    email: email, code: code, createdAt: new Date().toISOString()
                 });
-
-                status.textContent = "✅ Licencia Guardada";
-                document.getElementById('display-code').textContent = code;
-
-                const subject = encodeURIComponent("Tu Licencia KronoDual GOLD - Activada");
-                
-                // CORREO FINAL DEFINITIVO
-                const bodyText = `SlotCarHome le da las gracias por confiar en nuestro producto.%0D%0A%0D%0APago recibido correctamente. Aquí tienes tu acceso:%0D%0A%0D%0A📧 Usuario: ${email}%0D%0A🔑 CLAVE: ${code}%0D%0A%0D%0A👉 Entra aquí: ${CLIENT_URL}%0D%0A%0D%0AGracias por tu confianza!`;
-                
-                btnSend.href = `mailto:${email}?subject=${subject}&body=${bodyText}`;
-                deliverySection.classList.remove('hidden');
-                document.getElementById('client-email-1').value = "";
-
-            } catch (error) { 
-                console.error(error); 
-                status.textContent = "❌ Error: " + error.message; 
-                status.className = "text-red-400 text-xs font-bold mt-2";
-            }
-            
-            btn.disabled = false; 
-            btn.innerHTML = '<i class="fas fa-cogs mr-1"></i> GUARDAR Y PREPARAR ENTREGA';
-        }
+                document.getElementById('code-out').innerText = code;
+                document.getElementById('res').classList.remove('hidden');
+                const loginUrl = window.location.href.replace('admin.html', 'index.html');
+                document.getElementById('mail-out').href = `mailto:${email}?subject=Tu Clave KronoDual GOLD&body=Email: ${email}%0AClave: ${code}%0AEntra aquí: ${loginUrl}`;
+            } catch (e) { alert(e.message); }
+            btn.disabled = false;
+        };
     </script>
 </body>
 </html>
