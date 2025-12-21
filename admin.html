@@ -14,89 +14,95 @@
         .gold-text { background: linear-gradient(to bottom, #fef3c7, #fbbf24, #b45309); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .btn-gold { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: #1c1917; font-weight: 800; }
         .btn-gold:hover { filter: brightness(1.1); box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+        .btn-secondary { background: #292524; color: #fbbf24; border: 1px solid #78350f; }
+        .btn-secondary:hover { background: #44403c; }
+        
+        /* Animación suave para secciones */
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="min-h-screen p-2">
+<body class="min-h-screen p-2 flex flex-col items-center">
 
-    <!-- 1. PANTALLA DE BLOQUEO -->
+    <!-- PANTALLA DE BLOQUEO -->
     <div id="login-overlay" class="fixed inset-0 bg-stone-950 z-50 flex flex-col items-center justify-center p-4">
         <div class="glass p-8 rounded-2xl w-full max-w-sm text-center shadow-2xl border border-amber-500/30">
             <i class="fas fa-crown text-5xl text-amber-500 mb-6 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"></i>
-            <h2 class="text-xl font-bold mb-4 gold-text uppercase tracking-widest">KronoDual Access</h2>
-            <input type="password" id="admin-pass" class="w-full input-dark p-3 rounded-lg mb-4 text-center text-lg" placeholder="Contraseña Admin">
-            <button onclick="checkPass()" class="w-full btn-gold py-3 rounded-lg transition transform active:scale-95">ACCEDER AL PANEL</button>
-            <p id="login-msg" class="text-red-400 text-xs mt-3 hidden">Contraseña incorrecta</p>
+            <h2 class="text-xl font-bold mb-4 gold-text uppercase tracking-widest">KronoDual Admin</h2>
+            <input type="password" id="admin-pass" class="w-full input-dark p-3 rounded-lg mb-4 text-center text-lg" placeholder="Contraseña">
+            <button onclick="checkPass()" class="w-full btn-gold py-3 rounded-lg font-bold tracking-wider">ENTRAR</button>
+            <p id="login-msg" class="text-red-500 text-xs mt-3 hidden font-bold">ACCESO DENEGADO</p>
         </div>
     </div>
 
-    <!-- 2. PANEL PRINCIPAL -->
-    <div id="main-panel" class="hidden max-w-md mx-auto space-y-6">
+    <!-- PANEL PRINCIPAL -->
+    <div id="main-panel" class="hidden w-full max-w-md space-y-4 pb-10">
         
         <!-- CABECERA -->
-        <header class="text-center py-4">
-            <h1 class="text-3xl font-black gold-text uppercase tracking-tighter">KRONODUAL GOLD</h1>
-            <p class="text-[10px] text-amber-500/70 uppercase tracking-widest mt-1 font-bold">Gestor Pro · 10.00€ · SlotCarHome</p>
+        <header class="text-center py-4 border-b border-stone-800 mb-2">
+            <h1 class="text-2xl font-black gold-text uppercase tracking-tighter">Gestor de Licencias</h1>
+            <div class="flex justify-center gap-4 mt-2 text-[10px] text-stone-500 font-mono">
+                <span><i class="fas fa-eye text-amber-500 mr-1"></i>VISTAS: <span id="clicks-counter" class="text-white">--</span></span>
+                <span><i class="fas fa-server text-green-500 mr-1"></i>DB: ONLINE</span>
+            </div>
         </header>
 
-        <!-- CONTADOR DE INTERESADOS -->
-        <div class="glass p-4 rounded-xl border-l-4 border-amber-500 flex items-center justify-between shadow-lg">
-            <div>
-                <h3 class="text-xs font-bold text-amber-200/80 uppercase">Interesados Dual</h3>
-                <p class="text-[10px] text-stone-500">Solicitudes de versión Pro</p>
+        <!-- SECCIÓN 1: DATOS DEL CLIENTE (INPUT ÚNICO) -->
+        <div class="glass p-5 rounded-xl border border-amber-500/30 shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+            <h2 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3">1. Datos del Cliente</h2>
+            
+            <div class="relative">
+                <i class="fas fa-envelope absolute left-3 top-3 text-stone-500"></i>
+                <input type="email" id="unified-email" class="w-full input-dark pl-10 pr-3 py-3 rounded-lg text-sm font-medium" placeholder="correo@cliente.com" oninput="resetWorkflow()">
             </div>
-            <div class="text-right">
-                <span id="clicks-counter" class="text-3xl font-black text-amber-400">--</span>
-                <i class="fas fa-gem text-amber-700 ml-2"></i>
-            </div>
+            <p class="text-[10px] text-stone-500 mt-2 italic">* Escribe el correo aquí para activar las acciones.</p>
         </div>
 
-        <!-- FASE 1: PEDIR PAGO -->
-        <div class="glass rounded-xl p-5 border border-amber-500/20 relative">
-            <div class="absolute top-0 right-0 bg-amber-600 text-stone-900 text-[10px] font-bold px-2 py-1 rounded-bl">PASO 1</div>
-            <h2 class="text-sm font-bold text-amber-100 mb-3"><i class="fas fa-comment-dollar mr-2 text-amber-500"></i>Enviar Instrucciones (10€)</h2>
-            
-            <input type="email" id="client-email-1" class="w-full input-dark rounded p-2 text-sm mb-3" placeholder="Email del interesado...">
-            
-            <button onclick="sendPaymentRequest()" class="w-full bg-stone-800 hover:bg-stone-700 text-amber-400 font-bold py-2 rounded text-sm flex justify-center gap-2 border border-amber-600/50 transition">
-                <i class="fas fa-paper-plane"></i> ENVIAR DATOS DE PAGO
-            </button>
-        </div>
+        <!-- SECCIÓN 2: ACCIONES (FLUJO) -->
+        <div class="glass p-5 rounded-xl border border-stone-700 relative">
+            <h2 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">2. Flujo de Venta</h2>
 
-        <!-- FASE 2: ENTREGAR LICENCIA -->
-        <div class="glass rounded-xl p-5 border border-amber-500/50 relative">
-            <div class="absolute top-0 right-0 bg-amber-500 text-stone-900 text-[10px] font-bold px-2 py-1 rounded-bl">PASO 2</div>
-            <h2 class="text-sm font-bold text-amber-400 mb-3"><i class="fas fa-magic mr-2"></i>Generar Clave de 6 Dig</h2>
-            
-            <div class="space-y-3">
-                <input type="hidden" id="app-id" value="app_kronodual">
-                
-                <div>
-                    <label class="text-[10px] text-amber-500/60 font-bold uppercase">Correo Cliente (Pago verificado)</label>
-                    <input type="email" id="client-email-2" class="w-full input-dark rounded p-2 text-sm focus:border-amber-400 font-mono">
-                </div>
-                
-                <button onclick="generateAndSave()" id="btn-save" class="w-full btn-gold py-3 rounded shadow-xl text-sm mt-2 transition-all">
-                    <i class="fas fa-check-circle mr-1"></i> VALIDAR Y CREAR ACCESO
+            <!-- Paso A: Pedir Pago -->
+            <div class="mb-6 relative pl-4 border-l border-stone-700 hover:border-amber-500/50 transition-colors">
+                <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-stone-700 border border-black"></div>
+                <h3 class="text-sm font-bold text-white mb-1">A. Solicitar Pago (10€)</h3>
+                <p class="text-[11px] text-stone-400 mb-3">Envía instrucciones de pago por email.</p>
+                <button onclick="actionSendPayment()" class="w-full btn-secondary py-2 rounded text-xs font-bold flex items-center justify-center gap-2">
+                    <i class="fas fa-paper-plane"></i> ABRIR EMAIL DE PAGO
                 </button>
-                
-                <!-- ZONA DE ENTREGA (OCULTA) -->
-                <div id="delivery-section" class="hidden pt-4 mt-2 border-t border-amber-900/40">
-                    <div class="bg-black/40 p-3 rounded mb-3 text-center border border-amber-500/30">
-                        <p class="text-[10px] text-amber-500/50">TU CLAVE GOLD DE 6 CARACTERES:</p>
-                        <p id="display-code" class="text-3xl font-mono text-amber-300 font-black tracking-[0.25em] select-all">---</p>
-                    </div>
-
-                    <a id="btn-send-delivery" href="#" target="_blank" class="block w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-3 rounded text-center shadow-lg border border-blue-400 text-sm">
-                        <i class="fas fa-envelope-open-text mr-2"></i> ENVIAR LICENCIA AL CLIENTE
-                    </a>
-                    <p id="status" class="text-center text-xs text-amber-400 mt-2 font-bold"></p>
+                <div id="msg-payment-sent" class="hidden mt-2 text-[10px] text-green-400 font-bold bg-green-900/20 p-1 rounded text-center border border-green-900">
+                    <i class="fas fa-check mr-1"></i> Correo abierto
                 </div>
             </div>
+
+            <!-- Paso B: Generar y Entregar -->
+            <div class="relative pl-4 border-l border-stone-700 hover:border-amber-500 transition-colors">
+                <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-amber-600 border border-black shadow-[0_0_5px_#d97706]"></div>
+                <h3 class="text-sm font-bold text-amber-100 mb-1">B. Activar Licencia GOLD</h3>
+                <p class="text-[11px] text-stone-400 mb-3">Genera clave única y guárdala en la base de datos.</p>
+                
+                <button onclick="actionGenerateLicense()" id="btn-generate" class="w-full btn-gold py-3 rounded text-sm shadow-lg mb-2">
+                    <i class="fas fa-magic mr-2"></i> GENERAR Y GUARDAR
+                </button>
+
+                <!-- Resultado de Generación (Oculto al inicio) -->
+                <div id="result-area" class="hidden fade-in bg-black/40 rounded p-3 mt-3 border border-amber-500/30 text-center">
+                    <p class="text-[9px] text-stone-400 uppercase tracking-widest mb-1">CLAVE ASIGNADA</p>
+                    <div class="text-2xl font-mono font-black text-amber-400 tracking-[0.2em] mb-3 select-all bg-stone-900/50 py-2 rounded" id="display-code">------</div>
+                    
+                    <a id="btn-final-email" href="#" class="block w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition-colors">
+                        <i class="fas fa-envelope-open-text mr-1"></i> ENVIAR CLAVE AL CLIENTE
+                    </a>
+                </div>
+                <p id="status-msg" class="text-center text-[10px] mt-2 font-bold min-h-[15px]"></p>
+            </div>
         </div>
-        
-        <div class="text-center pt-4">
-             <button onclick="logout()" class="text-stone-500 hover:text-amber-500 text-xs"><i class="fas fa-power-off mr-1"></i> Cerrar Sesión</button>
-        </div>
+
+        <button onclick="logout()" class="w-full py-4 text-stone-600 hover:text-red-500 text-xs font-bold transition-colors">
+            <i class="fas fa-sign-out-alt mr-1"></i> SALIR
+        </button>
+
     </div>
 
     <script type="module">
@@ -124,8 +130,10 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            signInAnonymously(auth).catch(e => console.warn("Modo local habilitado"));
-        } catch(e) { console.error("Error Firebase", e); }
+            signInAnonymously(auth).catch(e => console.warn("Local mode"));
+        } catch(e) { console.error("Firebase Error", e); }
+
+        // --- LÓGICA DE UI ---
 
         window.checkPass = function() {
             const pass = document.getElementById('admin-pass').value;
@@ -134,46 +142,49 @@
                 document.getElementById('main-panel').classList.remove('hidden');
                 initStats();
             } else {
-                document.getElementById('login-msg').classList.remove('hidden');
+                const msg = document.getElementById('login-msg');
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 2000);
             }
         }
+
         window.logout = function() { location.reload(); }
 
-        function initStats() {
-            try {
-                onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats'), (docSnap) => {
-                    const count = docSnap.data()?.purchase_clicks || 0;
-                    document.getElementById('clicks-counter').textContent = count;
-                }, (error) => {
-                    document.getElementById('clicks-counter').textContent = "0";
-                });
-            } catch(e) {}
+        window.resetWorkflow = function() {
+            document.getElementById('msg-payment-sent').classList.add('hidden');
+            document.getElementById('result-area').classList.add('hidden');
+            document.getElementById('status-msg').textContent = "";
+            document.getElementById('btn-generate').disabled = false;
+            document.getElementById('btn-generate').classList.remove('opacity-50', 'cursor-not-allowed');
         }
 
-        window.sendPaymentRequest = function() {
-            const email = document.getElementById('client-email-1').value;
-            if(!email) return alert("Escribe el correo.");
-            
-            const subject = encodeURIComponent("Instrucciones Pago KronoDual GOLD");
-            const body = `Hola,%0D%0A%0D%0APara activar tu licencia GOLD de KronoDual PRO (10€), los pasos son:%0D%0A%0D%0A1. Importe: ${PRECIO}%0D%0A2. Realiza el pago (Bizum/Transferencia) según lo acordado.%0D%0A%0D%0AEnvíame el justificante respondiendo a este correo y recibirás tu clave de activación inmediata.%0D%0A%0D%0AGracias.`;
+        // --- ACCIONES PRINCIPALES ---
+
+        window.actionSendPayment = function() {
+            const email = document.getElementById('unified-email').value.trim();
+            if(!email) return alert("⚠️ Escribe primero el correo del cliente arriba.");
+
+            const subject = encodeURIComponent("KronoDual GOLD - Instrucciones de Pago");
+            const body = `Hola,%0D%0A%0D%0AGracias por tu interés en KronoDual GOLD.%0D%0A%0D%0APara recibir tu licencia (Precio: ${PRECIO}), por favor realiza el pago por la vía acordada.%0D%0A%0D%0AUna vez realizado, responde a este correo con el justificante y te enviaré tu CLAVE DE ACTIVACIÓN inmediata.%0D%0A%0D%0AUn saludo,%0D%0ASlotCarHome`;
             
             window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-            document.getElementById('client-email-2').value = email;
+            
+            // Feedback visual
+            document.getElementById('msg-payment-sent').classList.remove('hidden');
         }
 
-        window.generateAndSave = async function() {
-            const email = document.getElementById('client-email-2').value.trim();
-            const btn = document.getElementById('btn-save');
-            const status = document.getElementById('status');
-            const deliverySection = document.getElementById('delivery-section');
-            const btnSend = document.getElementById('btn-send-delivery');
+        window.actionGenerateLicense = async function() {
+            const email = document.getElementById('unified-email').value.trim();
+            if(!email) return alert("⚠️ Escribe primero el correo del cliente arriba.");
 
-            if(!email) return alert("Falta el correo.");
+            const btn = document.getElementById('btn-generate');
+            const statusMsg = document.getElementById('status-msg');
             
-            btn.disabled = true; 
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> CREANDO LICENCIA...';
+            // UI Loading
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> GENERANDO...';
 
-            // GENERACIÓN DE CLAVE DE 6 CARACTERES (3-3)
+            // Generar Código 3-3
             const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
             let code = "";
             for(let i=0; i<3; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -181,6 +192,7 @@
             for(let i=0; i<3; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
 
             try {
+                // Guardar en Firestore
                 await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), {
                     email: email, 
                     code: code, 
@@ -189,20 +201,39 @@
                     createdAt: new Date().toISOString()
                 });
 
-                status.textContent = "✨ Licencia Guardada con Éxito";
-                document.getElementById('display-code').textContent = code;
-
-                const subject = encodeURIComponent("Tu Licencia KronoDual GOLD - Acceso Activado");
-                const bodyText = `SlotCarHome te da las gracias por tu compra.%0D%0A%0D%0APago de 10€ recibido. Aquí tienes tu acceso exclusivo GOLD:%0D%0A%0D%0A📧 Usuario: ${email}%0D%0A🔑 CLAVE: ${code}%0D%0A%0D%0A👉 Acceso al programa: https://github.com/${GITHUB_REPO}%0D%0A%0D%0A¡Gracias por confiar en KronoDual!`;
+                // Éxito UI
+                statusMsg.textContent = "✅ Licencia guardada en la base de datos.";
+                statusMsg.className = "text-center text-[10px] mt-2 font-bold text-green-400";
                 
-                btnSend.href = `mailto:${email}?subject=${subject}&body=${bodyText}`;
-                deliverySection.classList.remove('hidden');
-            } catch (error) { 
-                status.textContent = "❌ Error al guardar"; 
+                document.getElementById('display-code').textContent = code;
+                document.getElementById('result-area').classList.remove('hidden');
+
+                // Configurar botón final de email
+                const subject = encodeURIComponent("¡Tu Licencia KronoDual GOLD está lista!");
+                const bodyText = `¡Pago recibido! Muchas gracias.%0D%0A%0D%0AAquí tienes los datos para activar tu versión GOLD:%0D%0A%0D%0A👤 Usuario: ${email}%0D%0A🔑 CLAVE: ${code}%0D%0A%0D%0A--------------------------------%0D%0AINSTRUCCIONES:%0D%0A1. Entra en KronoDual: https://slotcarhome-star.github.io/KronoDual-Pro/%0D%0A2. Ve a Configuración > Activar Pro%0D%0A3. Introduce tu email y esta clave.%0D%0A%0D%0A¡A disfrutar de las carreras!`;
+                
+                document.getElementById('btn-final-email').href = `mailto:${email}?subject=${subject}&body=${bodyText}`;
+
+                btn.innerHTML = '<i class="fas fa-check"></i> LICENCIA CREADA';
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            } catch (error) {
+                console.error(error);
+                statusMsg.textContent = "❌ Error al guardar. Inténtalo de nuevo.";
+                statusMsg.className = "text-center text-[10px] mt-2 font-bold text-red-400";
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-magic mr-2"></i> GENERAR Y GUARDAR';
             }
-            
-            btn.disabled = false; 
-            btn.innerHTML = '<i class="fas fa-check-circle mr-1"></i> VALIDAR Y CREAR ACCESO';
+        }
+
+        // --- MONITORIZACIÓN ---
+        function initStats() {
+            try {
+                onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats'), (docSnap) => {
+                    const count = docSnap.data()?.purchase_clicks || 0;
+                    document.getElementById('clicks-counter').textContent = count;
+                });
+            } catch(e) {}
         }
     </script>
 </body>
