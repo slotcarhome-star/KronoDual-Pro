@@ -3,476 +3,464 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONO DUAL V.1.1</title>
-    <meta name="theme-color" content="#0b2545">
+    <title>KRONO DUAL V.2.1 Gold</title>
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <!-- Firebase (boilerplate standard) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        if (Object.keys(firebaseConfig).length > 0) {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            signInAnonymously(auth).catch(console.error);
+        }
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            100: '#FFF9C4',
+                            300: '#FFF176',
+                            400: '#FFEE58',
+                            500: '#FFD700', // Classic Gold
+                            600: '#FFC107',
+                            700: '#FFA000',
+                            800: '#FF8F00',
+                            900: '#B8860B'  // Dark Gold
+                        },
+                        dark: {
+                            900: '#0a0a0a',
+                            800: '#111111'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Arial', 'Helvetica', 'sans-serif'], // Arial como fuente principal
+                    },
+                    boxShadow: {
+                        'gold': '0 0 15px rgba(255, 215, 0, 0.3)',
+                        'gold-inset': 'inset 0 0 10px rgba(255, 215, 0, 0.1)'
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        /* --- KRONO DUAL V.1.1 DESIGN --- */
-        :root {
-            --bg-base: #001a33;
-            --bg-gradient: radial-gradient(circle at 50% 0%, #004488 0%, #000810 90%);
-            --panel: rgba(0, 15, 30, 0.7);
-            --border: 1px solid rgba(0, 200, 255, 0.3);
-            --cyan: #00f3ff;
-            --red: #ff3333;
-            --gold: #ffcc00;
-            --text: #ffffff;
-            --cam-bg: #00050a; 
-        }
-
+        /* Estilos Base Gold */
         body {
-            background-color: var(--bg-base);
-            background-image: var(--bg-gradient);
-            color: var(--text);
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0; padding: 10px;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow-x: hidden; touch-action: manipulation;
+            background-color: #050505;
+            background-image: radial-gradient(circle at 50% 0%, #332a00 0%, #000000 100%);
+            color: #FFD700;
+            font-family: 'Arial', sans-serif; /* Forzar Arial globalmente */
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            overscroll-behavior: none;
         }
 
-        /* UTILIDADES */
-        .flex { display: flex; } .col { flex-direction: column; } .row { flex-direction: row; }
-        .center { align-items: center; justify-content: center; } .between { justify-content: space-between; }
-        .w-full { width: 100%; } .gap-2 { gap: 8px; } .gap-4 { gap: 15px; }
-        .hidden { display: none !important; }
-        .bold { font-weight: bold; }
+        /* Efectos Neón Gold */
+        .neon-text-g { text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); }
+        .neon-border-g { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.1); border-color: #FFD700; }
 
-        /* NEÓN COLORS */
-        .text-c { color: var(--cyan); text-shadow: 0 0 12px rgba(0, 243, 255, 0.6); }
-        .text-r { color: var(--red); text-shadow: 0 0 12px rgba(255, 0, 0, 0.6); }
-        .text-y { color: var(--gold); text-shadow: 0 0 12px rgba(255, 204, 0, 0.6); }
-
-        /* PANELES */
-        .panel {
-            background: var(--panel); border: var(--border);
-            border-radius: 16px; padding: 12px;
-            width: 100%; max-width: 900px;
-            box-sizing: border-box; margin-bottom: 10px;
-            box-shadow: 0 10px 40px rgba(0, 10, 30, 0.4);
-            backdrop-filter: blur(8px);
+        /* Semáforo */
+        .bulb {
+            width: 20px; height: 20px; border-radius: 50%;
+            background-color: #222; border: 2px solid #554400;
+            transition: all 0.1s;
         }
+        .bulb.red { background-color: #ef4444; box-shadow: 0 0 15px #ef4444; border-color: #ffaaaa; }
+        .bulb.green { background-color: #22c55e; box-shadow: 0 0 15px #22c55e; border-color: #aaffaa; }
 
-        /* HEADER */
-        .header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: linear-gradient(90deg, rgba(0,40,80,0.5), rgba(0,20,40,0.5)); }
-        .header-left { justify-self: start; } 
-        .header-center { justify-self: center; display:flex; gap:10px; }
-        .header-right { justify-self: end; }
-
-        .logo-box { line-height: 1.2; }
-        .logo { font-size: 20px; font-weight: 900; font-style: normal; margin: 0; letter-spacing: 1px; } 
-        .logo-sub { font-size: 10px; color: #8cf; font-weight: bold; letter-spacing: 1px; opacity: 0.8; display: block; margin-top: 2px; }
-
-        /* SEMÁFORO */
-        .lights { display: flex; gap: 6px; background: rgba(0,0,0,0.6); padding: 6px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); }
-        .bulb { width: 14px; height: 14px; border-radius: 50%; background: #222; border: 1px solid #444; transition: 0.1s; }
-        .bulb.red { background: #ff0000; box-shadow: 0 0 20px #ff0000; border-color: #ff5555; }
-        .bulb.green { background: #00ff00; box-shadow: 0 0 20px #00ff00; border-color: #55ff55; }
-
-        /* BOTONES HEADER */
-        .btn-head { 
-            background: rgba(0, 40, 80, 0.4); border: 1px solid var(--cyan); color: var(--cyan); 
-            border-radius: 30px; padding: 6px 14px; font-size: 10px; font-weight: bold;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 5px;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
+        /* ROIs - Dorados y Visibles */
+        .roi {
+            position: absolute; 
+            border: 2px dashed #FFD700;
+            display: none; 
+            cursor: move; 
+            z-index: 50; 
+            touch-action: none;
+            box-sizing: border-box; 
+            background: rgba(255, 215, 0, 0.1);
+            width: 15%; 
+            height: 20%;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
         }
-        .btn-head:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-        .btn-head.gold { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(255,204,0,0.15); }
-        .btn-head.gold:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold); }
-
-        /* CONFIG DRAWER */
-        .config-drawer { height: 0; overflow: hidden; transition: height 0.3s ease; background: rgba(5,15,30,0.95); border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(0,200,255,0.3); }
-        .config-drawer.open { height: auto; padding: 20px; }
-        label { font-size: 10px; color: #8cf; display: block; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
-        input, select { background: rgba(0,0,0,0.4); border: 1px solid #357; color: white; padding: 10px; width: 100%; border-radius: 6px; outline: none; margin-bottom: 10px; font-size: 13px; }
-        input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,243,255,0.2); }
-
-        /* TIMER */
-        .timer-box { 
-            text-align: center; padding: 15px; 
-            background: radial-gradient(circle at center, rgba(20,50,90,0.4) 0%, rgba(5,10,20,0.8) 90%); 
-            border: 1px solid rgba(100,200,255,0.2); position: relative; 
-        }
-        #main-timer { 
-            font-family: Arial, sans-serif; font-size: 60px; font-weight: 900; font-style: normal;
-            color: white; line-height: 1; margin: 2px 0; 
-            text-shadow: 0 0 30px rgba(0, 180, 255, 0.5); z-index: 2; position: relative; 
-            font-variant-numeric: tabular-nums;
-        }
-        .lap-info { color: var(--gold); font-size: 12px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; z-index: 2; position: relative; }
-
-        /* VIDEO */
-        .vid-wrapper {
-            position: relative; background: var(--cam-bg); border: 2px solid #234;
-            border-radius: 8px; overflow: hidden; 
-            width: 100%;
-            /* AJUSTE: Altura al 45% del viewport */
-            height: 45vh; 
-            margin-bottom: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-        }
-        video { width: 100%; height: 100%; object-fit: fill; display: none; }
-        .cam-msg { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #579; text-align: center; }
-
-        /* ROIs */
-        .roi { position: absolute; width: 15%; height: 20%; border: 2px dashed rgba(255,255,255,0.5); display: none; cursor: move; z-index: 20; touch-action: none; box-sizing: border-box; }
-        .roi.active { border-style: solid; border-width: 4px; background: rgba(255,255,255,0.2); box-shadow: 0 0 20px currentColor; }
-        #roi1 { border-color: var(--cyan); top: 30%; left: 20%; color: var(--cyan); }
-        #roi2 { border-color: var(--red); top: 30%; left: 60%; color: var(--red); }
-        .roi-tag { position: absolute; top: -22px; left: -2px; font-size: 10px; font-weight: bold; background: currentColor; color: #000; padding: 2px 6px; border-radius: 2px; }
-        .handle { position: absolute; bottom: 0; right: 0; width: 25px; height: 25px; background: linear-gradient(135deg, transparent 50%, white 50%); cursor: nwse-resize; opacity: 0.8; }
-
-        /* RECORD OVERLAY */
-        #record-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--gold);
-            padding: 20px 40px; border-radius: 12px; text-align: center;
-            opacity: 0; pointer-events: none; transition: all 0.3s;
-            z-index: 50; box-shadow: 0 0 60px rgba(255, 215, 0, 0.4);
-        }
-        #record-overlay.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        .rec-title { color: var(--gold); font-weight: 900; font-size: 24px; margin-bottom: 5px; text-transform: uppercase; font-family: Arial, sans-serif; font-style: normal; }
-        .rec-val { color: white; font-size: 20px; font-weight: bold; font-family: Arial, sans-serif; font-style: normal; }
-
-        /* BOTONES NEÓN */
-        .btn-neon {
-            background: transparent; color: var(--cyan); border: 2px solid var(--cyan);
-            padding: 10px 20px; border-radius: 50px; font-weight: 900; letter-spacing: 1px;
-            cursor: pointer; text-transform: uppercase; font-size: 12px;
-            width: 100%; transition: all 0.2s;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
-            text-shadow: 0 0 8px var(--cyan);
-        }
-        .btn-neon:active { transform: scale(0.96); background: rgba(0, 243, 255, 0.15); }
-        .btn-neon:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 30px var(--cyan); color: white; border-color:white; }
-        .btn-neon:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); box-shadow: none; border-color: #555; color:#555; }
         
-        .btn-neon-red {
-            color: var(--red); border-color: var(--red);
-            box-shadow: 0 0 15px rgba(255, 50, 50, 0.3), inset 0 0 10px rgba(255, 50, 50, 0.1);
-            text-shadow: 0 0 8px var(--red);
-        }
-        .btn-neon-red:hover { background: rgba(255, 50, 50, 0.15); box-shadow: 0 0 30px var(--red); color: white; }
-        .btn-cam { width: auto; padding: 8px 18px; font-size: 10px; }
+        /* Posiciones iniciales */
+        #roi1 { top: 30%; left: 20%; color: #FFD700; }
+        #roi2 { top: 30%; left: 60%; color: #FFA000; border-color: #FFA000; } /* P2 un poco más oscuro/ámbar */
 
-        /* TELEMETRÍA */
-        .neon-title {
-            color: var(--cyan); text-align: center; font-size: 14px; font-weight: 900; letter-spacing: 3px;
-            text-transform: uppercase; text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-            margin: 0 0 10px 0; border-bottom: 1px solid rgba(0, 243, 255, 0.3); padding-bottom: 5px;
+        .roi.active { 
+            border-style: solid; 
+            border-width: 4px; 
+            background: rgba(255, 255, 255, 0.4); 
+            box-shadow: 0 0 20px #FFD700;
+            border-color: #FFF;
         }
-
-        .tele-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { background: linear-gradient(160deg, #0e1520, #050508); border-left: 3px solid #333; padding: 10px; border-radius: 6px; position: relative; overflow: hidden; }
-        .card.p1 { border-color: var(--cyan); box-shadow: inset 10px 0 20px -15px rgba(0, 243, 255, 0.2); }
-        .card.p2 { border-color: var(--red); box-shadow: inset 10px 0 20px -15px rgba(255, 42, 42, 0.2); }
-        .driver { font-size: 16px; font-weight: 900; margin: 0; line-height: 1; text-transform: uppercase; font-style: normal; }
-        .car { font-size: 9px; color: #568; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; font-weight: bold; }
         
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-        .stat-box { 
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 6px; padding: 4px 6px; display: flex; flex-direction: column;
-        }
-        .stat-lbl { font-size: 8px; color: #8cf; text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
-        .val { 
-            font-size: 14px; font-weight: 900; color: white; font-family: Arial, sans-serif;
-            text-shadow: 0 0 5px rgba(255,255,255,0.3); align-self: flex-end;
+        .roi-handle {
+            position: absolute; bottom: 0; right: 0; width: 30px; height: 30px;
+            background: linear-gradient(135deg, transparent 50%, #FFD700 50%);
+            cursor: nwse-resize; 
+            opacity: 1;
         }
 
-        .box-highlight { 
-            grid-column: span 2; 
-            background: rgba(0, 243, 255, 0.15); border: 1px solid var(--cyan); 
-            text-align: center; justify-content: center; align-items: center;
-            padding: 8px; margin-top: 4px;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        /* Botones Dorados */
+        .btn-gold {
+            background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+            border: 1px solid #B8860B;
+            color: #FFD700;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
         }
-        .card.p2 .box-highlight { background: rgba(255, 50, 50, 0.15); border-color: var(--red); box-shadow: 0 0 15px rgba(255, 50, 50, 0.1); }
+        .btn-gold:hover:not(:disabled) {
+            background: linear-gradient(180deg, #332a00 0%, #1a1500 100%);
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+        .btn-gold:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #444;
+            color: #666;
+        }
+
+        .btn-adj {
+            background: #111; color: #FFD700; border: 1px solid #B8860B;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; font-weight: bold; cursor: pointer; text-xl:
+        }
+        .btn-adj:active { background: #FFD700; color: #000; }
+
+        /* Animaciones */
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .box-highlight .stat-lbl { font-size: 10px; margin-bottom: 0; opacity: 0.9; color: white; letter-spacing: 1px; }
-        .box-highlight .val { font-size: 24px; align-self: center; text-shadow: 0 0 10px currentColor; }
-
-        /* GRÁFICA DE COLUMNAS */
-        .chart-box { 
-            /* RESTAURADO: Tamaño cómodo para que no se achate */
-            height: 140px; 
-            background: rgba(0, 10, 20, 0.4); border: 1px solid rgba(255,255,255,0.1); 
-            margin-top: 10px; padding: 10px 10px 10px 30px; position: relative; border-radius: 6px;
-        }
-        svg { width: 100%; height: 100%; overflow: visible; }
-        .grid-line { stroke: rgba(255,255,255,0.1); stroke-width: 1; }
-        .chart-labels { position: absolute; left: 5px; top: 10px; bottom: 10px; width: 25px; display: flex; flex-direction: column; justify-content: space-between; color: #8af; font-size: 8px; font-weight: bold; pointer-events: none; }
-
-        /* MODALES */
-        .modal { position: fixed; inset: 0; background: rgba(0,5,15,0.95); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal.show { display: flex; }
-        .modal-content { 
-            background: #0a1018; border: 1px solid #246; width: 95%; max-width: 800px; 
-            max-height: 95vh; border-radius: 12px; display: flex; flex-direction: column; 
-            box-shadow: 0 0 60px rgba(0, 100, 255, 0.3);
-        }
-        .res-header { padding: 25px; text-align: center; border-bottom: 1px solid #1e3a5a; background: linear-gradient(180deg, #102a4a, #0a1018); border-radius: 20px 20px 0 0; }
-        .winner-name { font-size: 36px; font-weight: 900; color: var(--gold); text-transform: uppercase; margin: 5px 0; text-shadow: 0 0 20px rgba(255,200,0,0.6); }
-        .winner-car { font-size: 16px; color: #8cf; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; margin-bottom: 20px; display: block; }
-
-        /* RESULTADOS VISTOSOS */
-        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .res-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-        .res-box.main { grid-column: span 2; background: rgba(255, 215, 0, 0.1); border-color: var(--gold); }
-        .res-box .lbl { font-size: 10px; color: #8af; display: block; margin-bottom: 4px; font-weight: bold; letter-spacing: 1px; }
-        .res-box .val { font-size: 20px; font-family: Arial; }
+        .slide-down { animation: slideDown 0.3s ease-out forwards; }
+        @keyframes slideDown { from { max-height: 0; opacity: 0; } to { max-height: 800px; opacity: 1; } }
         
-        .res-table { width: 100%; font-size: 12px; border-collapse: collapse; }
-        .res-table td { padding: 8px; border-bottom: 1px solid #1a2a3a; color: #aef; }
-        .best-lap-row { color: #000 !important; background: var(--cyan) !important; font-weight: bold; box-shadow: 0 0 10px var(--cyan); }
-        .best-lap-row.p2-row { background: var(--red) !important; box-shadow: 0 0 10px var(--red); }
+        .chart-bar { transition: height 0.3s ease; }
         
-        .records-table { width: 100%; font-size: 11px; color: #ccc; border-collapse: collapse; }
-        .records-table th { text-align: left; padding: 10px; border-bottom: 1px solid #468; color: var(--cyan); font-weight: bold; }
-        .records-table td { padding: 10px; border-bottom: 1px solid #246; }
-
-        #err { background: #900; color: white; padding: 10px; text-align: center; font-size: 12px; display: none; width: 100%; }
+        /* Inputs Gold */
+        input[type=range] { accent-color: #FFD700; }
     </style>
 </head>
-<body>
+<body class="flex flex-col min-h-screen p-2 max-w-4xl mx-auto w-full font-sans">
 
-    <div id="err"></div>
-    <script>window.onerror=function(m){const e=document.getElementById('err');e.style.display='block';e.innerHTML='ERROR: '+m;}</script>
+    <!-- ERROR HANDLER -->
+    <div id="err" class="hidden bg-red-900/80 border border-red-500 text-white p-2 text-center text-sm rounded mb-2"></div>
+    <script>window.onerror=function(m){const e=document.getElementById('err');e.classList.remove('hidden');e.innerHTML='ERROR: '+m;}</script>
 
     <!-- HEADER -->
-    <div class="panel header">
-        <div class="header-left logo-box">
-            <h1 class="logo">KRONO <span class="text-c">DUAL</span></h1>
-            <span class="logo-sub">V.1.1</span>
-            <span class="logo-sub" style="font-size:8px; margin-top:2px;">by Albert Closa</span>
-        </div>
-        
-        <div class="header-center">
-            <button class="btn-head" onclick="toggleConfig()">⚙️ AJUSTES</button>
-            <button class="btn-head gold" onclick="showRecords()">🏆 RÉCORDS</button>
+    <header class="bg-black/80 backdrop-blur-md border border-gold-900 rounded-xl p-3 shadow-gold flex flex-wrap justify-between items-center gap-3 mb-4">
+        <div class="flex flex-col">
+            <h1 class="text-2xl font-black italic tracking-tighter leading-none text-white font-sans">
+                KRONO <span class="text-gold-500 neon-text-g">DUAL</span> <span class="text-sm text-gold-300 not-italic">V.1.0.1</span>
+            </h1>
+            <span class="text-[10px] font-bold text-gold-700 tracking-widest uppercase font-sans">By Albert Closa</span>
         </div>
 
-        <div class="header-right">
-            <div class="lights">
-                <div id="l1" class="bulb"></div><div id="l2" class="bulb"></div><div id="l3" class="bulb"></div><div id="l4" class="bulb"></div><div id="l5" class="bulb"></div>
+        <div class="flex gap-2">
+            <button onclick="toggleConfig()" class="btn-gold text-[10px] py-2 px-4 rounded-full flex items-center gap-2 font-sans">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.35a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.73v.52a2 2 0 0 1-1 1.73l-.15.08a2 2 0 0 0-.73 2.73l.78 1.35a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V22a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.78-1.35a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.73v-.52a2 2 0 0 1 1-1.73l.15-.08a2 2 0 0 0 .73-2.73l-.78-1.35a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V2a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                AJUSTES
+            </button>
+            <button onclick="showRecords()" class="btn-gold text-[10px] py-2 px-4 rounded-full flex items-center gap-2 font-sans">
+                🏆 HISTORIAL
+            </button>
+        </div>
+
+        <div class="bg-black p-2 rounded-full border border-gold-900 flex gap-2 shadow-inner">
+            <div id="l1" class="bulb"></div><div id="l2" class="bulb"></div><div id="l3" class="bulb"></div><div id="l4" class="bulb"></div><div id="l5" class="bulb"></div>
+        </div>
+    </header>
+
+    <!-- PANEL DE AJUSTES (CON BOTONES +/-) -->
+    <div id="config" class="hidden w-full bg-dark-900 border-x border-b border-gold-900 rounded-b-xl p-4 mb-4 shadow-2xl relative z-30">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
+            <!-- COLUMNA P1 -->
+            <div class="bg-yellow-900/10 p-3 rounded-lg border border-yellow-700/30">
+                <label class="text-xs font-bold text-gold-400 mb-1 block">PILOTO 1 (ORO)</label>
+                <input id="in-p1-n" value="Piloto 1" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-2 text-sm text-gold-100 mb-2 focus:border-gold-500 outline-none font-sans">
+                <input id="in-p1-c" value="Golden Bull" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-2 text-xs text-gold-600 mb-3 focus:border-gold-500 outline-none font-sans">
+                
+                <label class="text-[10px] font-bold text-gold-700 uppercase">Tono P1</label>
+                <select id="snd-p1" onchange="previewTone(this.value)" class="w-full bg-black border border-gold-900 rounded p-2 text-sm mb-3 text-gold-300 font-sans">
+                    <option value="C5">Tono Alto (C5)</option>
+                    <option value="A4">Tono Medio (A4)</option>
+                    <option value="F4">Tono Bajo (F4)</option>
+                    <option value="E6">Digital (E6)</option>
+                </select>
+
+                <!-- AJUSTE UMBRAL P1 CON BOTONES -->
+                <label class="text-[10px] font-bold text-gold-700 uppercase flex justify-between">
+                    <span>Umbral P1</span> <span id="lbl-sens-p1" class="text-gold-400 font-sans tabular-nums text-lg">100</span>
+                </label>
+                <div class="flex items-center gap-3 mt-2">
+                    <button class="btn-adj" onclick="adjSens(1, -5)">-</button>
+                    <input type="range" id="in-sens-p1" min="0" max="255" value="100" oninput="updSensUI(1)" class="flex-1 h-4 bg-dark-800 rounded-lg appearance-none cursor-pointer">
+                    <button class="btn-adj" onclick="adjSens(1, 5)">+</button>
+                </div>
+            </div>
+
+            <!-- COLUMNA P2 -->
+            <div class="bg-orange-900/10 p-3 rounded-lg border border-orange-900/30">
+                <label class="text-xs font-bold text-orange-400 mb-1 block">PILOTO 2 (BRONCE)</label>
+                <input id="in-p2-n" value="Piloto 2" onchange="updUI()" class="w-full bg-black border border-orange-900 rounded p-2 text-sm text-gold-100 mb-2 focus:border-orange-500 outline-none font-sans">
+                <input id="in-p2-c" value="Bronze Horse" onchange="updUI()" class="w-full bg-black border border-orange-900 rounded p-2 text-xs text-orange-600 mb-3 focus:border-orange-500 outline-none font-sans">
+                
+                <label class="text-[10px] font-bold text-orange-700 uppercase">Tono P2</label>
+                <select id="snd-p2" onchange="previewTone(this.value)" class="w-full bg-black border border-orange-900 rounded p-2 text-sm mb-3 text-gold-300 font-sans">
+                    <option value="F4">Tono Bajo (F4)</option>
+                    <option value="A4">Tono Medio (A4)</option>
+                    <option value="C5">Tono Alto (C5)</option>
+                    <option value="C3">Grave (C3)</option>
+                </select>
+
+                <!-- AJUSTE UMBRAL P2 CON BOTONES -->
+                <label class="text-[10px] font-bold text-orange-700 uppercase flex justify-between">
+                    <span>Umbral P2</span> <span id="lbl-sens-p2" class="text-orange-400 font-sans tabular-nums text-lg">100</span>
+                </label>
+                <div class="flex items-center gap-3 mt-2">
+                    <button class="btn-adj border-orange-900 text-orange-400" onclick="adjSens(2, -5)">-</button>
+                    <input type="range" id="in-sens-p2" min="0" max="255" value="100" oninput="updSensUI(2)" class="flex-1 h-4 bg-dark-800 rounded-lg appearance-none cursor-pointer accent-orange-500">
+                    <button class="btn-adj border-orange-900 text-orange-400" onclick="adjSens(2, 5)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 border-t border-gold-900/50 pt-4">
+            <div class="w-full">
+                <label class="text-xs font-bold text-gold-700 mb-1 block">VUELTAS DE CARRERA</label>
+                <select id="in-laps" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-2 text-sm text-gold-300 font-sans">
+                    <option value="5">5 Vueltas (Sprint)</option>
+                    <option value="10" selected>10 Vueltas (Standard)</option>
+                    <option value="20">20 Vueltas (Long)</option>
+                    <option value="50">50 Vueltas (Endurance)</option>
+                    <option value="9999">Práctica Libre (∞)</option>
+                </select>
+            </div>
+            <div class="w-full flex items-center justify-center pt-6">
+                <label class="flex items-center cursor-pointer gap-3">
+                    <input type="checkbox" id="voice-chk" checked class="w-5 h-5 accent-gold-500 rounded bg-black border-gold-700">
+                    <span class="text-sm font-bold text-gold-500 font-sans">LOCUTOR (TTS) ACTIVO</span>
+                </label>
             </div>
         </div>
     </div>
 
-    <!-- CONFIGURACIÓN -->
-    <div id="config" class="config-drawer w-full max-w-800">
-        <div class="row gap-4 flex" style="margin-bottom:15px;">
-            <div class="w-full">
-                <label class="text-c">PILOTO 1 (CIAN)</label>
-                <input id="in-p1-n" value="Piloto 1" onchange="updUI()" placeholder="Nombre">
-                <input id="in-p1-c" value="F1 RedBull" onchange="updUI()" style="margin-top:5px; color:#8af;">
-                <label style="margin-top:10px;">TONO P1</label>
-                <select id="snd-p1" onchange="testSound(this.value)">
-                    <option value="bell_h">Campana Aguda</option>
-                    <option value="bell_l">Campana Grave</option>
-                    <option value="ding">Ding-Dong</option>
-                    <option value="digi">Digital</option>
-                </select>
-                <!-- NUEVO: UMBRAL INDIVIDUAL P1 -->
-                <label style="margin-top:10px;">UMBRAL P1</label>
-                <input type="range" id="in-sens-p1" min="0" max="255" value="100" style="padding:0; height:35px;">
+    <!-- MAIN TIMER -->
+    <div class="relative bg-gradient-to-br from-dark-900 to-black border border-gold-900 rounded-2xl p-6 text-center shadow-[0_0_20px_rgba(184,134,11,0.2)] mb-4 overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDIxNSwwLDAuMDUpIj48cGF0aCBkPSJNMCAwaDIwdjIwSDB6Ii8+PC9zdmc+')] opacity-20"></div>
+        <div class="relative z-10">
+            <div class="text-[10px] font-bold text-gold-600 tracking-[0.3em] uppercase mb-1 font-sans">Tiempo de Carrera</div>
+            <div id="main-timer" class="text-6xl sm:text-7xl font-sans font-black text-white tabular-nums tracking-tight drop-shadow-[0_0_10px_rgba(255,215,0,0.3)]">
+                00:00.00
             </div>
-            <div class="w-full">
-                <label class="text-r">PILOTO 2 (ROJO)</label>
-                <input id="in-p2-n" value="Piloto 2" onchange="updUI()" placeholder="Nombre">
-                <input id="in-p2-c" value="F1 Ferrari" onchange="updUI()" style="margin-top:5px; color:#8af;">
-                <label style="margin-top:10px;">TONO P2</label>
-                <select id="snd-p2" onchange="testSound(this.value)">
-                    <option value="bell_l">Campana Grave</option>
-                    <option value="bell_h">Campana Aguda</option>
-                    <option value="ding">Ding-Dong</option>
-                    <option value="digi">Digital</option>
-                </select>
-                <!-- NUEVO: UMBRAL INDIVIDUAL P2 -->
-                <label style="margin-top:10px;">UMBRAL P2</label>
-                <input type="range" id="in-sens-p2" min="0" max="255" value="100" style="padding:0; height:35px;">
+            <div id="lap-counter" class="text-xs font-bold text-yellow-400 tracking-[0.2em] uppercase mt-2 font-sans">
+                PREPARADO
             </div>
-        </div>
-        <div class="row gap-4 flex">
-            <div class="w-full">
-                <label>VUELTAS</label>
-                <select id="in-laps" onchange="updUI()">
-                    <option value="5">5 Vueltas</option><option value="10" selected>10 Vueltas</option><option value="20">20 Vueltas</option><option value="50">50 Vueltas</option><option value="9999">Infinito</option>
-                </select>
-            </div>
-            <div class="w-full">
-                <!-- Espacio libre o futuros ajustes -->
-            </div>
-        </div>
-        <div class="flex center gap-2" style="margin-top:15px; border-top:1px solid #1e3a5a; padding-top:10px;">
-            <input type="checkbox" id="voice-chk" checked style="width:auto; margin:0;">
-            <label for="voice-chk" style="margin:0; cursor:pointer; color:white;">LOCUTOR ACTIVO</label>
         </div>
     </div>
 
-    <!-- TIMER CENTRADO -->
-    <div class="panel timer-box">
-        <div class="grid-bg"></div>
-        <div style="font-size:12px; color:#8af; letter-spacing:4px; font-weight:bold; text-transform:uppercase; z-index:2; position:relative;">TIEMPO DE CARRERA</div>
-        <div id="main-timer">00:00.00</div>
-        <div id="lap-counter" class="lap-info">PREPARADO</div>
-    </div>
-
-    <!-- VIDEO & CONTROL -->
-    <div class="panel" style="padding:15px;">
-        <div class="flex between center" style="margin-bottom:10px;">
-            <button id="btn-cam" class="btn-neon btn-cam" onclick="toggleCam()">ENCENDER CÁMARA</button>
-            <div style="font-size:11px; font-family:monospace; background:rgba(0,0,0,0.5); padding:6px 12px; border:1px solid #246; border-radius:20px;">
-                <span class="text-c">P1: <b id="val-p1">0</b></span> | <span class="text-r">P2: <b id="val-p2">0</b></span>
+    <!-- VIDEO ZONE -->
+    <div class="bg-dark-900 border border-gold-900 rounded-xl p-4 shadow-lg mb-4">
+        <div class="flex justify-between items-center mb-3">
+            <button id="btn-cam" onclick="toggleCam()" class="btn-gold text-[10px] py-2 px-4 rounded-full shadow-none border-gold-800 text-gold-500 font-sans">
+                ENCENDER CÁMARA
+            </button>
+            <div class="flex gap-2 text-[10px] font-sans bg-black/50 px-3 py-1 rounded-full border border-gold-900 tabular-nums">
+                <span class="text-gold-400">P1: <b id="val-p1">0</b></span>
+                <span class="text-gold-800">|</span>
+                <span class="text-orange-400">P2: <b id="val-p2">0</b></span>
             </div>
         </div>
 
-        <div class="vid-wrapper">
-            <div id="cam-msg" class="cam-msg">
-                <h3 style="margin:0 0 5px 0;">CÁMARA APAGADA</h3>
-                <p style="margin:0;">Pulsa el botón azul para activar</p>
+        <div class="relative w-full h-[45vh] bg-black rounded-lg overflow-hidden border-2 border-gold-900 shadow-inner">
+            <div id="cam-msg" class="absolute inset-0 flex flex-col items-center justify-center text-gold-800">
+                <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                <p class="text-xs font-bold font-sans">CÁMARA APAGADA</p>
             </div>
-            <video id="webcam" autoplay playsinline muted></video>
+            <video id="webcam" class="w-full h-full object-fill hidden" autoplay playsinline muted></video>
             
-            <div id="record-overlay">
-                <div class="rec-title">¡NUEVO RÉCORD!</div>
-                <div id="rec-data" class="rec-val">Piloto - 00.00</div>
+            <!-- OVERLAY RECORD -->
+            <div id="record-overlay" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/90 border-2 border-gold-500 p-6 rounded-xl text-center opacity-0 pointer-events-none transition-all transform scale-90 z-50 shadow-[0_0_50px_rgba(255,215,0,0.5)]">
+                <div class="text-gold-400 text-2xl font-black uppercase mb-1 font-sans">¡NUEVO RÉCORD!</div>
+                <div id="rec-data" class="text-white text-xl font-bold font-sans tabular-nums">--.---</div>
             </div>
 
-            <div id="roi1" class="roi"><div class="roi-tag text-c">P1</div><div class="handle"></div></div>
-            <div id="roi2" class="roi"><div class="roi-tag text-r">P2</div><div class="handle"></div></div>
+            <div id="roi1" class="roi"><div class="absolute -top-6 left-0 bg-gold-500 text-black text-[10px] font-bold px-2 rounded-sm border border-white font-sans">P1</div><div class="roi-handle"></div></div>
+            <div id="roi2" class="roi"><div class="absolute -top-6 left-0 bg-orange-600 text-black text-[10px] font-bold px-2 rounded-sm border border-white font-sans">P2</div><div class="roi-handle"></div></div>
         </div>
 
-        <div class="flex gap-4">
-            <button id="btn-start" class="btn-neon w-full" onclick="toggleRace()" disabled>INICIAR</button>
-            <button id="btn-reset" class="btn-neon btn-neon-red w-full" onclick="resetRace()" disabled>RESET</button>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+            <button id="btn-start" onclick="toggleRace()" disabled class="btn-gold py-3 px-4 rounded-xl text-sm shadow-md disabled:opacity-50 font-sans">
+                INICIAR
+            </button>
+            <button id="btn-reset" onclick="resetRace()" disabled class="bg-dark-800 text-red-500 font-black py-3 px-4 rounded-xl text-sm transition-all border border-red-900/30 shadow-md hover:bg-red-900/10 disabled:opacity-50 disabled:cursor-not-allowed font-sans">
+                RESET
+            </button>
         </div>
     </div>
 
-    <!-- TELEMETRÍA -->
-    <div class="panel">
-        <h3 class="neon-title">TELEMETRÍA EN VIVO</h3>
-        <div class="tele-grid">
-            <div class="card p1">
-                <h3 class="driver text-c" id="disp-p1-n">P1</h3>
-                <span class="car" id="disp-p1-c">CAR 1</span>
-                <div class="stats">
-                    <div class="stat-box"><span class="stat-lbl">VUELTAS</span><span class="val" id="disp-p1-l">0</span></div>
-                    <div class="stat-box"><span class="stat-lbl">TOTAL</span><span class="val" id="disp-p1-tot">00:00</span></div>
-                    <div class="stat-box"><span class="stat-lbl">VELOCIDAD</span><span class="val" id="disp-p1-spd">0 km/h</span></div>
-                    <div class="stat-box"><span class="stat-lbl">ÚLTIMA</span><span class="val" id="disp-p1-last">--.--</span></div>
-                    <div class="stat-box box-highlight">
-                        <span class="stat-lbl">MEJOR TIEMPO</span>
-                        <span class="val text-c" id="disp-p1-best">--.--</span>
+    <!-- TELEMETRY CARDS -->
+    <div class="bg-dark-900 border border-gold-900 rounded-xl p-4 shadow-lg mb-4">
+        <h3 class="text-center text-xs font-bold text-gold-500 tracking-[0.2em] uppercase border-b border-gold-900 pb-2 mb-4 font-sans">Telemetría en Vivo</h3>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <!-- P1 CARD -->
+            <div class="bg-gradient-to-b from-dark-800 to-black border-l-4 border-gold-500 p-3 rounded shadow-lg relative overflow-hidden neon-border-g">
+                <div class="absolute top-0 right-0 p-1 opacity-10"><h1 class="text-4xl font-black text-gold-500 font-sans">1</h1></div>
+                <h3 class="text-lg font-black text-gold-400 leading-none font-sans" id="disp-p1-n">P1</h3>
+                <span class="text-[10px] font-bold text-gold-700 uppercase tracking-wider block mb-3 font-sans" id="disp-p1-c">CAR 1</span>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[8px] text-gold-600 block font-bold font-sans">VUELTAS</span><span id="disp-p1-l" class="text-sm font-bold text-white font-sans tabular-nums">0</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[8px] text-gold-600 block font-bold font-sans">TOTAL</span><span id="disp-p1-tot" class="text-sm font-bold text-white font-sans tabular-nums">00:00</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[8px] text-gold-600 block font-bold font-sans">VELOCIDAD</span><span id="disp-p1-spd" class="text-xs font-bold text-white font-sans tabular-nums">0</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[8px] text-gold-600 block font-bold font-sans">ÚLTIMA</span><span id="disp-p1-last" class="text-xs font-bold text-white font-sans tabular-nums">--.--</span></div>
+                    <div class="col-span-2 bg-yellow-900/20 border border-gold-500/30 p-2 rounded text-center">
+                        <span class="text-[8px] text-gold-200 block font-bold uppercase tracking-widest font-sans">MEJOR TIEMPO</span>
+                        <span id="disp-p1-best" class="text-xl font-black text-white font-sans tabular-nums drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]">--.--</span>
                     </div>
                 </div>
             </div>
-            <div class="card p2">
-                <h3 class="driver text-r" id="disp-p2-n">P2</h3>
-                <span class="car" id="disp-p2-c">CAR 2</span>
-                <div class="stats">
-                    <div class="stat-box"><span class="stat-lbl">VUELTAS</span><span class="val" id="disp-p2-l">0</span></div>
-                    <div class="stat-box"><span class="stat-lbl">TOTAL</span><span class="val" id="disp-p2-tot">00:00</span></div>
-                    <div class="stat-box"><span class="stat-lbl">VELOCIDAD</span><span class="val" id="disp-p2-spd">0 km/h</span></div>
-                    <div class="stat-box"><span class="stat-lbl">ÚLTIMA</span><span class="val" id="disp-p2-last">--.--</span></div>
-                    <div class="stat-box box-highlight">
-                        <span class="stat-lbl">MEJOR TIEMPO</span>
-                        <span class="val text-r" id="disp-p2-best">--.--</span>
+
+            <!-- P2 CARD -->
+            <div class="bg-gradient-to-b from-dark-800 to-black border-l-4 border-orange-600 p-3 rounded shadow-lg relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-1 opacity-10"><h1 class="text-4xl font-black text-orange-600 font-sans">2</h1></div>
+                <h3 class="text-lg font-black text-orange-500 leading-none font-sans" id="disp-p2-n">P2</h3>
+                <span class="text-[10px] font-bold text-orange-800 uppercase tracking-wider block mb-3 font-sans" id="disp-p2-c">CAR 2</span>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[8px] text-orange-700 block font-bold font-sans">VUELTAS</span><span id="disp-p2-l" class="text-sm font-bold text-white font-sans tabular-nums">0</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[8px] text-orange-700 block font-bold font-sans">TOTAL</span><span id="disp-p2-tot" class="text-sm font-bold text-white font-sans tabular-nums">00:00</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[8px] text-orange-700 block font-bold font-sans">VELOCIDAD</span><span id="disp-p2-spd" class="text-xs font-bold text-white font-sans tabular-nums">0</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[8px] text-orange-700 block font-bold font-sans">ÚLTIMA</span><span id="disp-p2-last" class="text-xs font-bold text-white font-sans tabular-nums">--.--</span></div>
+                    <div class="col-span-2 bg-orange-900/20 border border-orange-600/30 p-2 rounded text-center">
+                        <span class="text-[8px] text-orange-200 block font-bold uppercase tracking-widest font-sans">MEJOR TIEMPO</span>
+                        <span id="disp-p2-best" class="text-xl font-black text-white font-sans tabular-nums drop-shadow-[0_0_5px_rgba(255,100,0,0.5)]">--.--</span>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- GRÁFICA DE COLUMNAS -->
-        <div style="margin-top:20px;">
-            <div class="neon-title">RITMO DE CARRERA</div>
-            <div class="chart-box">
-                <div class="chart-labels">
+
+        <div class="mt-6">
+            <h4 class="text-xs font-bold text-gold-700 mb-2 uppercase font-sans">Ritmo de Carrera</h4>
+            <div class="bg-dark-800/50 border border-gold-900/50 h-32 rounded relative p-2 pl-8">
+                <div class="absolute left-1 top-2 bottom-2 flex flex-col justify-between text-[8px] text-gold-700 font-bold font-sans">
                     <span id="chart-max">10s</span>
                     <span id="chart-mid">5s</span>
                     <span>0s</span>
                 </div>
-                <svg id="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <line x1="0" y1="25" x2="100" y2="25" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
-                    <line x1="0" y1="50" x2="100" y2="50" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
-                    <line x1="0" y1="75" x2="100" y2="75" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                <svg id="chart-svg" class="w-full h-full overflow-visible" preserveAspectRatio="none">
+                    <!-- Lines and bars dynamically injected -->
                 </svg>
             </div>
         </div>
     </div>
 
-    <!-- MODAL FINAL (BIG DATA) -->
-    <div id="res-modal" class="modal">
-        <div class="modal-content">
-            <div class="res-header">
-                <div style="font-size:40px;">🏆</div>
-                <div style="font-size:12px; color:#8ab; font-weight:bold; letter-spacing:2px; margin-bottom:5px;">VICTORIA</div>
-                <h1 class="winner-name" id="res-winner">NOMBRE</h1>
-                <span class="winner-car" id="res-car">COCHE</span>
+    <!-- MODAL RESULTADOS -->
+    <div id="res-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden flex items-center justify-center fade-in">
+        <div class="bg-dark-900 border border-gold-600 w-[95%] max-w-lg max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden slide-down">
+            <div class="bg-gradient-to-b from-dark-800 to-black p-6 text-center border-b border-gold-800">
+                <div class="text-4xl mb-2">🏆</div>
+                <div class="text-[10px] font-bold text-gold-500 tracking-widest uppercase mb-1 font-sans">VICTORIA</div>
+                <h1 class="text-3xl font-black text-white uppercase leading-none mb-1 neon-text-g font-sans" id="res-winner">NOMBRE</h1>
+                <span class="text-xs font-bold text-gold-700 uppercase tracking-widest font-sans" id="res-car">COCHE</span>
                 
-                <div class="res-grid">
-                      <div class="res-box main">
-                          <span class="lbl">TIEMPO TOTAL</span>
-                          <span class="val text-y" id="res-total">--:--</span>
-                      </div>
-                      <div class="res-box">
-                          <span class="lbl">MEJOR VUELTA</span>
-                          <span class="val text-c" id="res-best">--.--</span>
-                      </div>
-                      <div class="res-box">
-                          <span class="lbl">TIEMPO MEDIO</span>
-                          <span class="val" id="res-avg">--.--</span>
-                      </div>
-                      <div class="res-box">
-                          <span class="lbl">VELOCIDAD MEDIA</span>
-                          <span class="val" id="res-spd-avg">0 km/h</span>
-                      </div>
+                <div class="grid grid-cols-2 gap-3 mt-6">
+                    <div class="bg-yellow-900/20 border border-gold-600/30 p-2 rounded col-span-2">
+                        <span class="text-[10px] text-gold-500 font-bold block font-sans">TIEMPO TOTAL</span>
+                        <span class="text-xl font-sans font-bold text-yellow-400 tabular-nums" id="res-total">--:--</span>
+                    </div>
+                    <div class="bg-dark-800 p-2 rounded border border-gold-900/30">
+                        <span class="text-[10px] text-gray-500 font-bold block font-sans">MEJOR VUELTA</span>
+                        <span class="text-lg font-sans font-bold text-gold-400 tabular-nums" id="res-best">--.--</span>
+                    </div>
+                    <div class="bg-dark-800 p-2 rounded border border-gold-900/30">
+                        <span class="text-[10px] text-gray-500 font-bold block font-sans">VEL. MEDIA</span>
+                        <span class="text-lg font-bold text-white font-sans tabular-nums" id="res-spd-avg">0</span>
+                    </div>
                 </div>
             </div>
             
-            <div class="row gap-4 flex" style="padding:20px; overflow-y:auto; flex:1;">
-                <div class="w-full">
-                    <h4 class="text-c" style="margin:0 0 10px 0; border-bottom:1px solid #1e3a5a; font-size:12px;">P1 TIEMPOS</h4>
-                    <table class="res-table"><tbody id="tb-p1"></tbody></table>
-                </div>
-                <div class="w-full">
-                    <h4 class="text-r" style="margin:0 0 10px 0; border-bottom:1px solid #1e3a5a; font-size:12px;">P2 TIEMPOS</h4>
-                    <table class="res-table"><tbody id="tb-p2"></tbody></table>
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="flex gap-4">
+                    <div class="w-1/2">
+                        <h4 class="text-xs font-bold text-gold-400 border-b border-gold-900 pb-1 mb-2 font-sans">P1 TIEMPOS</h4>
+                        <table class="w-full text-xs text-gray-400">
+                            <tbody id="tb-p1" class="divide-y divide-gray-800"></tbody>
+                        </table>
+                    </div>
+                    <div class="w-1/2">
+                        <h4 class="text-xs font-bold text-orange-600 border-b border-orange-900 pb-1 mb-2 font-sans">P2 TIEMPOS</h4>
+                        <table class="w-full text-xs text-gray-400">
+                            <tbody id="tb-p2" class="divide-y divide-gray-800"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div style="padding:15px; border-top:1px solid #1e3a5a; display:flex; gap:10px; background:#08101a;">
-                <button class="btn-neon" onclick="closeModal('res-modal')">Cerrar</button>
-                <button class="btn-neon" onclick="newRace()">Nueva Carrera</button>
+            <div class="p-4 bg-black border-t border-gold-900 flex gap-3">
+                <button onclick="closeModal('res-modal')" class="flex-1 bg-dark-800 hover:bg-dark-700 text-white font-bold py-3 rounded-lg text-xs transition-all border border-gray-700 font-sans">CERRAR</button>
+                <button onclick="newRace()" class="flex-1 btn-gold py-3 rounded-lg text-xs transition-all shadow-lg uppercase font-sans">NUEVA CARRERA</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL RÉCORDS -->
-    <div id="rec-modal" class="modal">
-        <div class="modal-content" style="max-width:900px;">
-            <div class="res-header" style="background: linear-gradient(180deg, #2a1b00, #0a0a0a); border-color:var(--gold);">
-                <div style="font-size:40px;">👑</div>
-                <div style="font-size:12px; color:var(--gold); font-weight:bold; letter-spacing:2px; margin-bottom:5px;">HALL OF FAME</div>
-                <div class="winner-name" style="font-size:24px; color:var(--gold);">MEJORES TIEMPOS</div>
+    <!-- MODAL RECORDS -->
+    <div id="rec-modal" class="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 hidden flex items-center justify-center fade-in">
+        <div class="bg-dark-900 border border-gold-600/50 w-[95%] max-w-3xl max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden slide-down">
+            <div class="bg-gradient-to-r from-black via-yellow-900/20 to-black p-6 text-center border-b border-gold-600/30">
+                <div class="text-3xl mb-2">👑</div>
+                <h1 class="text-2xl font-black text-gold-500 uppercase tracking-widest neon-text-g font-sans">Hall of Fame</h1>
             </div>
             
-            <div class="row gap-4 flex" style="padding:20px; overflow-y:auto; flex:1; flex-direction:column;">
-                <table class="records-table">
-                    <thead>
+            <div class="flex-1 overflow-y-auto p-0">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-950 text-slate-400 sticky top-0 font-sans">
                         <tr>
-                            <th>FECHA</th><th>HORA</th>
-                            <th class="text-c">PILOTO</th><th>COCHE</th>
-                            <th class="text-y" style="text-align:right;">TIEMPO</th>
-                            <th style="text-align:right;">VEL. MAX</th>
+                            <th class="p-3 font-bold">FECHA</th>
+                            <th class="p-3 font-bold text-cyan-400">PILOTO</th>
+                            <th class="p-3 font-bold">COCHE</th>
+                            <th class="p-3 font-bold text-yellow-400 text-right">TIEMPO</th>
+                            <th class="p-3 font-bold text-right">VEL.</th>
                         </tr>
                     </thead>
-                    <tbody id="records-list"></tbody>
+                    <tbody id="records-list" class="divide-y divide-slate-800 text-slate-300 font-sans"></tbody>
                 </table>
             </div>
 
-            <div style="padding:15px; border-top:1px solid #333; display:flex; gap:10px; background:#08101a;">
-                <button class="btn-neon" style="color:var(--gold); border-color:var(--gold); box-shadow:none;" onclick="closeModal('rec-modal')">Cerrar</button>
-                <button class="btn-neon btn-neon-red" onclick="clearRecords()">Borrar Historial</button>
+            <div class="p-4 bg-slate-950 border-t border-slate-800 flex justify-between">
+                <button onclick="closeModal('rec-modal')" class="text-yellow-500 text-xs font-bold hover:text-white transition-colors font-sans">CERRAR</button>
+                <button onclick="clearRecords()" class="text-red-500 text-xs font-bold hover:text-red-400 transition-colors font-sans">BORRAR HISTORIAL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRM DELETE -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/95 backdrop-blur-sm z-[60] hidden flex items-center justify-center fade-in">
+        <div class="bg-dark-900 border border-red-900 w-[90%] max-w-sm rounded-xl p-6 text-center shadow-2xl">
+            <h3 class="text-xl font-bold text-red-500 mb-2 font-sans">¿BORRAR HISTORIAL?</h3>
+            <p class="text-gray-400 text-sm mb-6 font-sans">Esta acción no se puede deshacer.</p>
+            <div class="flex gap-3">
+                <button onclick="closeModal('confirm-modal')" class="flex-1 bg-dark-800 text-white py-2 rounded border border-gray-700 font-sans">CANCELAR</button>
+                <button onclick="performClear()" class="flex-1 bg-red-900/50 text-red-400 border border-red-500 py-2 rounded font-sans font-bold hover:bg-red-900">BORRAR</button>
             </div>
         </div>
     </div>
@@ -480,156 +468,143 @@
     <canvas id="cv" class="hidden"></canvas>
 
     <script>
+        // --- UTILIDADES ---
         const get = (id) => document.getElementById(id);
         const set = (id, txt) => { const el = get(id); if(el) el.innerText = txt; }
+        const fmt = (ms) => (ms/1000).toFixed(2);
+        const fmtTime = (ms) => {
+            let m=Math.floor(ms/60000), s=Math.floor((ms%60000)/1000), i=Math.floor((ms%1000)/10);
+            return (m<10?'0':'')+m+":"+(s<10?'0':'')+s+"."+(i<10?'0':'')+i;
+        };
 
+        // --- ESTADO ---
         const state = {
             race: false, cam: false, start: 0, timer: null,
             countdown: false, aborted: false,
             flags: { f5: false, f1: false },
             p1: { n:'P1', c:'C1', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0 },
             p2: { n:'P2', c:'C2', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0 },
-            cfg: { laps:10 } // Removed old sens property
+            cfg: { laps:10 } 
         };
 
         const vid = get('webcam');
         const cv = get('cv');
         const ctx = cv.getContext('2d', { willReadFrequently: true });
-        const aud = new (window.AudioContext || window.webkitAudioContext)();
 
-        // --- RECORDS SYSTEM ACTUALIZADO ---
-        function loadRecords() { return JSON.parse(localStorage.getItem('krono_recs') || '[]'); }
-        function saveRecord(name, car, time, speed) {
-            let recs = loadRecords();
-            let exist = recs.find(r => r.name === name);
-            const now = new Date();
-            const dateStr = now.toLocaleDateString();
-            const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-            if(exist) {
-                if(time < exist.time) { 
-                    exist.time = time; 
-                    exist.car = car; 
-                    exist.date = dateStr;
-                    exist.clock = timeStr;
-                    exist.speed = speed;
-                }
-            } else {
-                recs.push({name, car, time, date: dateStr, clock: timeStr, speed});
+        // --- TONE.JS SETUP ---
+        let synth, polySynth;
+        
+        async function initAudio() {
+            if(!synth) {
+                await Tone.start();
+                synth = new Tone.Synth().toDestination();
+                polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
+                // Ajustes de volumen
+                synth.volume.value = -5;
+                polySynth.volume.value = -5;
             }
-            recs.sort((a,b)=>a.time-b.time);
-            localStorage.setItem('krono_recs', JSON.stringify(recs));
         }
 
-        function showRecords() {
-            const list = get('records-list');
-            list.innerHTML = '';
-            const recs = loadRecords();
-            if(!recs.length) list.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:10px;">Sin récords</td></tr>';
-            else recs.forEach((r,i) => {
-                const spd = r.speed ? r.speed.toFixed(1) + ' km/h' : '-';
-                const d = r.date || '-';
-                const t = r.clock || '-';
-                list.innerHTML += `<tr>
-                    <td>${d}</td><td>${t}</td>
-                    <td style="color:white; font-weight:bold;">${r.name}</td>
-                    <td>${r.car}</td>
-                    <td class="text-y" style="text-align:right; font-family:Arial; font-weight:bold; font-size:14px;">${fmt(r.time)}</td>
-                    <td style="text-align:right;">${spd}</td>
-                </tr>`;
-            });
-            get('rec-modal').classList.add('show');
+        function playTone(note) {
+            if(synth) synth.triggerAttackRelease(note, "8n");
         }
 
-        function clearRecords() { 
-            if(confirm("¿Borrar historial?")) { 
-                localStorage.removeItem('krono_recs'); 
-                const list = get('records-list');
-                list.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:10px;">Sin récords</td></tr>';
-            } 
+        function previewTone(note) {
+            initAudio().then(() => playTone(note));
         }
 
-        // --- AUDIO ENGINE ---
-        function playTone(type) {
-            if(aud.state==='suspended') aud.resume();
-            const t = aud.currentTime;
+        async function playStartSequence() {
+            await initAudio();
+            // 5 Semáforos
+            for(let i=1; i<=5; i++) {
+                if(state.aborted) return;
+                get('l'+i).classList.add('red');
+                synth.triggerAttackRelease("C4", "8n"); // Nota Roja
+                await new Promise(r => setTimeout(r, 900));
+            }
+            if(state.aborted) return;
             
-            if(type === 'bell_h') { 
-               osc('sine', 800, 0.5, 0.8, t); osc('sine', 1600, 0.2, 0.6, t); 
-            } else if(type === 'bell_l') { 
-               osc('sine', 400, 0.5, 1.0, t); osc('sine', 800, 0.2, 0.8, t);
-            } else if(type === 'ding') { 
-               osc('sine', 800, 0.3, 0.1, t); osc('sine', 600, 0.5, 0.4, t+0.15);
-            } else { 
-               osc('square', 800, 0.1, 0.1, t);
+            // Random delay
+            await new Promise(r => setTimeout(r, Math.random()*1500 + 500));
+            if(state.aborted) return;
+
+            // Green Light
+            for(let i=1; i<=5; i++) { get('l'+i).classList.remove('red'); get('l'+i).classList.add('green'); }
+            // Acorde de salida (C5 Major)
+            polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n");
+            
+            startRaceLogic();
+        }
+
+        function playFalseStartSound() {
+            if(synth) {
+                const now = Tone.now();
+                synth.triggerAttackRelease("G3", "8n", now);
+                synth.triggerAttackRelease("G3", "8n", now + 0.2);
             }
         }
 
-        // NUEVO SONIDO: CAMPANA DE ALARMA FUERTE
-        function playLastLapBell() {
-            if(aud.state==='suspended') aud.resume();
-            const t = aud.currentTime;
-            // Golpe 1
-            osc('sine', 800, 0.8, 1.0, t);
-            osc('triangle', 800*2, 0.3, 1.0, t);
-            // Golpe 2
-            osc('sine', 800, 0.8, 1.5, t + 0.3);
-            osc('triangle', 800*2, 0.3, 1.5, t + 0.3);
+        function playLapSound(id) {
+            if(!synth) return;
+            const note = get('snd-p'+id).value;
+            synth.triggerAttackRelease(note, "16n");
         }
 
-        function testSound(val) { playTone(val); }
-
-        function osc(type, freq, vol, dur, t) {
-            const o = aud.createOscillator(); const g = aud.createGain();
-            o.type=type; o.frequency.value=freq; 
-            g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t+dur);
-            o.connect(g); g.connect(aud.destination); o.start(t); o.stop(t+dur);
+        function playBell() {
+            // Sonido de campana simulado (armónicos metálicos)
+            if(!polySynth) return;
+            polySynth.triggerAttackRelease(["C6", "E6"], "8n");
         }
 
-        function playStartSeq(i) {
-            if(aud.state==='suspended') aud.resume();
-            const t = aud.currentTime;
-            if(i<5) { osc('square', 300, 0.2, 0.15, t); } 
-            else { osc('sawtooth', 600, 0.5, 0.8, t); osc('sawtooth', 300, 0.5, 0.8, t); }
-        }
-
+        // --- TTS (Voz) ---
         function speak(txt) {
             if(get('voice-chk').checked && 'speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const u = new SpeechSynthesisUtterance(txt);
-                u.rate = 1.2; window.speechSynthesis.speak(u);
+                u.rate = 1.2; 
+                u.lang = 'es-ES';
+                window.speechSynthesis.speak(u);
             }
         }
 
-        window.onload = () => { setupDrag('roi1'); setupDrag('roi2'); updUI(); };
-
-        // --- CÁMARA ---
+        // --- CAMARA ---
         async function toggleCam() {
             const btn = get('btn-cam');
             if(!state.cam) {
                 try {
+                    await initAudio(); // Init audio context on user gesture
                     let stream;
                     try { stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
                     catch(e) { stream = await navigator.mediaDevices.getUserMedia({video:true}); }
+                    
                     vid.srcObject = stream;
                     vid.onloadedmetadata = () => {
                         vid.play();
                         cv.width = 320; cv.height = 240;
                         state.cam = true;
-                        vid.style.display='block';
-                        get('cam-msg').style.display='none';
-                        get('roi1').style.display='flex'; get('roi2').style.display='flex';
-                        btn.innerText = "APAGAR CÁMARA"; btn.classList.add('btn-neon-red');
+                        vid.classList.remove('hidden');
+                        get('cam-msg').classList.add('hidden');
+                        get('roi1').style.display='block'; get('roi2').style.display='block';
+                        
+                        btn.innerText = "APAGAR CÁMARA";
+                        btn.classList.replace('text-gold-500', 'text-red-500');
+                        btn.classList.replace('border-gold-800', 'border-red-900');
+                        
                         get('btn-start').disabled = false;
                         loop();
                     };
                 } catch(e) { alert("Error Cam: "+e); }
             } else {
                 if(vid.srcObject) vid.srcObject.getTracks().forEach(t=>t.stop());
-                state.cam = false; vid.style.display='none';
-                get('cam-msg').style.display='flex';
+                state.cam = false; 
+                vid.classList.add('hidden');
+                get('cam-msg').classList.remove('hidden');
                 get('roi1').style.display='none'; get('roi2').style.display='none';
-                btn.innerText = "ENCENDER CÁMARA"; btn.classList.remove('btn-neon-red');
+                
+                btn.innerText = "ENCENDER CÁMARA";
+                btn.classList.replace('text-red-500', 'text-gold-500');
+                btn.classList.replace('border-red-900', 'border-gold-800');
+                
                 get('btn-start').disabled = true;
             }
         }
@@ -641,306 +616,413 @@
             requestAnimationFrame(loop);
         }
 
+        // --- DETECCIÓN & AJUSTE UMBRAL ---
+        function adjSens(id, val) {
+            const el = get('in-sens-p'+id);
+            let n = parseInt(el.value) + val;
+            if(n<0) n=0; if(n>255) n=255;
+            el.value = n;
+            updSensUI(id);
+        }
+
+        function updSensUI(id) {
+            const v = get('in-sens-p'+id).value;
+            get('lbl-sens-p'+id).innerText = v;
+        }
+
         function check(id) {
             const roi = get('roi'+id);
             const l = parseFloat(roi.style.left)||20, t=parseFloat(roi.style.top)||40, w=parseFloat(roi.style.width)||15, h=parseFloat(roi.style.height)||15;
-            const rx = Math.floor((l/100)*cv.width), ry = Math.floor((t/100)*cv.height), rw = Math.floor((w/100)*cv.width), rh = Math.floor((h/100)*cv.height);
+            
+            const rx = Math.floor((l/100)*cv.width), ry = Math.floor((t/100)*cv.height);
+            const rw = Math.floor((w/100)*cv.width), rh = Math.floor((h/100)*cv.height);
+            
             if(rw<=0 || rh<=0) return;
+            
             const d = ctx.getImageData(rx, ry, rw, rh).data;
             let s=0, c=0;
             for(let i=0; i<d.length; i+=16) { s+=(d[i]+d[i+1]+d[i+2])/3; c++; }
             const avg = Math.floor(s/c);
+            
             set('val-p'+id, avg);
             
-            // --- MODIFICACIÓN: Leer el umbral específico de cada piloto ---
-            const sens = parseInt(get('in-sens-p'+id).value);
+            const umbral = parseInt(get('in-sens-p'+id).value);
             
-            if(avg < sens) {
+            if(avg < umbral) {
                 roi.classList.add('active');
-                
-                // --- LOGICA DE CARRERA ---
                 if(state.race && !state['p'+id].blk && !state['p'+id].fin) {
                     state['p'+id].blk = true; lap(id);
-                }
-                // --- LOGICA SALIDA NULA ---
-                else if(state.countdown && !state['p'+id].blk && !state.aborted) {
+                } else if(state.countdown && !state['p'+id].blk && !state.aborted) {
                     state['p'+id].blk = true;
                     triggerFalseStart(id);
                 }
-
             } else {
                 roi.classList.remove('active');
                 state['p'+id].blk = false;
             }
         }
 
-        function triggerFalseStart(id) {
-            state.aborted = true;
-            state.countdown = false;
-            
-            const name = get('in-p'+id+'-n').value;
-            
-            get('btn-start').disabled = false;
-            get('btn-start').innerText = "REINICIAR";
-            get('btn-start').classList.remove('btn-neon-red'); 
-            
-            [1,2,3,4,5].forEach(i => get('l'+i).className = 'bulb red');
-            
-            const timer = get('main-timer');
-            timer.style.color = 'var(--red)';
-            timer.innerText = "SALIDA NULA";
-            set('lap-counter', "CULPABLE: " + name);
-            get('lap-counter').style.color = 'var(--red)';
-
-            osc('sawtooth', 150, 0.5, 1.0, aud.currentTime);
-            speak(`Salida nula de ${name}. Vuelta a empezar.`);
-        }
-
-        async function toggleRace() {
+        // --- LÓGICA DE CARRERA ---
+        function toggleRace() {
             const btn = get('btn-start');
-            if(state.race) { 
-                stopRace(); 
-                btn.innerText="INICIAR"; 
-                btn.classList.remove('btn-neon-red'); 
+            if(state.race) {
+                stopRace();
+                btn.innerText = "INICIAR";
+                btn.classList.remove('text-red-400');
             } else {
-                state.aborted = false;
-                state.countdown = true;
-                
-                get('config').classList.remove('open');
-                btn.disabled=true; get('btn-reset').disabled=true;
-                
-                const lbs = [1,2,3,4,5].map(i=>get('l'+i));
-                lbs.forEach(l=>l.className='bulb');
-
-                get('main-timer').style.color = 'white';
-                get('main-timer').innerText = "00:00.00";
-                get('lap-counter').style.color = 'var(--gold)';
-                set('lap-counter', "PREPARADO");
-                
-                speak("Pilotos preparados");
-                
-                for(let i=0; i<5; i++) { 
-                    if(state.aborted) return; 
-                    lbs[i].className='bulb red'; playStartSeq(i);
-                    await new Promise(r=>setTimeout(r,900)); 
-                }
-                
-                if(state.aborted) return; 
-                await new Promise(r=>setTimeout(r, Math.random()*1000+500));
-                if(state.aborted) return; 
-                
-                state.countdown = false; 
-                state.race = true; 
-                state.start = Date.now();
-                resetData();
-                
-                lbs.forEach(l=>l.className='bulb green'); playStartSeq(5);
-                
-                state.timer = setInterval(()=>{
-                    set('main-timer', fmtTime(Date.now()-state.start));
-                },37);
-                btn.disabled=false; btn.innerText="PARAR"; btn.classList.add('btn-neon-red');
+                startCountdown();
             }
         }
 
+        async function startCountdown() {
+            state.aborted = false;
+            state.countdown = true;
+            get('config').classList.add('hidden'); // Close config
+            get('btn-start').disabled = true;
+            get('btn-reset').disabled = true;
+            
+            // Reset Lights
+            for(let i=1; i<=5; i++) get('l'+i).className = 'bulb';
+            
+            set('main-timer', "00:00.00");
+            set('lap-counter', "PREPARADO");
+            
+            speak("Pilotos a sus puestos");
+            await playStartSequence();
+        }
+
+        function startRaceLogic() {
+            state.countdown = false;
+            state.race = true;
+            state.start = Date.now();
+            resetData();
+            
+            state.timer = setInterval(()=>{
+                set('main-timer', fmtTime(Date.now()-state.start));
+            }, 37);
+            
+            const btn = get('btn-start');
+            btn.disabled = false;
+            btn.innerText = "PARAR";
+            btn.classList.add('text-red-400');
+        }
+
+        function triggerFalseStart(id) {
+            state.aborted = true;
+            state.countdown = false;
+            playFalseStartSound();
+            const name = get('in-p'+id+'-n').value;
+            set('main-timer', "SALIDA NULA");
+            set('lap-counter', "CULPABLE: "+name);
+            get('main-timer').style.color = '#ef4444';
+            
+            for(let i=1; i<=5; i++) { get('l'+i).className = 'bulb red'; }
+            
+            get('btn-start').disabled = false;
+            get('btn-start').innerText = "REINICIAR";
+            speak("Salida nula de " + name);
+        }
+
         function stopRace() {
-            state.race = false; clearInterval(state.timer);
-            get('btn-reset').disabled=false;
+            state.race = false;
+            clearInterval(state.timer);
+            get('btn-reset').disabled = false;
+        }
+
+        function resetRace() {
+            stopRace();
+            set('main-timer', "00:00.00");
+            get('main-timer').style.color = 'white';
+            set('lap-counter', "PREPARADO");
+            for(let i=1; i<=5; i++) get('l'+i).className = 'bulb';
+            
+            const btn = get('btn-start');
+            btn.innerText = "INICIAR";
+            btn.classList.remove('text-red-400');
+            resetData();
         }
 
         function lap(id) {
             const now = Date.now();
-            if(now - state['p'+id].last < 1500) return;
+            // Anti-bounce 2s
+            if(now - state['p'+id].last < 2000) return;
+            
             const t = now - state['p'+id].last;
             state['p'+id].last = now;
             state['p'+id].laps++;
             state['p'+id].h.push(t);
             
-            const lapSpeed = (25 / (t/1000)) * 3.6;
+            // Calc Speed (simple scale assumption)
+            const lapSpeed = (25 / (t/1000)) * 3.6; 
             saveRecord(state['p'+id].n, state['p'+id].c, t, lapSpeed);
 
+            playLapSound(id);
+
+            // Record?
             if(t < state['p'+id].best) {
                 state['p'+id].best = t;
                 const name = get(`in-p${id}-n`).value;
-                const txt = fmt(t);
-                speak(`Récord ${name}, ${txt}`);
-                
-                const ov = get('record-overlay');
-                get('rec-data').innerText = `${name} - ${txt}`;
-                ov.classList.add('show');
-                setTimeout(()=>ov.classList.remove('show'), 2000);
-            } 
-            
-            playTone(get('snd-p'+id).value);
+                speak(`Récord ${name}, ${fmt(t)}`);
+                showOverlay(`${name} - ${fmt(t)}`);
+            }
+
             updUI(); drawChart();
-            
+
+            // Check laps
             const max = parseInt(get('in-laps').value);
             if(max !== 9999) {
-                const remaining = max - state['p'+id].laps;
-                if(remaining === 5 && !state.flags.f5) {
+                const rem = max - state['p'+id].laps;
+                if(rem === 5 && !state.flags.f5) {
                     state.flags.f5 = true;
-                    speak("Últimas 5 vueltas");
+                    speak("Quedan 5 vueltas");
                 }
-                if(remaining === 1 && !state.flags.f1) {
+                if(rem === 1 && !state.flags.f1) {
                     state.flags.f1 = true;
-                    playLastLapBell(); // NUEVA CAMPANA
-                    speak("Última vuelta, gas a fondo");
+                    playBell();
+                    speak("Última vuelta");
                 }
-            }
-
-            if(max !== 9999 && state['p'+id].laps >= max) {
-                state['p'+id].fin = true;
-                state['p'+id].total = now - state.start;
-                const oid = id===1?2:1;
-                if(!state['p'+oid].fin) { 
-                    stopRace(); 
-                    speak(`Victoria para ${get(`in-p${id}-n`).value}`);
-                    showRes(id); 
+                if(state['p'+id].laps >= max) {
+                    finish(id, now);
                 }
             }
         }
 
-        function resetData() {
-            [1,2].forEach(id=>{ state['p'+id].laps=0; state['p'+id].best=999999; state['p'+id].h=[]; state['p'+id].last=state.start; state['p'+id].fin=false; });
-            state.flags = { f5: false, f1: false };
-            updUI(); drawChart();
-        }
-        function resetRace() {
-            stopRace(); set('main-timer', "00:00.00");
-            const btn = get('btn-start'); btn.innerText="INICIAR"; btn.classList.remove('btn-neon-red');
-            resetData();
+        function finish(id, now) {
+            state['p'+id].fin = true;
+            state['p'+id].total = now - state.start;
             
-            get('main-timer').style.color = 'white';
-            get('lap-counter').style.color = 'var(--gold)';
-            set('lap-counter', "PREPARADO");
-            [1,2,3,4,5].forEach(i=>get('l'+i).className='bulb');
+            // Si el otro ya acabó, o soy el primero
+            const oid = id===1?2:1;
+            if(!state['p'+oid].fin) {
+                stopRace();
+                const name = get(`in-p${id}-n`).value;
+                speak(`Victoria para ${name}`);
+                showRes(id);
+            }
         }
 
+        function showOverlay(txt) {
+            const ov = get('record-overlay');
+            get('rec-data').innerText = txt;
+            ov.classList.replace('opacity-0', 'opacity-100');
+            ov.classList.replace('scale-90', 'scale-100');
+            setTimeout(()=>{
+                ov.classList.replace('opacity-100', 'opacity-0');
+                ov.classList.replace('scale-100', 'scale-90');
+            }, 2500);
+        }
+
+        // --- UI UPDATES ---
         function updUI() {
             const max = get('in-laps').value;
             [1,2].forEach(id=>{
-                state['p'+id].n = get('in-p'+id+'-n').value;
-                state['p'+id].c = get('in-p'+id+'-c').value;
-                set('disp-p'+id+'-n', state['p'+id].n);
-                set('disp-p'+id+'-c', state['p'+id].c);
                 const p = state['p'+id];
+                p.n = get('in-p'+id+'-n').value;
+                p.c = get('in-p'+id+'-c').value;
+                
+                set('disp-p'+id+'-n', p.n);
+                set('disp-p'+id+'-c', p.c);
                 set('disp-p'+id+'-l', p.laps);
-                set('disp-p'+id+'-last', p.h.length?fmt(p.h[p.h.length-1]):"--.--");
-                set('disp-p'+id+'-best', p.best<999999?fmt(p.best):"--.--");
-                const total = p.h.length ? p.h.reduce((a,b)=>a+b,0) : 0;
-                set('disp-p'+id+'-tot', total ? fmtTime(total) : "00:00");
-
-                let spd = 0;
-                if(p.h.length > 0) {
-                    const lastLapMs = p.h[p.h.length-1];
-                    spd = (25 / (lastLapMs/1000)) * 3.6;
-                }
-                set('disp-p'+id+'-spd', spd > 0 ? spd.toFixed(1) + ' km/h' : '0 km/h');
+                
+                // Last lap
+                const last = p.h.length ? p.h[p.h.length-1] : 0;
+                set('disp-p'+id+'-last', last ? fmt(last) : "--.--");
+                
+                // Best
+                set('disp-p'+id+'-best', p.best<999999 ? fmt(p.best) : "--.--");
+                
+                // Total
+                const tot = p.h.reduce((a,b)=>a+b,0);
+                set('disp-p'+id+'-tot', tot ? fmtTime(tot) : "00:00");
+                
+                // Speed (simulada basada en last lap)
+                const spd = last ? ((25/(last/1000))*3.6).toFixed(1) : 0;
+                set('disp-p'+id+'-spd', spd+" km/h");
             });
+            
             const lead = Math.max(state.p1.laps, state.p2.laps);
             set('lap-counter', `VUELTA ${lead} / ${max==='9999'?'∞':max}`);
         }
 
-        // --- GRÁFICA DE COLUMNAS ---
+        // --- GRAFICA (GOLD) ---
         function drawChart() {
             const svg = get('chart-svg');
+            // Clear but keep grid
             svg.innerHTML = `
-                <line x1="0" y1="25" x2="100" y2="25" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
-                <line x1="0" y1="50" x2="100" y2="50" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
-                <line x1="0" y1="75" x2="100" y2="75" class="grid-line" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                <line x1="0" y1="25%" x2="100%" y2="25%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
+                <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
+                <line x1="0" y1="75%" x2="100%" y2="75%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
             `;
             
             const h1 = state.p1.h, h2 = state.p2.h;
             const len = Math.max(h1.length, h2.length);
             if(len === 0) return;
-            const maxT = Math.max(...h1, ...h2, 1000); 
             
-            set('chart-max', (maxT/1000).toFixed(1) + 's');
-            set('chart-mid', (maxT/2000).toFixed(1) + 's');
-
-            const barW = 40 / len; 
-
+            const maxT = Math.max(...h1, ...h2, 5000); // Min scale 5s
+            
+            set('chart-max', (maxT/1000).toFixed(1)+'s');
+            set('chart-mid', (maxT/2000).toFixed(1)+'s');
+            
+            const w = 100/len;
+            
             for(let i=0; i<len; i++) {
-                const x = (i / len) * 100;
+                const x = i * w;
+                // Bar P1 (Gold)
                 if(h1[i]) {
-                    const h = (h1[i]/maxT) * 90;
-                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                    rect.setAttribute("x", x + 2); rect.setAttribute("y", 100-h);
-                    rect.setAttribute("width", barW); rect.setAttribute("height", h);
-                    rect.setAttribute("fill", "var(--cyan)"); rect.setAttribute("opacity", "0.8");
-                    rect.setAttribute("rx", "1");
-                    svg.appendChild(rect);
+                    const h = (h1[i]/maxT)*100;
+                    const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    r.setAttribute("x", x+"%"); r.setAttribute("y", (100-h)+"%");
+                    r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
+                    r.setAttribute("fill", "#FFD700"); r.setAttribute("rx", "2");
+                    r.classList.add('chart-bar');
+                    svg.appendChild(r);
                 }
+                // Bar P2 (Bronze/Dark Gold)
                 if(h2[i]) {
-                    const h = (h2[i]/maxT) * 90;
-                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                    rect.setAttribute("x", x + 2 + barW + 1); rect.setAttribute("y", 100-h);
-                    rect.setAttribute("width", barW); rect.setAttribute("height", h);
-                    rect.setAttribute("fill", "var(--red)"); rect.setAttribute("opacity", "0.8");
-                    rect.setAttribute("rx", "1");
-                    svg.appendChild(rect);
+                    const h = (h2[i]/maxT)*100;
+                    const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    r.setAttribute("x", (x + w/2)+"%"); r.setAttribute("y", (100-h)+"%");
+                    r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
+                    r.setAttribute("fill", "#B8860B"); r.setAttribute("rx", "2");
+                    r.classList.add('chart-bar');
+                    svg.appendChild(r);
                 }
             }
         }
 
-        function showRes(wid) {
-            set('res-winner', get(`in-p${wid}-n`).value);
-            set('res-car', get(`in-p${wid}-c`).value);
-            const w = state['p'+wid];
-            set('res-total', fmtTime(w.total));
-            set('res-best', fmt(w.best));
-            const avg = w.h.length ? w.total/w.h.length : 0;
-            set('res-avg', fmt(avg));
+        // --- RECORDS LOCALSTORAGE ---
+        function saveRecord(name, car, time, speed) {
+            let recs = JSON.parse(localStorage.getItem('krono_dual_v2')||'[]');
+            // Solo top 10
+            const date = new Date().toLocaleDateString();
+            const hour = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
             
-            const avgSpd = w.total > 0 ? ((w.laps * 25) / (w.total/1000) * 3.6) : 0;
-            set('res-spd-avg', avgSpd.toFixed(1) + ' km/h');
+            // Check if better
+            recs.push({name, car, time, speed, date, hour});
+            recs.sort((a,b)=>a.time - b.time);
+            recs = recs.slice(0, 50); // Guardar ultimos 50
+            localStorage.setItem('krono_dual_v2', JSON.stringify(recs));
+        }
 
-            [1,2].forEach(id=>{
-                const tb = get('tb-p'+id); tb.innerHTML = '';
-                const best = state['p'+id].best;
-                state['p'+id].h.forEach((t,i)=>{
+        function showRecords() {
+            const tb = get('records-list');
+            tb.innerHTML = '';
+            const recs = JSON.parse(localStorage.getItem('krono_dual_v2')||'[]');
+            
+            if(recs.length===0) {
+                tb.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500 font-sans">Sin registros</td></tr>';
+            } else {
+                recs.forEach(r => {
                     const tr = document.createElement('tr');
-                    const isBest = t === best;
-                    const cls = isBest ? (id===1 ? 'best-lap-row' : 'best-lap-row p2-row') : '';
-                    tr.innerHTML = `<td>${i+1}</td><td style="text-align:right" class="${cls}">${fmt(t)}</td>`;
+                    tr.className = "border-b border-gray-800 hover:bg-gray-800/50";
+                    tr.innerHTML = `
+                        <td class="p-3 text-gold-300 font-sans">${r.date}</td>
+                        <td class="p-3 text-gold-500 font-bold font-sans">${r.name}</td>
+                        <td class="p-3 text-gray-400 font-sans">${r.car}</td>
+                        <td class="p-3 text-right text-white font-sans tabular-nums font-bold">${fmt(r.time)}</td>
+                        <td class="p-3 text-right font-sans tabular-nums text-gray-500">${r.speed.toFixed(1)}</td>
+                    `;
                     tb.appendChild(tr);
                 });
-            });
-            get('res-modal').classList.add('show');
-        }
-        function closeModal(id) { get(id).classList.remove('show'); }
-        function newRace() { closeModal('res-modal'); resetRace(); }
-        function toggleConfig() { get('config').classList.toggle('open'); }
-        function fmt(ms) { return (ms/1000).toFixed(2); }
-        function fmtTime(ms) {
-            let m=Math.floor(ms/60000), s=Math.floor((ms%60000)/1000), i=Math.floor((ms%1000)/10);
-            return (m<10?'0':'')+m+":"+(s<10?'0':'')+s+"."+(i<10?'0':'')+i;
+            }
+            get('rec-modal').classList.remove('hidden');
         }
 
+        function clearRecords() {
+            // Abrimos nuestro modal personalizado en lugar de usar confirm()
+            get('confirm-modal').classList.remove('hidden');
+        }
+
+        function performClear() {
+            localStorage.removeItem('krono_dual_v2');
+            showRecords(); // Actualiza la lista (ahora vacía)
+            closeModal('confirm-modal'); // Cierra el modal de confirmación
+        }
+
+        // --- MODALES & UTIL ---
+        function toggleConfig() { get('config').classList.toggle('hidden'); }
+        function closeModal(id) { get(id).classList.add('hidden'); }
+        function newRace() { closeModal('res-modal'); resetRace(); }
+        function showRes(wid) {
+            const w = state['p'+wid];
+            set('res-winner', w.n); set('res-car', w.c);
+            set('res-total', fmtTime(w.total));
+            set('res-best', fmt(w.best));
+            set('res-avg', w.h.length ? fmt(w.total/w.h.length) : "--.--");
+            // calc avg speed total
+            const avgS = w.total ? ((w.laps*25)/(w.total/1000)*3.6).toFixed(1) : 0;
+            set('res-spd-avg', avgS+" km/h");
+            
+            // Fill tables
+            [1,2].forEach(id=>{
+                const tb = get('tb-p'+id); tb.innerHTML='';
+                state['p'+id].h.forEach((t,i)=>{
+                    const best = t===state['p'+id].best;
+                    tb.innerHTML += `<tr class="${best?'bg-yellow-900/40 font-bold text-white':''}">
+                        <td class="p-2 border-b border-gray-800 font-sans">${i+1}</td>
+                        <td class="p-2 border-b border-gray-800 text-right font-sans tabular-nums">${fmt(t)}</td>
+                    </tr>`;
+                });
+            });
+            get('res-modal').classList.remove('hidden');
+        }
+        
+        function resetData() {
+            [1,2].forEach(id=>{
+                state['p'+id].laps=0; state['p'+id].h=[]; state['p'+id].best=999999;
+                state['p'+id].last=state.start; state['p'+id].fin=false; state['p'+id].blk=false;
+            });
+            state.flags = {f5:false, f1:false};
+            updUI(); drawChart();
+        }
+
+        // --- DRAG LOGIC ---
         function setupDrag(id) {
             const el = get(id);
-            const handle = el.querySelector('.handle');
+            const h = el.querySelector('.roi-handle');
             let m=null, s={};
+            
             const down = (e) => {
                 if(state.race) return;
-                e.preventDefault(); e.stopPropagation();
+                e.preventDefault();
                 el.setPointerCapture(e.pointerId);
-                m = (e.target === handle) ? 'size' : 'move';
+                m = (e.target === h) ? 'size' : 'move';
                 const r = el.getBoundingClientRect();
                 const p = el.parentElement.getBoundingClientRect();
-                s = { x:e.clientX, y:e.clientY, l:(el.offsetLeft/p.width)*100, t:(el.offsetTop/p.height)*100, w:(r.width/p.width)*100, h:(r.height/p.height)*100, pw:p.width, ph:p.height };
+                s = {
+                    x: e.clientX, y: e.clientY,
+                    l: (el.offsetLeft/p.width)*100, t: (el.offsetTop/p.height)*100,
+                    w: (r.width/p.width)*100, h: (r.height/p.height)*100,
+                    pw: p.width, ph: p.height
+                };
             };
             const move = (e) => {
                 if(!m) return;
                 e.preventDefault();
-                const dx = ((e.clientX - s.x) / s.pw) * 100;
-                const dy = ((e.clientY - s.y) / s.ph) * 100;
-                if(m === 'move') { el.style.left = Math.max(0, s.l+dx)+'%'; el.style.top = Math.max(0, s.t+dy)+'%'; }
-                else { el.style.width = Math.max(5, s.w+dx)+'%'; el.style.height = Math.max(5, s.h+dy)+'%'; }
+                const dx = ((e.clientX - s.x)/s.pw)*100;
+                const dy = ((e.clientY - s.y)/s.ph)*100;
+                
+                if(m==='move') {
+                    el.style.left = Math.max(0, Math.min(100-s.w, s.l+dx)) + '%';
+                    el.style.top = Math.max(0, Math.min(100-s.h, s.t+dy)) + '%';
+                } else {
+                    el.style.width = Math.max(5, s.w+dx) + '%';
+                    el.style.height = Math.max(5, s.h+dy) + '%';
+                }
             };
-            const up = (e) => { if(m) { m = null; el.releasePointerCapture(e.pointerId); } };
-            el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move); el.addEventListener('pointerup', up);
+            const up = (e) => { if(m){ m=null; el.releasePointerCapture(e.pointerId); }};
+            
+            el.addEventListener('pointerdown', down);
+            el.addEventListener('pointermove', move);
+            el.addEventListener('pointerup', up);
         }
+
+        // Inicializar Drag
+        window.onload = () => {
+            setupDrag('roi1');
+            setupDrag('roi2');
+            updUI();
+        };
     </script>
 </body>
 </html>

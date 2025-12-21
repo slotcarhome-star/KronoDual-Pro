@@ -3,93 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KronoDual - Acceso Oficial</title>
+    <title>KronoDual - Gold Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #0f172a; font-family: sans-serif; }
-        .glass-panel { 
-            background: rgba(30, 41, 59, 0.7); 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        body { 
+            background: linear-gradient(180deg, #000000 0%, #1c190b 50%, #383008 100%);
+            font-family: sans-serif; 
+            color: #fff;
         }
+
+        /* --- ESTILOS GOLD / ORO --- */
+        .gold-panel {
+            background: linear-gradient(145deg, #FFD700 0%, #FDB931 45%, #C2920C 55%, #FFD700 100%);
+            border: 1px solid #FFE5B4;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(255,255,255,0.4);
+            color: #3e2723; /* Marrón oscuro para contraste sobre oro */
+        }
+
+        .gold-text {
+            background: linear-gradient(180deg, #FFD700 0%, #FDB931 50%, #C2920C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .glass-panel { 
+            background: rgba(20, 20, 20, 0.8); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(253, 185, 49, 0.3); /* Borde dorado sutil */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-gold {
+            background: linear-gradient(180deg, #FFD700 0%, #d4af37 100%);
+            color: #2c1810;
+            border: 1px solid #fff;
+            transition: all 0.3s ease;
+        }
+        .btn-gold:hover {
+            background: linear-gradient(180deg, #fff 0%, #FFD700 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .input-gold {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #5c4d00;
+            color: #FDB931;
+            transition: all 0.3s;
+        }
+        .input-gold:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+            outline: none;
+        }
+
+        /* --- IMAGEN 9:16 (Instagram Story Style) --- */
+        .img-container {
+            width: 100%;
+            max-width: 240px;
+            margin: 0 auto 2.5rem auto;
+            position: relative;
+        }
+
+        .aspect-9-16 {
+            width: 100%;
+            aspect-ratio: 9 / 16;
+            object-fit: cover;
+            border-radius: 1rem;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+            border: 3px solid #d4af37;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
         #app-frame { width: 100vw; height: 100vh; border: none; display: none; background: white; }
+
+        /* Modal de Alerta */
+        #session-alert {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
     </style>
 </head>
-<body class="text-white min-h-screen overflow-y-auto">
+<body class="min-h-screen overflow-y-auto">
 
-    <!-- PANTALLA DE VENTA Y LOGIN -->
+    <!-- Modal de Sesión Duplicada -->
+    <div id="session-alert">
+        <div class="glass-panel p-8 rounded-2xl max-w-sm text-center border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+            <i class="fas fa-shield-alt text-4xl text-red-400 mb-4"></i>
+            <h3 class="text-xl font-bold text-white mb-2">Sesión Cerrada</h3>
+            <p class="text-sm text-gray-300 mb-6">Se ha detectado acceso desde otro dispositivo.</p>
+            <button onclick="location.reload()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <!-- PANTALLA PRINCIPAL -->
     <div id="auth-container" class="min-h-screen flex flex-col items-center justify-center p-4">
         
-        <!-- TÍTULO -->
+        <!-- TÍTULO GOLD -->
         <div class="text-center mb-6 mt-4">
-            <h1 class="text-3xl font-bold tracking-wider text-emerald-400">KRONO<span class="text-white">DUAL</span></h1>
-            <p class="text-gray-400 text-xs uppercase tracking-widest">Competición Profesional de Slot</p>
+            <h1 class="text-4xl font-black tracking-tighter gold-text uppercase drop-shadow-lg">KRONODUAL</h1>
+            <div class="h-1 w-24 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto mt-2"></div>
+            <p class="text-yellow-600/80 text-[10px] uppercase tracking-[0.4em] mt-2 font-bold">Gold Edition / Professional Slot</p>
         </div>
 
-        <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-
-            <!-- CAJA 1: INFORMACIÓN Y COMPRA -->
-            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-600 shadow-xl relative">
-                <div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl">INFO LICENCIA</div>
+        <!-- IMAGEN 9:16 VERTICAL -->
+        <div class="img-container">
+            <div class="aspect-9-16">
+                <!-- Busca la imagen 'kronoro.jpg' -->
+                <img id="user-image" src="kronoro.jpg" 
+                     alt="[KronoDual Gold]" 
+                     class="w-full h-full object-cover"
+                     onerror="this.style.display='none'; document.getElementById('placeholder').style.display='flex';">
                 
-                <h2 class="text-lg font-bold text-white mb-3"><i class="fas fa-stopwatch-20 text-emerald-400 mr-2"></i>Licencia Dual</h2>
-                
-                <p class="text-gray-300 text-sm mb-4 leading-relaxed">
-                    Software avanzado para gestión de dos pistas simultáneas. Por seguridad y soporte, requiere una licencia única.
-                </p>
+                <!-- Placeholder si no hay imagen -->
+                <div id="placeholder" class="flex flex-col items-center justify-center p-5 text-center text-yellow-700/50" style="display: none;">
+                    <i class="fas fa-trophy text-6xl mb-4 opacity-30"></i>
+                    <p class="text-xs font-bold uppercase tracking-widest text-yellow-500">kronoro.jpg</p>
+                </div>
+            </div>
+        </div>
 
-                <div class="bg-blue-900/20 rounded-lg p-4 border border-blue-500/20 mb-4">
-                    <p class="text-xs font-bold text-gray-400 uppercase mb-2 text-center">Pasos para activar:</p>
-                    <ul class="text-sm space-y-2 text-gray-300">
-                        <li class="flex items-center"><span class="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold mr-2">1</span> Solicita los datos de pago.</li>
-                        <li class="flex items-center"><span class="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold mr-2">2</span> Haz un Bizum de <strong>5€</strong>.</li>
-                        <li class="flex items-center"><span class="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold mr-2">3</span> Recibe tu Clave Personal.</li>
-                    </ul>
+        <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+
+            <!-- CAJA 1: INFORMACIÓN Y COMPRA (ESTILO ORO) -->
+            <div class="gold-panel rounded-3xl p-8 relative flex flex-col justify-between">
+                <div class="absolute -top-3 -right-3 bg-black text-yellow-400 text-[10px] font-bold px-3 py-1 rounded-full border border-yellow-500 shadow-xl">LICENCIA GOLD</div>
+                
+                <div>
+                    <h2 class="text-xl font-black mb-4 flex items-center text-amber-900">
+                        <i class="fas fa-crown mr-3 opacity-80"></i> ACCESO TOTAL
+                    </h2>
+                    
+                    <p class="text-amber-900/90 text-sm mb-6 leading-relaxed font-bold">
+                        Gestión dual de pistas de alto rendimiento. Máxima precisión y control absoluto.
+                    </p>
+
+                    <div class="bg-black/10 rounded-2xl p-5 border border-black/10 mb-6">
+                        <ul class="text-xs space-y-3 text-amber-950 font-black">
+                            <li class="flex items-center"><i class="fas fa-star mr-2 text-amber-800"></i> Solicita acceso vía Email</li>
+                            <li class="flex items-center"><i class="fas fa-star mr-2 text-amber-800"></i> Pago único de 10,00€</li>
+                            <li class="flex items-center"><i class="fas fa-star mr-2 text-amber-800"></i> Activación Vitalicia</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="text-center mb-4">
-                     <span class="text-2xl font-bold text-white">5,00€</span> <span class="text-xs text-gray-400">(Pago único)</span>
+                     <span class="text-3xl font-black text-amber-950">10,00€</span>
                 </div>
 
-                <a id="mail-link" href="#" class="block w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg text-center shadow transition border border-blue-400">
-                    <i class="fas fa-shopping-cart mr-2"></i> SOLICITAR LICENCIA (5€)
+                <a id="mail-link" href="#" class="block w-full bg-black hover:bg-neutral-900 text-yellow-400 font-black py-4 rounded-xl text-center shadow-2xl transition duration-300 transform hover:scale-[1.02] text-sm tracking-widest uppercase border border-yellow-600">
+                    <i class="fas fa-gem mr-2"></i> SOLICITAR AHORA
                 </a>
             </div>
 
-            <!-- CAJA 2: LOGIN -->
-            <div class="glass-panel rounded-2xl p-6 relative">
-                <div class="absolute top-0 left-0 bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-br">CLIENTES</div>
-                
-                <h2 class="text-lg font-bold text-white mb-4 mt-1"><i class="fas fa-key text-emerald-400 mr-2"></i>Acceso Seguro</h2>
+            <!-- CAJA 2: LOGIN (ESTILO CRISTAL OSCURO) -->
+            <div class="glass-panel rounded-3xl p-8 flex flex-col">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gold-text">
+                    <i class="fas fa-fingerprint mr-3"></i> AREA CLIENTE
+                </h2>
 
-                <form id="login-form" class="space-y-4">
+                <form id="login-form" class="space-y-6 flex-grow">
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tu Correo</label>
+                        <label class="block text-[10px] font-black text-yellow-600/80 uppercase mb-2 tracking-widest">Identificación</label>
                         <input type="email" id="login-email" required 
-                            class="w-full bg-slate-900 border border-slate-600 rounded p-3 focus:border-emerald-500 outline-none text-white text-sm"
-                            placeholder="nombre@email.com">
+                            class="w-full input-gold rounded-xl p-4 text-sm"
+                            placeholder="tu@email.com">
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tu Clave</label>
+                        <label class="block text-[10px] font-black text-yellow-600/80 uppercase mb-2 tracking-widest">Código de Activación</label>
                         <input type="text" id="code" required 
-                            class="w-full bg-slate-900 border border-slate-600 rounded p-3 focus:border-emerald-500 outline-none text-white text-center tracking-widest uppercase font-mono text-sm"
+                            class="w-full input-gold rounded-xl p-4 text-center tracking-[0.5em] uppercase font-mono text-sm"
                             placeholder="XXX-XXX">
                     </div>
                     
-                    <div id="msg-box" class="hidden p-2 rounded text-xs text-center font-bold"></div>
+                    <div id="msg-box" class="hidden p-3 rounded-xl text-xs text-center font-bold"></div>
 
-                    <button type="submit" id="btn-login" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center">
-                        ENTRAR AHORA <i class="fas fa-arrow-right ml-2"></i>
+                    <button type="submit" id="btn-login" class="btn-gold w-full font-black py-4 rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.2)] transition flex justify-center items-center text-sm tracking-widest uppercase">
+                        ENTRAR <i class="fas fa-chevron-right ml-3 text-xs"></i>
                     </button>
                 </form>
             </div>
         </div>
         
-        <p class="mt-8 text-[10px] text-gray-600 text-center max-w-lg">
-            Software original KronoDual. Todos los derechos reservados.<br>
-            Soporte: slotcarhome@gmail.com
+        <p class="mt-12 text-[9px] text-yellow-800/50 text-center max-w-lg uppercase tracking-[0.2em] font-medium">
+            KronoDual Gold v2.0 <span class="mx-2">|</span> slotcarhome@gmail.com
         </p>
     </div>
 
@@ -97,16 +209,16 @@
     <iframe id="app-frame" src="about:blank"></iframe>
     
     <!-- BOTÓN SALIR -->
-    <button onclick="logout()" id="logout-btn" class="hidden fixed bottom-6 right-6 bg-red-600 w-12 h-12 rounded-full shadow-lg z-[100] flex items-center justify-center text-white text-xl border-2 border-white/20 transition transform active:scale-90">
+    <button onclick="logout()" id="logout-btn" class="hidden fixed bottom-6 right-6 btn-gold w-14 h-14 rounded-full shadow-lg z-[100] flex items-center justify-center text-xl border-2 border-white transition transform active:scale-90">
         <i class="fas fa-power-off"></i>
     </button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        // Importamos herramientas de seguridad extra
-        import { getFirestore, collection, getDocs, query, where, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, where, updateDoc, doc, onSnapshot, setDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // TUS CLAVES REALES
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
           apiKey: "AIzaSyDW-2Yc4kvZJYbNOVeesPZWdRThYe0noUI",
           authDomain: "correo-95e58.firebaseapp.com",
@@ -117,31 +229,63 @@
           measurementId: "G-6DMG51VQ92"
         };
         
-        // DATOS DE KRONODUAL
         const ADMIN_EMAIL = "slotcarhome@gmail.com"; 
-        const APP_FILENAME = "kronodual.html"; // <--- Abre la app Dual
-        const APP_ID = "app_kronodual";        // <--- Cajón Dual
+        const APP_FILENAME = "kronodual.html"; 
+        const APP_ID = "app_kronodual";        
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
-        // --- LÓGICA DE SOLICITUD ---
-        const mailLink = document.getElementById('mail-link');
-        
-        // Texto genérico porque no hay input, pero claro para el usuario
-        const subject = "Solicitud Licencia KronoDual (5€)";
-        const body = "Hola Admin,%0D%0A%0D%0AMe interesa la licencia de KRONODUAL por 5 Euros.%0D%0APor favor, envíame el número para hacer el Bizum.%0D%0A(Mi correo es el remitente de este mensaje).";
-        
-        mailLink.href = `mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`;
+        const auth = getAuth(app);
 
-        // --- LOGIN SEGURO CON ANTI-COPIA ---
+        // Autenticación silenciosa para estadísticas y seguridad
+        signInAnonymously(auth).catch(err => console.warn("Modo local (sin auth remota):", err));
+        
+        const mailLink = document.getElementById('mail-link');
+        const emailInput = document.getElementById('login-email'); 
+        let unsubscribeSession = null;
+
+        // --- GENERADOR DE ID MANUAL (Anti-bloqueo local) ---
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        
+        // --- LÓGICA DE CORREO (10 EUROS) ---
+        function updateMailLink() {
+            const userEmail = emailInput.value || "[Mi Correo]";
+            const subject = "Interés Licencia KronoDual GOLD";
+            
+            // --- CAMBIO APLICADO: TEXTO EXACTO SOLICITADO ---
+            const body = `Hola, ${ADMIN_EMAIL},%0D%0A%0D%0AEstoy muy interesado en adquirir KRONODUAL por 10 Euros.%0D%0A%0D%0AMi correo de usuario es: ${userEmail}%0D%0A%0D%0AQuedo a la espera de sus instrucciones para realizar el pago.%0D%0AGracias.`;
+            
+            mailLink.href = `mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`;
+        }
+        
+        emailInput.addEventListener('input', updateMailLink);
+        updateMailLink(); 
+
+        // --- TRACKING DE CLICS ---
+        mailLink.addEventListener('click', async () => {
+            try {
+                const statsRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats');
+                await setDoc(statsRef, { 
+                    purchase_clicks: increment(1),
+                    last_click: new Date().toISOString()
+                }, { merge: true });
+            } catch (e) { console.warn("Tracking desactivado en local"); }
+        });
+
+        // --- LOGIN SEGURO TODOTERRENO ---
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('login-email').value.toLowerCase().trim();
+            const email = emailInput.value.toLowerCase().trim();
             const code = document.getElementById('code').value.trim();
             const btn = document.getElementById('btn-login');
             
-            btn.innerHTML = '...'; btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; btn.disabled = true;
+            document.getElementById('msg-box').classList.add('hidden');
 
             try {
                 const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), where("email", "==", email), where("code", "==", code));
@@ -154,42 +298,52 @@
                     if(userData.active === false) {
                         showMessage("⛔ Licencia desactivada.", "error");
                     } else {
-                        // SEGURIDAD: Generar ID de sesión único
-                        const sessionID = Math.random().toString(36).substring(2);
+                        const sessionID = generateUUID();
                         
-                        // Sobrescribir en la base de datos (echa al anterior)
-                        await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes', docSnap.id), {
-                            current_session: sessionID
-                        });
+                        try {
+                            await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes', docSnap.id), {
+                                current_session: sessionID,
+                                last_login: new Date().toISOString()
+                            });
 
-                        localStorage.setItem('session_' + APP_ID, sessionID);
-                        localStorage.setItem('doc_id_' + APP_ID, docSnap.id);
-                        startSecurityCheck(docSnap.id, sessionID);
-                        showApp();
+                            localStorage.setItem('session_' + APP_ID, sessionID);
+                            localStorage.setItem('doc_id_' + APP_ID, docSnap.id);
+                            
+                            startSecurityCheck(docSnap.id, sessionID);
+                            showApp();
+                        } catch (writeErr) {
+                            console.warn("Entrando en modo local sin bloqueo remoto.");
+                            localStorage.setItem('session_' + APP_ID, sessionID); 
+                            showApp();
+                        }
                     }
                 } else {
                     showMessage("❌ Datos incorrectos.", "error");
                 }
-            } catch (error) { console.error(error); showMessage("⚠️ Error de conexión.", "error"); }
-            btn.innerHTML = 'ENTRAR AHORA <i class="fas fa-arrow-right ml-2"></i>'; btn.disabled = false;
+            } catch (error) { 
+                console.error("Error Login:", error); 
+                showMessage("ERROR TÉCNICO: " + error.message, "error"); 
+            }
+            btn.innerHTML = 'ENTRAR <i class="fas fa-chevron-right ml-3 text-xs"></i>'; btn.disabled = false;
         });
 
-        // --- VIGILANTE DE SEGURIDAD (ANTI-COPIA) ---
+        // --- VIGILANTE DE SEGURIDAD ---
         function startSecurityCheck(docId, mySessionID) {
-            onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes', docId), (doc) => {
-                const data = doc.data();
-                // Si la sesión en la nube es distinta a la mía -> Me echan
-                if (data && data.current_session && data.current_session !== mySessionID) {
-                    alert("⚠️ ALERTA DE SEGURIDAD\n\nSe ha abierto esta cuenta en otro dispositivo.\nSe cerrará la sesión aquí.");
-                    logout();
-                }
-            });
+            if (unsubscribeSession) unsubscribeSession();
+            try {
+                unsubscribeSession = onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes', docId), (doc) => {
+                    const data = doc.data();
+                    if (data && data.current_session && data.current_session !== mySessionID) {
+                        forceLogout();
+                    }
+                }, (err) => console.warn("Monitor desconectado en local"));
+            } catch (e) { console.warn("Monitor no disponible"); }
         }
 
         function showMessage(text, type) {
             const box = document.getElementById('msg-box');
             box.textContent = text;
-            box.className = `p-2 rounded text-xs text-center font-bold border ${type === 'error' ? 'bg-red-900/50 text-red-200 border-red-500' : 'bg-green-900/50 text-green-200 border-green-500'}`;
+            box.className = `p-3 rounded-xl text-xs text-center font-bold border ${type === 'error' ? 'bg-red-900/50 text-red-200 border-red-500' : 'bg-yellow-900/50 text-yellow-200 border-yellow-500'}`;
             box.classList.remove('hidden');
         }
 
@@ -200,7 +354,15 @@
             document.getElementById('logout-btn').classList.remove('hidden');
         }
 
+        function forceLogout() {
+            document.getElementById('session-alert').style.display = 'flex';
+            localStorage.removeItem('session_' + APP_ID);
+            localStorage.removeItem('doc_id_' + APP_ID);
+            document.getElementById('app-frame').src = 'about:blank';
+        }
+
         window.logout = function() {
+            if (unsubscribeSession) unsubscribeSession();
             localStorage.removeItem('session_' + APP_ID);
             localStorage.removeItem('doc_id_' + APP_ID);
             location.reload();
@@ -210,10 +372,11 @@
         const savedSession = localStorage.getItem('session_' + APP_ID);
         
         if(savedDocId && savedSession) {
-            startSecurityCheck(savedDocId, savedSession);
             showApp();
+            startSecurityCheck(savedDocId, savedSession);
+        } else if (savedSession) {
+            window.logout();
         }
     </script>
 </body>
 </html>
-
