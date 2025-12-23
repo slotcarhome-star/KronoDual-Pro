@@ -395,7 +395,6 @@
                         <span class="text-[10px] text-gray-500 font-bold block">VEL. MEDIA</span>
                         <span class="text-lg font-bold text-white" id="res-spd-avg">0</span>
                     </div>
-                    <!-- FIX: AGREGADO EL DIV FALTANTE PARA TIEMPO MEDIO -->
                     <div class="bg-dark-800 p-2 rounded border border-gold-900/30">
                         <span class="text-[10px] text-gray-500 font-bold block">TIEMPO MEDIO</span>
                         <span class="text-lg font-arial font-bold text-white" id="res-avg">--.--</span>
@@ -659,6 +658,7 @@
             const btn = get('btn-start');
             if(state.race) {
                 stopRace();
+                saveSessionRecords(); // Guardar al parar manualmente
                 btn.innerText = "INICIAR";
                 btn.classList.remove('text-red-400');
             } else {
@@ -744,10 +744,6 @@
             state['p'+id].laps++;
             state['p'+id].h.push(t);
             
-            // Calc Speed (simple scale assumption)
-            const lapSpeed = (25 / (t/1000)) * 3.6; 
-            saveRecord(state['p'+id].n, state['p'+id].c, t, lapSpeed);
-
             playLapSound(id);
 
             // Record?
@@ -787,10 +783,24 @@
             const oid = id===1?2:1;
             if(!state['p'+oid].fin) {
                 stopRace();
+                saveSessionRecords(); // Guardar resultados al terminar la carrera
                 const name = get(`in-p${id}-n`).value;
                 speak(`Victoria para ${name}`);
                 showRes(id);
             }
+        }
+        
+        // --- GUARDADO DE RESULTADOS (SOLO AL FINAL) ---
+        function saveSessionRecords() {
+            [1,2].forEach(id => {
+                const p = state['p'+id];
+                // Solo guarda si ha dado vueltas y tiene un tiempo válido
+                if(p.h.length > 0 && p.best < 999999) {
+                     // Calcular velocidad de la MEJOR vuelta
+                     const bestSpd = (25 / (p.best/1000)) * 3.6;
+                     saveRecord(p.n, p.c, p.best, bestSpd);
+                }
+            });
         }
 
         function showOverlay(txt) {
