@@ -26,6 +26,7 @@
             <input type="password" id="admin-pass" class="w-full input-dark p-3 rounded-lg mb-4 text-center" placeholder="Contraseña">
             <button onclick="checkPass()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition">ENTRAR</button>
             <p id="login-msg" class="text-red-400 text-xs mt-3 hidden">Contraseña incorrecta</p>
+            <p id="auth-status" class="text-xs text-slate-500 mt-2">Conectando...</p>
         </div>
     </div>
 
@@ -104,6 +105,7 @@
         import { getFirestore, collection, addDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+        // ID Original de KronoDual y Precio 10€ (según tu archivo)
         const APP_ID = "app_kronodual";
         const PRECIO = "10€";
 
@@ -113,7 +115,8 @@
           projectId: "correo-95e58",
           storageBucket: "correo-95e58.firebasestorage.app",
           messagingSenderId: "977860532946",
-          appId: "1:977860532946:web:3738c6b7165201bce7ab0b"
+          appId: "1:977860532946:web:3738c6b7165201bce7ab0b",
+          measurementId: "G-6DMG51VQ92"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -123,17 +126,27 @@
         const BASE_URL = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
         const CLIENT_URL = `${BASE_URL}/index.html`; 
 
-        window.checkPass = async function() {
+        // --- SEGURIDAD AUTOMÁTICA ---
+        (async function initSecurity() {
+            try {
+                await signInAnonymously(auth);
+                document.getElementById('auth-status').textContent = "Conectado";
+                document.getElementById('auth-status').className = "text-xs text-green-500 mt-2 font-bold";
+            } catch(e) { 
+                console.error("Error Auth:", e); 
+                document.getElementById('auth-status').textContent = "Error Conexión: " + e.message;
+                document.getElementById('auth-status').className = "text-xs text-red-500 mt-2";
+            }
+        })();
+
+        window.checkPass = function() {
             if(document.getElementById('admin-pass').value === "admin123") {
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('main-panel').classList.remove('hidden');
                 
-                // IMPORTANTE: Aseguramos conexión antes de cargar datos
-                try {
-                    await signInAnonymously(auth);
-                    initStats();
-                    loadHistory();
-                } catch(e) { console.error("Error conexión admin", e); }
+                // Iniciamos escuchas tras el login
+                initStats();
+                loadHistory();
             } else {
                 document.getElementById('login-msg').classList.remove('hidden');
             }
@@ -142,20 +155,24 @@
         window.logout = function() { location.reload(); }
 
         function initStats() {
-            onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats'), (docSnap) => {
-                document.getElementById('clicks-counter').textContent = docSnap.data()?.purchase_clicks || 0;
-            });
+            try {
+                onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats'), (docSnap) => {
+                    document.getElementById('clicks-counter').textContent = docSnap.data()?.purchase_clicks || 0;
+                }, (error) => console.log("Esperando conexión stats..."));
+            } catch(e) {}
         }
 
         function loadHistory() {
-            onSnapshot(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), (snap) => {
-                const body = document.getElementById('history-body');
-                body.innerHTML = "";
-                snap.docs.forEach(d => {
-                    const data = d.data();
-                    body.innerHTML += `<tr><td>${data.email}</td><td class="font-mono text-yellow-500">${data.code}</td><td>${data.current_session?'Activo':'-'}</td></tr>`;
-                });
-            });
+            try {
+                onSnapshot(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), (snap) => {
+                    const body = document.getElementById('history-body');
+                    body.innerHTML = "";
+                    snap.docs.forEach(d => {
+                        const data = d.data();
+                        body.innerHTML += `<tr><td>${data.email}</td><td class="font-mono text-yellow-500">${data.code}</td><td>${data.current_session?'Activo':'-'}</td></tr>`;
+                    });
+                }, (error) => console.log("Esperando conexión historial..."));
+            } catch(e) {}
         }
 
         window.sendPaymentRequest = function() {
@@ -180,13 +197,22 @@
             for(let i=0; i<3; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
 
             try {
+                // Escritura segura gracias a signInAnonymously
                 await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'access_codes'), { email: email, code: code, active: true, createdAt: new Date().toISOString() });
+                
                 document.getElementById('display-code').textContent = code;
                 const subject = encodeURIComponent("Tu Licencia KronoDual GOLD - Activada");
                 const bodyText = `SlotCarHome le da las gracias por confiar en nuestro producto.%0D%0A%0D%0APago recibido correctamente. Aquí tienes tu acceso:%0D%0A%0D%0A📧 Usuario: ${email}%0D%0A🔑 CLAVE: ${code}%0D%0A%0D%0A👉 Entra aquí: ${CLIENT_URL}%0D%0A%0D%0AGracias por tu confianza!`;
                 document.getElementById('btn-send-delivery').href = `mailto:${email}?subject=${subject}&body=${bodyText}`;
                 document.getElementById('delivery-section').classList.remove('hidden');
-            } catch (error) { alert("Error: " + error.message); }
+                document.getElementById('status').innerText = "✅ Guardado correctamente";
+                document.getElementById('status').className = "text-center text-xs text-emerald-400 mt-2 font-bold";
+            } catch (error) { 
+                console.error(error);
+                alert("Error: " + error.message); 
+                document.getElementById('status').innerText = "❌ Error al guardar";
+                document.getElementById('status').className = "text-center text-xs text-red-400 mt-2 font-bold";
+            }
             btn.disabled = false; btn.innerHTML = '<i class="fas fa-cogs mr-1"></i> GUARDAR Y PREPARAR ENTREGA';
         }
     </script>
