@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONO DUAL V.2.2 Gold</title>
+    <title>KRONO DUAL V.1.0 Gold</title>
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -487,6 +487,10 @@
         let synth, polySynth;
         
         async function initAudio() {
+            if(typeof Tone === 'undefined') {
+                console.warn('Tone.js no cargado');
+                return;
+            }
             if(!synth) {
                 await Tone.start();
                 synth = new Tone.Synth().toDestination();
@@ -502,7 +506,7 @@
         }
 
         function previewTone(note) {
-            initAudio().then(() => playTone(note));
+            initAudio().then(() => playTone(note)).catch(e=>console.log(e));
         }
 
         async function playStartSequence() {
@@ -511,7 +515,7 @@
             for(let i=1; i<=5; i++) {
                 if(state.aborted) return;
                 get('l'+i).classList.add('red');
-                synth.triggerAttackRelease("C4", "8n"); // Nota Roja
+                if(synth) synth.triggerAttackRelease("C4", "8n"); // Nota Roja
                 await new Promise(r => setTimeout(r, 900));
             }
             if(state.aborted) return;
@@ -523,7 +527,7 @@
             // Green Light
             for(let i=1; i<=5; i++) { get('l'+i).classList.remove('red'); get('l'+i).classList.add('green'); }
             // Acorde de salida (C5 Major)
-            polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n");
+            if(polySynth) polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n");
             
             startRaceLogic();
         }
@@ -925,10 +929,11 @@
                 recs.forEach(r => {
                     const tr = document.createElement('tr');
                     tr.className = "border-b border-gray-800 hover:bg-gray-800/50";
-                    // MODIFICADO: Añadido span con r.hour
+                    // MODIFICADO: FIX robustez para records antiguos
+                    const h = r.hour ? r.hour : '';
                     tr.innerHTML = `
                         <td class="p-3 text-gold-300">
-                            ${r.date} <span class="text-[10px] text-gray-500 block">${r.hour}</span>
+                            ${r.date} <span class="text-[10px] text-gray-500 block">${h}</span>
                         </td>
                         <td class="p-3 text-gold-500 font-bold">${r.name}</td>
                         <td class="p-3 text-gray-400">${r.car}</td>
@@ -1035,7 +1040,7 @@
             updUI(); drawChart();
         }
 
-        // --- DRAG LOGIC ---
+        // --- DRAG LOGIC (ROBUST) ---
         function setupDrag(id) {
             const el = get(id);
             const h = el.querySelector('.roi-handle');
@@ -1044,10 +1049,21 @@
             const down = (e) => {
                 if(state.race) return;
                 e.preventDefault();
-                el.setPointerCapture(e.pointerId);
+                
+                // FIX: Protección contra errores de puntero
+                try {
+                    el.setPointerCapture(e.pointerId);
+                } catch(err) {
+                    console.log("Pointer capture failed silently", err);
+                }
+                
                 m = (e.target === h) ? 'size' : 'move';
                 const r = el.getBoundingClientRect();
                 const p = el.parentElement.getBoundingClientRect();
+                
+                // FIX: Protección contra división por cero
+                if(p.width === 0 || p.height === 0) return;
+
                 s = {
                     x: e.clientX, y: e.clientY,
                     l: (el.offsetLeft/p.width)*100, t: (el.offsetTop/p.height)*100,
@@ -1056,7 +1072,7 @@
                 };
             };
             const move = (e) => {
-                if(!m) return;
+                if(!m || !s.pw) return; // FIX: Check if drag started correctly
                 e.preventDefault();
                 const dx = ((e.clientX - s.x)/s.pw)*100;
                 const dy = ((e.clientY - s.y)/s.ph)*100;
@@ -1069,11 +1085,18 @@
                     el.style.height = Math.max(5, s.h+dy) + '%';
                 }
             };
-            const up = (e) => { if(m){ m=null; el.releasePointerCapture(e.pointerId); }};
+            const up = (e) => { 
+                if(m){ 
+                    m=null; 
+                    try { el.releasePointerCapture(e.pointerId); } catch(err){}
+                }
+            };
             
             el.addEventListener('pointerdown', down);
             el.addEventListener('pointermove', move);
             el.addEventListener('pointerup', up);
+            // Fallback para cancelar drag
+            el.addEventListener('pointercancel', up);
         }
 
         // Inicializar Drag
