@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONO DUAL V.1.0 Gold</title>
+    <title>KRONO DUAL V.1.0 Emergency</title>
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -143,7 +143,7 @@
             background: #111; color: #FFD700; border: 1px solid #B8860B;
             width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
             border-radius: 8px; font-weight: bold; cursor: pointer; 
-            font-size: 1.25rem; /* CORREGIDO: antes decía text-xl: */
+            font-size: 1.25rem; 
         }
         .btn-adj:active { background: #FFD700; color: #000; }
 
@@ -162,9 +162,16 @@
 </head>
 <body class="flex flex-col min-h-screen p-2 max-w-4xl mx-auto w-full font-arial">
 
-    <!-- ERROR HANDLER -->
+    <!-- ERROR HANDLER SAFEGUARDED -->
     <div id="err" class="hidden bg-red-900/80 border border-red-500 text-white p-2 text-center text-sm rounded mb-2"></div>
-    <script>window.onerror=function(m){const e=document.getElementById('err');e.classList.remove('hidden');e.innerHTML='ERROR: '+m;}</script>
+    <script>
+        window.onerror = function(m, s, l, c, e) {
+            console.error("Global Error Caught:", m);
+            // No mostramos el error al usuario para no interrumpir la experiencia visual, 
+            // a menos que sea crítico. El sistema intentará recuperarse.
+            return false;
+        }
+    </script>
 
     <!-- HEADER -->
     <header class="bg-black/60 backdrop-blur-xl border border-gold-900 rounded-xl p-3 shadow-gold flex flex-wrap justify-between items-center gap-3 mb-4 sticky top-0 z-40">
@@ -289,7 +296,7 @@
             </div>
         </div>
 
-        <!-- MODIFICADO: Aumentado de h-[25vh] a h-[35vh] para mejor aspecto sin scroll -->
+        <!-- CÁMARA GRANDE (h-35vh) -->
         <div class="relative w-full h-[35vh] bg-black rounded-lg overflow-hidden border-2 border-gold-900 shadow-inner">
             <div id="cam-msg" class="absolute inset-0 flex flex-col items-center justify-center text-gold-800">
                 <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -487,22 +494,20 @@
         let synth, polySynth;
         
         async function initAudio() {
-            if(typeof Tone === 'undefined') {
-                console.warn('Tone.js no cargado');
-                return;
-            }
-            if(!synth) {
-                await Tone.start();
-                synth = new Tone.Synth().toDestination();
-                polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
-                // Ajustes de volumen
-                synth.volume.value = -5;
-                polySynth.volume.value = -5;
-            }
+            try {
+                if(typeof Tone === 'undefined') return;
+                if(!synth) {
+                    await Tone.start();
+                    synth = new Tone.Synth().toDestination();
+                    polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
+                    synth.volume.value = -5;
+                    polySynth.volume.value = -5;
+                }
+            } catch(e) { console.warn("Audio init fail", e); }
         }
 
         function playTone(note) {
-            if(synth) synth.triggerAttackRelease(note, "8n");
+            try { if(synth) synth.triggerAttackRelease(note, "8n"); } catch(e){}
         }
 
         function previewTone(note) {
@@ -515,52 +520,56 @@
             for(let i=1; i<=5; i++) {
                 if(state.aborted) return;
                 get('l'+i).classList.add('red');
-                if(synth) synth.triggerAttackRelease("C4", "8n"); // Nota Roja
+                try { if(synth) synth.triggerAttackRelease("C4", "8n"); } catch(e){}
                 await new Promise(r => setTimeout(r, 900));
             }
             if(state.aborted) return;
             
-            // Random delay
             await new Promise(r => setTimeout(r, Math.random()*1500 + 500));
             if(state.aborted) return;
 
-            // Green Light
             for(let i=1; i<=5; i++) { get('l'+i).classList.remove('red'); get('l'+i).classList.add('green'); }
-            // Acorde de salida (C5 Major)
-            if(polySynth) polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n");
+            try { if(polySynth) polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n"); } catch(e){}
             
             startRaceLogic();
         }
 
         function playFalseStartSound() {
-            if(synth) {
-                const now = Tone.now();
-                synth.triggerAttackRelease("G3", "8n", now);
-                synth.triggerAttackRelease("G3", "8n", now + 0.2);
-            }
+            try {
+                if(synth) {
+                    const now = Tone.now();
+                    synth.triggerAttackRelease("G3", "8n", now);
+                    synth.triggerAttackRelease("G3", "8n", now + 0.2);
+                }
+            } catch(e){}
         }
 
         function playLapSound(id) {
-            if(!synth) return;
-            const note = get('snd-p'+id).value;
-            synth.triggerAttackRelease(note, "16n");
+            try {
+                if(!synth) return;
+                const note = get('snd-p'+id).value;
+                synth.triggerAttackRelease(note, "16n");
+            } catch(e){}
         }
 
         function playBell() {
-            // Sonido de campana simulado (armónicos metálicos)
-            if(!polySynth) return;
-            polySynth.triggerAttackRelease(["C6", "E6"], "8n");
+            try {
+                if(!polySynth) return;
+                polySynth.triggerAttackRelease(["C6", "E6"], "8n");
+            } catch(e){}
         }
 
         // --- TTS (Voz) ---
         function speak(txt) {
-            if(get('voice-chk').checked && 'speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(txt);
-                u.rate = 1.2; 
-                u.lang = 'es-ES';
-                window.speechSynthesis.speak(u);
-            }
+            try {
+                if(get('voice-chk').checked && 'speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const u = new SpeechSynthesisUtterance(txt);
+                    u.rate = 1.2; 
+                    u.lang = 'es-ES';
+                    window.speechSynthesis.speak(u);
+                }
+            } catch(e){}
         }
 
         // --- CAMARA ---
@@ -568,7 +577,7 @@
             const btn = get('btn-cam');
             if(!state.cam) {
                 try {
-                    await initAudio(); // Init audio context on user gesture
+                    await initAudio(); 
                     let stream;
                     try { stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
                     catch(e) { stream = await navigator.mediaDevices.getUserMedia({video:true}); }
@@ -607,8 +616,13 @@
 
         function loop() {
             if(!state.cam) return;
-            ctx.drawImage(vid, 0, 0, cv.width, cv.height);
-            check(1); check(2);
+            // CRITICAL SAFEGUARD: Try-catch to prevent crash loops
+            try {
+                ctx.drawImage(vid, 0, 0, cv.width, cv.height);
+                check(1); check(2);
+            } catch(e) {
+                console.warn("Loop error recovered", e);
+            }
             requestAnimationFrame(loop);
         }
 
@@ -628,6 +642,7 @@
 
         function check(id) {
             const roi = get('roi'+id);
+            // Lógica Original Robusta (V2.1)
             const l = parseFloat(roi.style.left)||20, t=parseFloat(roi.style.top)||40, w=parseFloat(roi.style.width)||15, h=parseFloat(roi.style.height)||15;
             
             const rx = Math.floor((l/100)*cv.width), ry = Math.floor((t/100)*cv.height);
@@ -635,6 +650,9 @@
             
             if(rw<=0 || rh<=0) return;
             
+            // Protección básica de límites
+            if(rx < 0 || ry < 0 || rx+rw > cv.width || ry+rh > cv.height) return;
+
             const d = ctx.getImageData(rx, ry, rw, rh).data;
             let s=0, c=0;
             for(let i=0; i<d.length; i+=16) { s+=(d[i]+d[i+1]+d[i+2])/3; c++; }
@@ -663,7 +681,7 @@
             const btn = get('btn-start');
             if(state.race) {
                 stopRace();
-                saveSessionRecords(); // Guardar al parar manualmente
+                saveSessionRecords();
                 btn.innerText = "INICIAR";
                 btn.classList.remove('text-red-400');
             } else {
@@ -674,11 +692,10 @@
         async function startCountdown() {
             state.aborted = false;
             state.countdown = true;
-            get('config').classList.add('hidden'); // Close config
+            get('config').classList.add('hidden');
             get('btn-start').disabled = true;
             get('btn-reset').disabled = true;
             
-            // Reset Lights
             for(let i=1; i<=5; i++) get('l'+i).className = 'bulb';
             
             set('main-timer', "00:00.00");
@@ -740,43 +757,50 @@
         }
 
         function lap(id) {
-            const now = Date.now();
-            // Anti-bounce 2s
-            if(now - state['p'+id].last < 2000) return;
-            
-            const t = now - state['p'+id].last;
-            state['p'+id].last = now;
-            state['p'+id].laps++;
-            state['p'+id].h.push(t);
-            
-            playLapSound(id);
+            // CRITICAL SAFEGUARD: Wrap lap logic so it never freezes the ROI
+            try {
+                const now = Date.now();
+                // Anti-bounce 2000ms
+                if(now - state['p'+id].last < 2000) return;
+                
+                const t = now - state['p'+id].last;
+                state['p'+id].last = now;
+                state['p'+id].laps++;
+                state['p'+id].h.push(t);
+                
+                playLapSound(id);
 
-            // Record?
-            if(t < state['p'+id].best) {
-                state['p'+id].best = t;
-                const name = get(`in-p${id}-n`).value;
-                speak(`Récord ${name}, ${fmt(t)}`);
-                showOverlay(`${name} - ${fmt(t)}`);
-            }
+                // Record?
+                if(t < state['p'+id].best) {
+                    state['p'+id].best = t;
+                    const name = get(`in-p${id}-n`).value;
+                    speak(`Récord ${name}, ${fmt(t)}`);
+                    showOverlay(`${name} - ${fmt(t)}`);
+                }
 
-            updUI(); drawChart();
+                updUI(); 
+                drawChart();
 
-            // Check laps
-            const max = parseInt(get('in-laps').value);
-            if(max !== 9999) {
-                const rem = max - state['p'+id].laps;
-                if(rem === 5 && !state.flags.f5) {
-                    state.flags.f5 = true;
-                    speak("Quedan 5 vueltas");
+                // Check laps
+                const max = parseInt(get('in-laps').value);
+                if(max !== 9999) {
+                    const rem = max - state['p'+id].laps;
+                    if(rem === 5 && !state.flags.f5) {
+                        state.flags.f5 = true;
+                        speak("Quedan 5 vueltas");
+                    }
+                    if(rem === 1 && !state.flags.f1) {
+                        state.flags.f1 = true;
+                        playBell();
+                        speak("Última vuelta");
+                    }
+                    if(state['p'+id].laps >= max) {
+                        finish(id, now);
+                    }
                 }
-                if(rem === 1 && !state.flags.f1) {
-                    state.flags.f1 = true;
-                    playBell();
-                    speak("Última vuelta");
-                }
-                if(state['p'+id].laps >= max) {
-                    finish(id, now);
-                }
+            } catch(e) {
+                console.error("Lap Error:", e);
+                // Si falla, asegurarse de que no bloquea
             }
         }
 
@@ -784,24 +808,20 @@
             state['p'+id].fin = true;
             state['p'+id].total = now - state.start;
             
-            // Si el otro ya acabó, o soy el primero
             const oid = id===1?2:1;
             if(!state['p'+oid].fin) {
                 stopRace();
-                saveSessionRecords(); // Guardar resultados al terminar la carrera
+                saveSessionRecords();
                 const name = get(`in-p${id}-n`).value;
                 speak(`Victoria para ${name}`);
                 showRes(id);
             }
         }
         
-        // --- GUARDADO DE RESULTADOS (SOLO AL FINAL) ---
         function saveSessionRecords() {
             [1,2].forEach(id => {
                 const p = state['p'+id];
-                // Solo guarda si ha dado vueltas y tiene un tiempo válido
                 if(p.h.length > 0 && p.best < 999999) {
-                     // Calcular velocidad de la MEJOR vuelta
                      const bestSpd = (25 / (p.best/1000)) * 3.6;
                      saveRecord(p.n, p.c, p.best, bestSpd);
                 }
@@ -819,82 +839,79 @@
             }, 2500);
         }
 
-        // --- UI UPDATES ---
         function updUI() {
-            const max = get('in-laps').value;
-            [1,2].forEach(id=>{
-                const p = state['p'+id];
-                p.n = get('in-p'+id+'-n').value;
-                p.c = get('in-p'+id+'-c').value;
+            try {
+                const max = get('in-laps').value;
+                [1,2].forEach(id=>{
+                    const p = state['p'+id];
+                    p.n = get('in-p'+id+'-n').value;
+                    p.c = get('in-p'+id+'-c').value;
+                    
+                    set('disp-p'+id+'-n', p.n);
+                    set('disp-p'+id+'-c', p.c);
+                    set('disp-p'+id+'-l', p.laps);
+                    
+                    const last = p.h.length ? p.h[p.h.length-1] : 0;
+                    set('disp-p'+id+'-last', last ? fmt(last) : "--.--");
+                    
+                    set('disp-p'+id+'-best', p.best<999999 ? fmt(p.best) : "--.--");
+                    
+                    const tot = p.h.reduce((a,b)=>a+b,0);
+                    set('disp-p'+id+'-tot', tot ? fmtTime(tot) : "00:00");
+                    
+                    const spd = last ? ((25/(last/1000))*3.6).toFixed(1) : 0;
+                    set('disp-p'+id+'-spd', spd+" km/h");
+                });
                 
-                set('disp-p'+id+'-n', p.n);
-                set('disp-p'+id+'-c', p.c);
-                set('disp-p'+id+'-l', p.laps);
-                
-                // Last lap
-                const last = p.h.length ? p.h[p.h.length-1] : 0;
-                set('disp-p'+id+'-last', last ? fmt(last) : "--.--");
-                
-                // Best
-                set('disp-p'+id+'-best', p.best<999999 ? fmt(p.best) : "--.--");
-                
-                // Total
-                const tot = p.h.reduce((a,b)=>a+b,0);
-                set('disp-p'+id+'-tot', tot ? fmtTime(tot) : "00:00");
-                
-                // Speed (simulada basada en last lap)
-                const spd = last ? ((25/(last/1000))*3.6).toFixed(1) : 0;
-                set('disp-p'+id+'-spd', spd+" km/h");
-            });
-            
-            const lead = Math.max(state.p1.laps, state.p2.laps);
-            set('lap-counter', `VUELTA ${lead} / ${max==='9999'?'∞':max}`);
+                const lead = Math.max(state.p1.laps, state.p2.laps);
+                set('lap-counter', `VUELTA ${lead} / ${max==='9999'?'∞':max}`);
+            } catch(e) { console.warn("UI update error", e); }
         }
 
-        // --- GRAFICA (GOLD) ---
         function drawChart() {
-            const svg = get('chart-svg');
-            // Clear but keep grid
-            svg.innerHTML = `
-                <line x1="0" y1="25%" x2="100%" y2="25%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-                <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-                <line x1="0" y1="75%" x2="100%" y2="75%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-            `;
-            
-            const h1 = state.p1.h, h2 = state.p2.h;
-            const len = Math.max(h1.length, h2.length);
-            if(len === 0) return;
-            
-            const maxT = Math.max(...h1, ...h2, 5000); // Min scale 5s
-            
-            set('chart-max', (maxT/1000).toFixed(1)+'s');
-            set('chart-mid', (maxT/2000).toFixed(1)+'s');
-            
-            const w = 100/len;
-            
-            for(let i=0; i<len; i++) {
-                const x = i * w;
-                // Bar P1 (Gold)
-                if(h1[i]) {
-                    const h = (h1[i]/maxT)*100;
-                    const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                    r.setAttribute("x", x+"%"); r.setAttribute("y", (100-h)+"%");
-                    r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
-                    r.setAttribute("fill", "#FFD700"); r.setAttribute("rx", "2");
-                    r.classList.add('chart-bar');
-                    svg.appendChild(r);
+            try {
+                const svg = get('chart-svg');
+                svg.innerHTML = `
+                    <line x1="0" y1="25%" x2="100%" y2="25%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
+                    <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
+                    <line x1="0" y1="75%" x2="100%" y2="75%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
+                `;
+                
+                const h1 = state.p1.h, h2 = state.p2.h;
+                const len = Math.max(h1.length, h2.length);
+                if(len === 0) return;
+                
+                // Spread safe
+                const times = [...h1, ...h2, 5000];
+                const maxT = Math.max(...times);
+                
+                set('chart-max', (maxT/1000).toFixed(1)+'s');
+                set('chart-mid', (maxT/2000).toFixed(1)+'s');
+                
+                const w = 100/len;
+                
+                for(let i=0; i<len; i++) {
+                    const x = i * w;
+                    if(h1[i]) {
+                        const h = (h1[i]/maxT)*100;
+                        const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                        r.setAttribute("x", x+"%"); r.setAttribute("y", (100-h)+"%");
+                        r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
+                        r.setAttribute("fill", "#FFD700"); r.setAttribute("rx", "2");
+                        r.classList.add('chart-bar');
+                        svg.appendChild(r);
+                    }
+                    if(h2[i]) {
+                        const h = (h2[i]/maxT)*100;
+                        const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                        r.setAttribute("x", (x + w/2)+"%"); r.setAttribute("y", (100-h)+"%");
+                        r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
+                        r.setAttribute("fill", "#B8860B"); r.setAttribute("rx", "2");
+                        r.classList.add('chart-bar');
+                        svg.appendChild(r);
+                    }
                 }
-                // Bar P2 (Bronze/Dark Gold)
-                if(h2[i]) {
-                    const h = (h2[i]/maxT)*100;
-                    const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                    r.setAttribute("x", (x + w/2)+"%"); r.setAttribute("y", (100-h)+"%");
-                    r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
-                    r.setAttribute("fill", "#B8860B"); r.setAttribute("rx", "2");
-                    r.classList.add('chart-bar');
-                    svg.appendChild(r);
-                }
-            }
+            } catch(e) { console.warn("Chart error", e); }
         }
 
         // --- RECORDS LOCALSTORAGE ---
@@ -904,14 +921,12 @@
                 recs = JSON.parse(localStorage.getItem('krono_dual_v2') || '[]');
             } catch(e) { recs = []; }
             
-            // Solo top 10
             const date = new Date().toLocaleDateString();
             const hour = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
             
-            // Check if better
             recs.push({name, car, time, speed, date, hour});
             recs.sort((a,b)=>a.time - b.time);
-            recs = recs.slice(0, 50); // Guardar ultimos 50
+            recs = recs.slice(0, 50); 
             localStorage.setItem('krono_dual_v2', JSON.stringify(recs));
         }
 
@@ -929,7 +944,6 @@
                 recs.forEach(r => {
                     const tr = document.createElement('tr');
                     tr.className = "border-b border-gray-800 hover:bg-gray-800/50";
-                    // MODIFICADO: FIX robustez para records antiguos
                     const h = r.hour ? r.hour : '';
                     tr.innerHTML = `
                         <td class="p-3 text-gold-300">
@@ -943,13 +957,10 @@
                     tb.appendChild(tr);
                 });
             }
-            // Reset button state based on deleteConfirm global var
             const btn = get('btn-del-rec');
-            if(btn) {
-                if(!deleteConfirm) {
-                    btn.innerText = "BORRAR HISTORIAL";
-                    btn.className = "text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase";
-                }
+            if(btn && !deleteConfirm) {
+                btn.innerText = "BORRAR HISTORIAL";
+                btn.className = "text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase";
             }
             get('rec-modal').classList.remove('hidden');
         }
@@ -959,29 +970,19 @@
 
         function tryClearRecords(btn) {
             if (!deleteConfirm) {
-                // Primer click: Pedir confirmación
                 deleteConfirm = true;
                 btn.innerText = "¿ESTÁS SEGURO?";
                 btn.className = "text-white bg-red-600 px-2 py-1 rounded text-xs font-bold uppercase animate-pulse";
-                
                 clearTimer = setTimeout(() => {
                     deleteConfirm = false;
                     btn.innerText = "BORRAR HISTORIAL";
                     btn.className = "text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase";
                 }, 3000);
             } else {
-                // Segundo click: Confirmado
                 clearTimeout(clearTimer);
                 deleteConfirm = false;
-                
-                // FIX CRITICO: Remover explicitamente el item
-                try {
-                    localStorage.removeItem('krono_dual_v2');
-                } catch(e) { console.error(e); }
-                
+                try { localStorage.removeItem('krono_dual_v2'); } catch(e) {}
                 showRecords();
-                
-                // Restaurar boton
                 btn.innerText = "HISTORIAL BORRADO";
                 btn.className = "text-green-500 text-xs font-bold uppercase";
                 setTimeout(()=>{
@@ -991,12 +992,11 @@
             }
         }
         
-        // --- MODALES & UTIL ---
         function toggleConfig() { get('config').classList.toggle('hidden'); }
         function closeModal(id) { 
             get(id).classList.add('hidden'); 
             if(id === 'rec-modal') {
-                deleteConfirm = false; // Resetear estado al cerrar
+                deleteConfirm = false; 
                 clearTimeout(clearTimer);
             }
         }
@@ -1008,16 +1008,13 @@
             set('res-total', fmtTime(w.total));
             set('res-best', fmt(w.best));
             
-            // FIX: AGREGADO CALCULO Y MOSTRADO DE TIEMPO MEDIO
             const avg = w.h.length ? (w.total/w.h.length) : 0;
             const elAvg = get('res-avg');
             if(elAvg) elAvg.innerText = fmt(avg);
 
-            // calc avg speed total
             const avgS = w.total ? ((w.laps*25)/(w.total/1000)*3.6).toFixed(1) : 0;
             set('res-spd-avg', avgS+" km/h");
             
-            // Fill tables
             [1,2].forEach(id=>{
                 const tb = get('tb-p'+id); tb.innerHTML='';
                 state['p'+id].h.forEach((t,i)=>{
@@ -1040,7 +1037,7 @@
             updUI(); drawChart();
         }
 
-        // --- DRAG LOGIC (ROBUST) ---
+        // --- DRAG LOGIC (V2.1 ORIGINAL) ---
         function setupDrag(id) {
             const el = get(id);
             const h = el.querySelector('.roi-handle');
@@ -1049,21 +1046,10 @@
             const down = (e) => {
                 if(state.race) return;
                 e.preventDefault();
-                
-                // FIX: Protección contra errores de puntero
-                try {
-                    el.setPointerCapture(e.pointerId);
-                } catch(err) {
-                    console.log("Pointer capture failed silently", err);
-                }
-                
+                try { el.setPointerCapture(e.pointerId); } catch(e){}
                 m = (e.target === h) ? 'size' : 'move';
                 const r = el.getBoundingClientRect();
                 const p = el.parentElement.getBoundingClientRect();
-                
-                // FIX: Protección contra división por cero
-                if(p.width === 0 || p.height === 0) return;
-
                 s = {
                     x: e.clientX, y: e.clientY,
                     l: (el.offsetLeft/p.width)*100, t: (el.offsetTop/p.height)*100,
@@ -1072,7 +1058,7 @@
                 };
             };
             const move = (e) => {
-                if(!m || !s.pw) return; // FIX: Check if drag started correctly
+                if(!m) return;
                 e.preventDefault();
                 const dx = ((e.clientX - s.x)/s.pw)*100;
                 const dy = ((e.clientY - s.y)/s.ph)*100;
@@ -1086,20 +1072,14 @@
                 }
             };
             const up = (e) => { 
-                if(m){ 
-                    m=null; 
-                    try { el.releasePointerCapture(e.pointerId); } catch(err){}
-                }
+                if(m){ m=null; try { el.releasePointerCapture(e.pointerId); } catch(e){} }
             };
             
             el.addEventListener('pointerdown', down);
             el.addEventListener('pointermove', move);
             el.addEventListener('pointerup', up);
-            // Fallback para cancelar drag
-            el.addEventListener('pointercancel', up);
         }
 
-        // Inicializar Drag
         window.onload = () => {
             setupDrag('roi1');
             setupDrag('roi2');
