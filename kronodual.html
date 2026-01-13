@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONO DUAL V.1.02</title>
+    <title>KRONO DUAL V.2.6 SmartStart</title>
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -13,15 +13,21 @@
     <!-- Tone.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
-    <!-- Firebase (boilerplate standard) -->
+    <!-- Firebase (Safe Boilerplate) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        if (Object.keys(firebaseConfig).length > 0) {
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            signInAnonymously(auth).catch(() => {});
+        
+        try {
+            const configStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+            if (configStr) {
+                const firebaseConfig = JSON.parse(configStr);
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                signInAnonymously(auth).catch(console.error);
+            }
+        } catch (e) {
+            console.log("Modo offline/local activo");
         }
     </script>
 
@@ -47,6 +53,7 @@
                     },
                     fontFamily: {
                         arial: ['Arial', 'Helvetica', 'sans-serif'],
+                        mono: ['Courier New', 'Courier', 'monospace'] // Para el boot screen
                     },
                     boxShadow: {
                         'gold': '0 0 15px rgba(255, 215, 0, 0.3)',
@@ -68,11 +75,31 @@
             -webkit-user-select: none;
             overscroll-behavior: none;
             font-family: 'Arial', sans-serif;
+            overflow-x: hidden; /* Prevenir scroll horizontal accidental */
         }
 
         /* Efectos Neón Gold */
         .neon-text-g { text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); }
         .neon-border-g { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.1); border-color: #FFD700; }
+        
+        /* Boton Exportar Neon Extra (Estilizado y más pequeño) */
+        .btn-neon-export {
+            background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+            border: 1px solid #FFD700;
+            color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 0.7rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-neon-export:hover {
+            background: #FFD700;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            transform: scale(1.02);
+        }
 
         /* Semáforo */
         .bulb {
@@ -93,14 +120,11 @@
             touch-action: none;
             box-sizing: border-box; 
             background: rgba(255, 215, 0, 0.1);
-            width: 15%; 
-            height: 20%;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
         }
         
-        /* Posiciones iniciales */
-        #roi1 { top: 30%; left: 20%; color: #FFD700; }
-        #roi2 { top: 30%; left: 60%; color: #FFA000; border-color: #FFA000; }
+        #roi1 { color: #FFD700; }
+        #roi2 { color: #FFA000; border-color: #FFA000; }
 
         .roi.active { 
             border-style: solid; 
@@ -143,7 +167,7 @@
             background: #111; color: #FFD700; border: 1px solid #B8860B;
             width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
             border-radius: 8px; font-weight: bold; cursor: pointer; 
-            font-size: 1.25rem; 
+            font-size: 1.25rem;
         }
         .btn-adj:active { background: #FFD700; color: #000; }
 
@@ -156,38 +180,85 @@
         
         .chart-bar { transition: height 0.3s ease; }
         
+        /* Boot Screen Transition */
+        #boot-screen { transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+        
         /* Inputs Gold */
         input[type=range] { accent-color: #FFD700; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen p-2 max-w-4xl mx-auto w-full font-arial">
+<body id="app-body" class="flex flex-col min-h-screen p-2 max-w-4xl mx-auto w-full font-arial">
 
-    <!-- ERROR HANDLER SUPPRESSED FOR PRESENTATION -->
-    <script>
-        // Blindaje total para la presentación: Si hay error, lo ignoramos y seguimos
-        window.onerror = function() { return true; }
-    </script>
+    <!-- BOOT / COMPATIBILITY SCREEN -->
+    <div id="boot-screen" class="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center text-gold-500 font-arial p-4">
+        <div class="max-w-md w-full border border-gold-900 p-8 rounded-2xl bg-dark-900 shadow-[0_0_60px_rgba(255,215,0,0.15)] relative overflow-hidden">
+            <!-- Background Gradient - Sleek Tech Look -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black via-dark-900 to-black opacity-95 z-0"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,215,0,0.08)_0%,_transparent_70%)] z-0"></div>
+            
+            <div class="relative z-10 flex flex-col items-center">
+                <!-- Title Neon Gold Style -->
+                <h1 class="text-4xl font-black italic tracking-tighter mb-2 text-center text-white drop-shadow-lg">
+                    KRONO<span class="text-gold-500 neon-text-g">DUAL</span>
+                </h1>
+                <div class="text-[10px] text-center text-gold-600 tracking-[0.6em] uppercase mb-8 font-bold border-b border-gold-900/50 pb-4 w-full">System Check v2.6</div>
+                
+                <div class="w-full space-y-3 text-xs uppercase tracking-widest mb-8 font-bold">
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded border border-gold-900/20 shadow-inner">
+                        <span class="text-gray-500">DISPOSITIVO</span>
+                        <span id="chk-dev" class="text-gray-400 animate-pulse">ANALIZANDO...</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded border border-gold-900/20 shadow-inner">
+                        <span class="text-gray-500">CÁMARA</span>
+                        <span id="chk-cam" class="text-gray-400">ESPERANDO...</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded border border-gold-900/20 shadow-inner">
+                        <span class="text-gray-500">AUDIO</span>
+                        <span id="chk-aud" class="text-gray-400">ESPERANDO...</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded border border-gold-900/20 shadow-inner">
+                        <span class="text-gray-500">PANTALLA</span>
+                        <span id="chk-res" class="text-gray-400">ESPERANDO...</span>
+                    </div>
+                </div>
+
+                <div id="boot-status" class="text-center font-black text-sm mb-6 text-gray-600 min-h-[20px] tracking-wider">INICIANDO DIAGNÓSTICO...</div>
+
+                <button id="btn-enter" onclick="enterApp()" class="hidden w-full btn-gold py-4 rounded-xl font-black tracking-[0.3em] text-sm animate-pulse shadow-[0_0_30px_rgba(255,215,0,0.4)] transition-transform hover:scale-[1.02]">
+                    ENTRAR AL SISTEMA
+                </button>
+                
+                <div id="boot-error" class="hidden text-red-500 text-center text-[10px] font-bold mt-4 border border-red-900/50 p-3 rounded bg-red-900/10 uppercase tracking-wide">
+                    ERROR CRÍTICO: DISPOSITIVO NO COMPATIBLE
+                </div>
+            </div>
+        </div>
+        <div class="mt-8 text-[10px] text-gray-800 font-bold tracking-widest uppercase">Powered by Albert Closa Tech</div>
+    </div>
+
+    <!-- ERROR HANDLER -->
+    <div id="err" class="hidden bg-red-900/80 border border-red-500 text-white p-2 text-center text-sm rounded mb-2 z-50 fixed top-0 left-0 w-full"></div>
+    <script>window.onerror=function(m){const e=document.getElementById('err');e.classList.remove('hidden');e.innerHTML='ERROR: '+m; setTimeout(()=>e.classList.add('hidden'), 5000);}</script>
 
     <!-- HEADER -->
     <header class="bg-black/60 backdrop-blur-xl border border-gold-900 rounded-xl p-3 shadow-gold flex flex-wrap justify-between items-center gap-3 mb-4 sticky top-0 z-40">
         <div class="flex flex-col">
             <h1 class="text-2xl font-black italic tracking-tighter leading-none text-white">
-                KRONODUAL <span class="text-gold-500 neon-text-g">V.1.02</span>
+                KRONODUAL <span class="text-gold-500 neon-text-g">V.2.6</span>
             </h1>
             <span class="text-[10px] font-bold text-gold-700 tracking-widest uppercase">By Albert Closa</span>
         </div>
 
         <div class="flex gap-2">
-            <!-- Botón Pantalla Completa Nuevo -->
-            <button onclick="toggleFullScreen()" class="btn-gold text-[10px] py-2 px-3 rounded-full flex items-center justify-center" title="Pantalla Completa">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-            </button>
             <button onclick="toggleConfig()" class="btn-gold text-[10px] py-2 px-4 rounded-full flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.35a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.73v.52a2 2 0 0 1-1 1.73l-.15.08a2 2 0 0 0-.73 2.73l.78 1.35a2 2 0 0 0-2.73-.73l-.15-.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V2a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                 AJUSTES
             </button>
             <button onclick="showRecords()" class="btn-gold text-[10px] py-2 px-4 rounded-full flex items-center gap-2">
                 🏆 HISTORIAL
+            </button>
+            <button onclick="toggleFullScreen()" class="btn-gold text-[10px] w-8 h-8 rounded-full flex items-center justify-center p-0" title="Pantalla Completa">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
             </button>
         </div>
 
@@ -284,24 +355,34 @@
 
     <!-- VIDEO ZONE -->
     <div class="bg-dark-900 border border-gold-900 rounded-xl p-4 shadow-lg mb-4">
-        <div class="flex justify-between items-center mb-3">
-            <button id="btn-cam" onclick="toggleCam()" class="btn-gold text-[10px] py-2 px-4 rounded-full shadow-none border-gold-800 text-gold-500">
-                ENCENDER CÁMARA
-            </button>
-            <div class="flex gap-2 text-[10px] font-bold bg-black/50 px-3 py-1 rounded-full border border-gold-900 font-arial">
-                <span class="text-gold-400">P1: <b id="val-p1">0</b></span>
-                <span class="text-gold-800">|</span>
-                <span class="text-orange-400">P2: <b id="val-p2">0</b></span>
+        <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
+            <div class="flex gap-2">
+                <button id="btn-cam" onclick="toggleCam()" class="btn-gold text-[10px] py-2 px-4 rounded-full shadow-none border-gold-800 text-gold-500">
+                    ENCENDER CÁMARA
+                </button>
+                <button id="btn-auto" onclick="autoCalibrate()" class="hidden btn-gold text-[10px] py-2 px-4 rounded-full shadow-none border-gold-600 text-gold-200 bg-gradient-to-r from-yellow-900 to-black animate-pulse">
+                    🎯 AUTO-AJUSTE
+                </button>
+            </div>
+            <div class="flex gap-2 text-[10px] font-bold bg-black/50 px-3 py-1 rounded-full border border-gold-900 font-arial items-center">
+                <div class="flex flex-col items-center">
+                    <span class="text-gold-400">P1: <b id="val-p1">0</b></span>
+                    <span id="st-p1" class="text-[8px] uppercase font-black text-gray-500">--</span>
+                </div>
+                <span class="text-gold-800 mx-1">|</span>
+                <div class="flex flex-col items-center">
+                    <span class="text-orange-400">P2: <b id="val-p2">0</b></span>
+                    <span id="st-p2" class="text-[8px] uppercase font-black text-gray-500">--</span>
+                </div>
             </div>
         </div>
 
-        <!-- CÁMARA GRANDE (h-35vh) -->
-        <div class="relative w-full h-[35vh] bg-black rounded-lg overflow-hidden border-2 border-gold-900 shadow-inner">
+        <div class="relative w-full h-[25vh] bg-black rounded-lg overflow-hidden border-2 border-gold-900 shadow-inner group">
             <div id="cam-msg" class="absolute inset-0 flex flex-col items-center justify-center text-gold-800">
                 <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                 <p class="text-xs font-bold">CÁMARA APAGADA</p>
             </div>
-            <video id="webcam" class="w-full h-full object-fill hidden" autoplay playsinline muted></video>
+            <video id="webcam" class="w-full h-full object-cover hidden" autoplay playsinline muted></video>
             
             <!-- OVERLAY RECORD -->
             <div id="record-overlay" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/90 border-2 border-gold-500 p-6 rounded-xl text-center opacity-0 pointer-events-none transition-all transform scale-90 z-50 shadow-[0_0_50px_rgba(255,215,0,0.5)]">
@@ -309,8 +390,15 @@
                 <div id="rec-data" class="text-white text-xl font-bold font-arial tracking-widest">--.---</div>
             </div>
 
-            <div id="roi1" class="roi"><div class="absolute -top-6 left-0 bg-gold-500 text-black text-[10px] font-bold px-2 rounded-sm border border-white">P1</div><div class="roi-handle"></div></div>
-            <div id="roi2" class="roi"><div class="absolute -top-6 left-0 bg-orange-600 text-black text-[10px] font-bold px-2 rounded-sm border border-white">P2</div><div class="roi-handle"></div></div>
+            <!-- ROIS -->
+            <div id="roi1" class="roi" style="top: 30%; left: 20%; width: 15%; height: 20%;">
+                <div class="absolute -top-6 left-0 bg-gold-500 text-black text-[10px] font-bold px-2 rounded-sm border border-white">P1</div>
+                <div class="roi-handle"></div>
+            </div>
+            <div id="roi2" class="roi" style="top: 30%; left: 60%; width: 15%; height: 20%;">
+                <div class="absolute -top-6 left-0 bg-orange-600 text-black text-[10px] font-bold px-2 rounded-sm border border-white">P2</div>
+                <div class="roi-handle"></div>
+            </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mt-4">
@@ -329,7 +417,7 @@
         
         <div class="grid grid-cols-2 gap-4">
             <!-- P1 CARD -->
-            <div class="bg-gradient-to-b from-dark-800 to-black border-l-4 border-gold-500 p-3 rounded shadow-lg relative overflow-hidden neon-border-g">
+            <div class="bg-gradient-to-b from-dark-800 to-black border-l-4 border-gold-500 p-3 rounded shadow-lg relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-1 opacity-10"><h1 class="text-4xl font-black text-gold-500">1</h1></div>
                 <h3 class="text-lg font-black text-gold-400 leading-none" id="disp-p1-n">P1</h3>
                 <span class="text-[10px] font-bold text-gold-700 uppercase tracking-wider block mb-3" id="disp-p1-c">CAR 1</span>
@@ -426,36 +514,38 @@
                 </div>
             </div>
 
-            <!-- FOOTER MODAL CON EXPORTACIÓN -->
+            <!-- FOOTER CON BOTONES Y EXCEL -->
             <div class="p-4 bg-black border-t border-gold-900 flex flex-col gap-3">
-                <button onclick="exportToExcel()" class="w-full btn-gold py-3 rounded-lg text-xs transition-all shadow-lg uppercase flex justify-center items-center gap-2 neon-text-g border-gold-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    EXPORTAR DATOS (EXCEL)
-                </button>
-                <div class="flex gap-3 w-full">
+                <div class="flex gap-3">
                     <button onclick="closeModal('res-modal')" class="flex-1 bg-dark-800 hover:bg-dark-700 text-white font-bold py-3 rounded-lg text-xs transition-all border border-gray-700">CERRAR</button>
                     <button onclick="newRace()" class="flex-1 btn-gold py-3 rounded-lg text-xs transition-all shadow-lg uppercase">NUEVA CARRERA</button>
                 </div>
+                <button onclick="exportToExcel()" class="btn-neon-export w-full py-2 rounded-lg flex items-center justify-center gap-2 transform hover:scale-105 transition-transform text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Descargar Excel
+                </button>
             </div>
         </div>
     </div>
 
     <!-- MODAL RECORDS -->
     <div id="rec-modal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 hidden flex items-center justify-center fade-in">
-        <div class="bg-dark-900/90 border border-gold-600/50 w-[95%] max-w-3xl max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden slide-down">
+        <div class="bg-dark-900/90 border border-gold-600/50 w-[95%] max-w-5xl max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden slide-down relative">
             <div class="bg-gradient-to-r from-black via-yellow-900/20 to-black p-6 text-center border-b border-gold-600/30">
                 <div class="text-3xl mb-2">👑</div>
                 <h1 class="text-2xl font-black text-gold-500 uppercase tracking-widest neon-text-g">Hall of Fame</h1>
             </div>
             
             <div class="flex-1 overflow-y-auto p-0">
-                <table class="w-full text-xs text-left">
+                <table class="w-full text-[10px] sm:text-xs text-left whitespace-nowrap">
                     <thead class="bg-slate-950 text-slate-400 sticky top-0">
                         <tr>
                             <th class="p-3 font-bold">FECHA</th>
                             <th class="p-3 font-bold text-cyan-400">PILOTO</th>
                             <th class="p-3 font-bold">COCHE</th>
-                            <th class="p-3 font-bold text-yellow-400 text-right font-arial">TIEMPO</th>
+                            <th class="p-3 font-bold text-yellow-400 text-right font-arial">TOTAL</th>
+                            <th class="p-3 font-bold text-green-400 text-right font-arial">MEJOR</th>
+                            <th class="p-3 font-bold text-blue-400 text-right font-arial">MEDIA</th>
                             <th class="p-3 font-bold text-right font-arial">VEL.</th>
                         </tr>
                     </thead>
@@ -465,7 +555,20 @@
 
             <div class="p-4 bg-slate-950 border-t border-slate-800 flex justify-between">
                 <button onclick="closeModal('rec-modal')" class="text-yellow-500 text-xs font-bold hover:text-white transition-colors">CERRAR</button>
-                <button id="btn-del-rec" onclick="tryClearRecords(this)" class="text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase">BORRAR HISTORIAL</button>
+                <button onclick="tryClearRecords()" class="text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase">BORRAR HISTORIAL</button>
+            </div>
+
+            <!-- CONFIRMATION OVERLAY -->
+            <div id="conf-modal" class="absolute inset-0 bg-black/80 z-50 hidden flex items-center justify-center fade-in">
+                <div class="bg-dark-900 border border-red-900/50 p-5 rounded-xl shadow-2xl max-w-xs w-full mx-4 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-red-500/5 pointer-events-none"></div>
+                    <p class="text-white text-base font-black mb-2 uppercase tracking-wider text-red-500 relative z-10">¿Borrar Historial?</p>
+                    <p class="text-gray-400 text-[10px] mb-4 relative z-10">Esta acción no se puede deshacer.</p>
+                    <div class="flex gap-2 justify-center relative z-10">
+                        <button onclick="confirmDelete(false)" class="flex-1 bg-dark-800 border border-gray-700 text-white py-2 rounded text-[10px] font-bold uppercase hover:bg-gray-700 transition-colors">Cancelar</button>
+                        <button onclick="confirmDelete(true)" class="flex-1 bg-red-900/80 border border-red-500 text-white py-2 rounded text-[10px] font-bold uppercase hover:bg-red-800 transition-colors shadow-[0_0_10px_rgba(239,68,68,0.3)]">Sí, Borrar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -473,6 +576,87 @@
     <canvas id="cv" class="hidden"></canvas>
 
     <script>
+        // --- BOOT SYSTEM CHECK ---
+        window.addEventListener('load', async () => {
+            const sleep = m => new Promise(r => setTimeout(r, m));
+            
+            // Check 1: User Agent / Mobile
+            await sleep(500);
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const elDev = document.getElementById('chk-dev');
+            elDev.innerText = isMobile ? "MÓVIL / TABLET" : "PC / ESCRITORIO";
+            elDev.classList.remove('animate-pulse');
+            elDev.classList.add('text-gold-400');
+
+            // Check 2: Camera API
+            await sleep(400);
+            const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+            const elCam = document.getElementById('chk-cam');
+            if(hasMedia) {
+                elCam.innerText = "OK - ACTIVO";
+                elCam.classList.add('text-green-500');
+            } else {
+                elCam.innerText = "NO DETECTADO";
+                elCam.classList.add('text-red-500');
+            }
+
+            // Check 3: Audio (WebAudio)
+            await sleep(400);
+            const hasAudio = !!(window.AudioContext || window.webkitAudioContext);
+            const elAud = document.getElementById('chk-aud');
+            if(hasAudio) {
+                elAud.innerText = "OK - ACTIVO";
+                elAud.classList.add('text-green-500');
+            } else {
+                elAud.innerText = "ERROR API";
+                elAud.classList.add('text-red-500');
+            }
+
+            // Check 4: Res
+            await sleep(400);
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const elRes = document.getElementById('chk-res');
+            elRes.innerText = `${w} x ${h}px`;
+            elRes.classList.add('text-gold-400');
+
+            // Final Decision
+            await sleep(500);
+            const status = document.getElementById('boot-status');
+            
+            if(hasMedia && hasAudio) {
+                status.innerText = "SISTEMA OPERATIVO Y LISTO";
+                status.classList.remove('text-gray-500');
+                status.classList.add('text-green-400', 'animate-pulse');
+                document.getElementById('btn-enter').classList.remove('hidden');
+            } else {
+                status.innerText = "FALLO EN DIAGNÓSTICO";
+                status.classList.remove('text-gray-500');
+                status.classList.add('text-red-500');
+                const errBox = document.getElementById('boot-error');
+                errBox.classList.remove('hidden');
+                
+                let msg = "TU NAVEGADOR NO ES COMPATIBLE.";
+                if(!hasMedia) msg = "NO SE DETECTÓ ACCESO A CÁMARA (WEBCAM/MÓVIL).";
+                else if(!hasAudio) msg = "NO SE PUEDE GENERAR AUDIO (WebAudio API).";
+                
+                errBox.innerText = msg;
+            }
+        });
+
+        function enterApp() {
+            const screen = document.getElementById('boot-screen');
+            screen.style.opacity = '0';
+            screen.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                screen.remove();
+                // Setup Drag after removing overlay to calculate positions correctly
+                setupDrag('roi1');
+                setupDrag('roi2');
+                updUI();
+            }, 500);
+        }
+
         // --- UTILIDADES ---
         const get = (id) => document.getElementById(id);
         const set = (id, txt) => { const el = get(id); if(el) el.innerText = txt; }
@@ -483,13 +667,12 @@
         };
 
         // --- ESTADO ---
-        // V.1.02 Añadido 'validStart' para controlar el primer paso por meta
         const state = {
             race: false, cam: false, start: 0, timer: null,
             countdown: false, aborted: false,
             flags: { f5: false, f1: false },
-            p1: { n:'P1', c:'C1', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0, validStart: false },
-            p2: { n:'P2', c:'C2', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0, validStart: false },
+            p1: { n:'P1', c:'C1', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0 },
+            p2: { n:'P2', c:'C2', laps:0, best:999999, h:[], last:0, fin:false, blk:false, total:0 },
             cfg: { laps:10 } 
         };
 
@@ -501,24 +684,21 @@
         let synth, polySynth;
         
         async function initAudio() {
-            try {
-                if(typeof Tone === 'undefined') return;
-                if(!synth) {
-                    await Tone.start();
-                    synth = new Tone.Synth().toDestination();
-                    polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
-                    synth.volume.value = -5;
-                    polySynth.volume.value = -5;
-                }
-            } catch(e) { /* Silencio en fallo */ }
+            if(!synth) {
+                await Tone.start();
+                synth = new Tone.Synth().toDestination();
+                polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
+                synth.volume.value = -5;
+                polySynth.volume.value = -5;
+            }
         }
 
         function playTone(note) {
-            try { if(synth) synth.triggerAttackRelease(note, "8n"); } catch(e){}
+            if(synth) synth.triggerAttackRelease(note, "8n");
         }
 
         function previewTone(note) {
-            initAudio().then(() => playTone(note)).catch(()=>{});
+            initAudio().then(() => playTone(note));
         }
 
         async function playStartSequence() {
@@ -527,67 +707,186 @@
             for(let i=1; i<=5; i++) {
                 if(state.aborted) return;
                 get('l'+i).classList.add('red');
-                try { if(synth) synth.triggerAttackRelease("C4", "8n"); } catch(e){}
+                synth.triggerAttackRelease("C4", "8n"); 
                 await new Promise(r => setTimeout(r, 900));
             }
             if(state.aborted) return;
             
+            // Random delay
             await new Promise(r => setTimeout(r, Math.random()*1500 + 500));
             if(state.aborted) return;
 
+            // Green Light
             for(let i=1; i<=5; i++) { get('l'+i).classList.remove('red'); get('l'+i).classList.add('green'); }
-            try { if(polySynth) polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n"); } catch(e){}
+            // Salida
+            polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n");
             
             startRaceLogic();
         }
 
         function playFalseStartSound() {
-            try {
-                if(synth) {
-                    const now = Tone.now();
-                    synth.triggerAttackRelease("G3", "8n", now);
-                    synth.triggerAttackRelease("G3", "8n", now + 0.2);
-                }
-            } catch(e){}
+            if(synth) {
+                const now = Tone.now();
+                synth.triggerAttackRelease("G3", "8n", now);
+                synth.triggerAttackRelease("G3", "8n", now + 0.2);
+            }
         }
 
         function playLapSound(id) {
-            try {
-                if(!synth) return;
-                const note = get('snd-p'+id).value;
-                synth.triggerAttackRelease(note, "16n");
-            } catch(e){}
+            if(!synth) return;
+            const note = get('snd-p'+id).value;
+            synth.triggerAttackRelease(note, "16n");
         }
 
         function playBell() {
-            try {
-                if(!polySynth) return;
-                polySynth.triggerAttackRelease(["C6", "E6"], "8n");
-            } catch(e){}
+            if(!polySynth) return;
+            polySynth.triggerAttackRelease(["C6", "E6"], "8n");
         }
 
-        // --- TTS (Voz) ---
+        // --- TTS (Voz) CON COLA INTELIGENTE ---
+        let msgQueue = [];
+        let isSpeaking = false;
+
         function speak(txt) {
-            try {
-                if(get('voice-chk').checked && 'speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const u = new SpeechSynthesisUtterance(txt);
-                    u.rate = 1.2; 
-                    u.lang = 'es-ES';
-                    window.speechSynthesis.speak(u);
+            if(!get('voice-chk').checked) return;
+            msgQueue.push(txt);
+            processQueue();
+        }
+
+        function processQueue() {
+            if(isSpeaking || msgQueue.length === 0) return;
+            
+            isSpeaking = true;
+            const txt = msgQueue.shift();
+            
+            if('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(txt);
+                u.rate = 1.1; 
+                u.lang = 'es-ES';
+                u.onend = () => {
+                    isSpeaking = false;
+                    processQueue();
+                };
+                u.onerror = (e) => {
+                    console.error("TTS Error", e);
+                    isSpeaking = false;
+                    processQueue();
+                };
+                window.speechSynthesis.speak(u);
+            } else {
+                isSpeaking = false;
+            }
+        }
+
+        function stopSpeaking() {
+            if('speechSynthesis' in window) window.speechSynthesis.cancel();
+            msgQueue = [];
+            isSpeaking = false;
+        }
+
+        // --- PANTALLA COMPLETA ---
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Error al intentar pantalla completa: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
                 }
-            } catch(e){}
+            }
+        }
+
+        // --- EXPORTAR EXCEL (CSV) ---
+        function exportToExcel() {
+            const d = new Date();
+            const fecha = d.toLocaleDateString();
+            const hora = d.toLocaleTimeString();
+            
+            // Cabecera CSV
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "KRONO DUAL - REPORTE DE CARRERA\n";
+            csvContent += `Fecha;${fecha}\nHora;${hora}\n\n`;
+            
+            // Datos generales
+            csvContent += `PILOTO 1 (P1);${state.p1.n};COCHE;${state.p1.c}\n`;
+            csvContent += `PILOTO 2 (P2);${state.p2.n};COCHE;${state.p2.c}\n\n`;
+            
+            // Tabla de Vueltas
+            csvContent += "VUELTA;P1 TIEMPO (s);P1 VEL (km/h);P2 TIEMPO (s);P2 VEL (km/h)\n";
+            
+            const maxLaps = Math.max(state.p1.h.length, state.p2.h.length);
+            
+            for(let i=0; i<maxLaps; i++) {
+                const t1 = state.p1.h[i] ? fmt(state.p1.h[i]) : "-";
+                const v1 = state.p1.h[i] ? ((25/(state.p1.h[i]/1000))*3.6).toFixed(1) : "-";
+                
+                const t2 = state.p2.h[i] ? fmt(state.p2.h[i]) : "-";
+                const v2 = state.p2.h[i] ? ((25/(state.p2.h[i]/1000))*3.6).toFixed(1) : "-";
+                
+                csvContent += `${i+1};${t1.replace('.',',')};${v1.replace('.',',')};${t2.replace('.',',')};${v2.replace('.',',')}\n`;
+            }
+
+            // Resumen Final
+            csvContent += "\nRESUMEN FINAL\n";
+            csvContent += `TIEMPO TOTAL;${fmtTime(state.p1.total)};${fmtTime(state.p2.total)}\n`;
+            csvContent += `MEJOR VUELTA;${fmt(state.p1.best).replace('.',',')};${fmt(state.p2.best).replace('.',',')}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Carrera_${d.getFullYear()}${d.getMonth()+1}${d.getDate()}_${d.getHours()}${d.getMinutes()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- CALIBRACIÓN AUTO ---
+        function autoCalibrate() {
+            if (!state.cam) return;
+            
+            let msg = "";
+
+            [1, 2].forEach(id => {
+                const currentVal = parseInt(get('val-p'+id).innerText) || 0;
+                let newVal = Math.floor(currentVal * 0.75);
+                
+                if (newVal < 10) newVal = 10;
+                if (newVal > 240) newVal = 240;
+
+                get('in-sens-p'+id).value = newVal;
+                updSensUI(id);
+                
+                if (currentVal < 30) msg = "¡Poca luz!";
+            });
+
+            if (msg !== "") speak(msg);
+            else speak("Calibración lista");
+
+            // Feedback visual en botón
+            const btn = get('btn-auto');
+            btn.innerHTML = msg ? "⚠️ POCA LUZ" : "✅ OK";
+            setTimeout(() => {
+                btn.innerHTML = "🎯 AUTO-AJUSTE";
+            }, 2000);
         }
 
         // --- CAMARA ---
         async function toggleCam() {
             const btn = get('btn-cam');
+            const btnAuto = get('btn-auto');
+            
             if(!state.cam) {
                 try {
                     await initAudio(); 
                     let stream;
-                    try { stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
-                    catch(e) { stream = await navigator.mediaDevices.getUserMedia({video:true}); }
+                    try { 
+                        stream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'environment' }
+                        }); 
+                    } catch(e) { 
+                        stream = await navigator.mediaDevices.getUserMedia({video:true}); 
+                    }
                     
                     vid.srcObject = stream;
                     vid.onloadedmetadata = () => {
@@ -602,10 +901,14 @@
                         btn.classList.replace('text-gold-500', 'text-red-500');
                         btn.classList.replace('border-gold-800', 'border-red-900');
                         
+                        btnAuto.classList.remove('hidden');
                         get('btn-start').disabled = false;
                         loop();
                     };
-                } catch(e) { /* Error silencioso */ }
+                } catch(e) { 
+                    alert("Error Cam: "+e); 
+                    console.error(e);
+                }
             } else {
                 if(vid.srcObject) vid.srcObject.getTracks().forEach(t=>t.stop());
                 state.cam = false; 
@@ -617,19 +920,15 @@
                 btn.classList.replace('text-red-500', 'text-gold-500');
                 btn.classList.replace('border-red-900', 'border-gold-800');
                 
+                btnAuto.classList.add('hidden');
                 get('btn-start').disabled = true;
             }
         }
 
         function loop() {
             if(!state.cam) return;
-            // SAFEGUARD: Bucle infinito sin errores visibles
-            try {
-                ctx.drawImage(vid, 0, 0, cv.width, cv.height);
-                check(1); check(2);
-            } catch(e) {
-                // Skip frame corrupto
-            }
+            ctx.drawImage(vid, 0, 0, cv.width, cv.height);
+            check(1); check(2);
             requestAnimationFrame(loop);
         }
 
@@ -647,19 +946,27 @@
             get('lbl-sens-p'+id).innerText = v;
         }
 
+        let frameCount = 0;
+
         function check(id) {
             const roi = get('roi'+id);
-            // Lógica Original Robusta
-            const l = parseFloat(roi.style.left)||20, t=parseFloat(roi.style.top)||40, w=parseFloat(roi.style.width)||15, h=parseFloat(roi.style.height)||15;
-            
-            const rx = Math.floor((l/100)*cv.width), ry = Math.floor((t/100)*cv.height);
-            const rw = Math.floor((w/100)*cv.width), rh = Math.floor((h/100)*cv.height);
+            let l = parseFloat(roi.style.left);
+            let t = parseFloat(roi.style.top);
+            let w = parseFloat(roi.style.width);
+            let h = parseFloat(roi.style.height);
+
+            if (isNaN(l)) l = id === 1 ? 20 : 60; 
+            if (isNaN(t)) t = 30;
+            if (isNaN(w)) w = 15;
+            if (isNaN(h)) h = 20;
+
+            const rx = Math.floor((l/100)*cv.width);
+            const ry = Math.floor((t/100)*cv.height);
+            const rw = Math.floor((w/100)*cv.width);
+            const rh = Math.floor((h/100)*cv.height);
             
             if(rw<=0 || rh<=0) return;
             
-            // Protección de límites
-            if(rx < 0 || ry < 0 || rx+rw > cv.width || ry+rh > cv.height) return;
-
             const d = ctx.getImageData(rx, ry, rw, rh).data;
             let s=0, c=0;
             for(let i=0; i<d.length; i+=16) { s+=(d[i]+d[i+1]+d[i+2])/3; c++; }
@@ -668,6 +975,26 @@
             set('val-p'+id, avg);
             
             const umbral = parseInt(get('in-sens-p'+id).value);
+
+            if (id === 2) frameCount++; 
+            if (frameCount % 15 === 0) {
+                const elSt = get('st-p'+id);
+                const diff = avg - umbral;
+
+                if (avg < 30) {
+                    elSt.innerHTML = "🌑 OSCURO";
+                    elSt.className = "text-[8px] uppercase font-black text-red-500 animate-pulse";
+                } else if (diff < 15) {
+                    elSt.innerHTML = "⚠️ ALTO"; 
+                    elSt.className = "text-[8px] uppercase font-black text-orange-500";
+                } else if (diff > 80) {
+                    elSt.innerHTML = "⚠️ BAJO"; 
+                    elSt.className = "text-[8px] uppercase font-black text-yellow-600";
+                } else {
+                    elSt.innerHTML = "✅ OK";
+                    elSt.className = "text-[8px] uppercase font-black text-green-500";
+                }
+            }
             
             if(avg < umbral) {
                 roi.classList.add('active');
@@ -688,7 +1015,6 @@
             const btn = get('btn-start');
             if(state.race) {
                 stopRace();
-                saveSessionRecords();
                 btn.innerText = "INICIAR";
                 btn.classList.remove('text-red-400');
             } else {
@@ -699,9 +1025,10 @@
         async function startCountdown() {
             state.aborted = false;
             state.countdown = true;
-            get('config').classList.add('hidden');
+            get('config').classList.add('hidden'); 
             get('btn-start').disabled = true;
             get('btn-reset').disabled = true;
+            get('btn-auto').classList.add('opacity-50', 'pointer-events-none');
             
             for(let i=1; i<=5; i++) get('l'+i).className = 'bulb';
             
@@ -741,6 +1068,7 @@
             
             get('btn-start').disabled = false;
             get('btn-start').innerText = "REINICIAR";
+            get('btn-auto').classList.remove('opacity-50', 'pointer-events-none');
             speak("Salida nula de " + name);
         }
 
@@ -748,10 +1076,12 @@
             state.race = false;
             clearInterval(state.timer);
             get('btn-reset').disabled = false;
+            get('btn-auto').classList.remove('opacity-50', 'pointer-events-none');
         }
 
         function resetRace() {
             stopRace();
+            stopSpeaking(); // CALLAR LOCUTOR AL RESETEAR
             set('main-timer', "00:00.00");
             get('main-timer').style.color = 'white';
             set('lap-counter', "PREPARADO");
@@ -764,73 +1094,59 @@
         }
 
         function lap(id) {
-            try {
-                const now = Date.now();
-                
-                // --- DEFINIR TIEMPO MÍNIMO (3 SEGUNDOS) ---
-                // Cualquier "vuelta" detectada en menos de 3 segundos desde la anterior (o desde la salida)
-                // se considera un rebote del sensor y se descarta.
-                const MIN_LAP_TIME = 3000; 
+            const now = Date.now();
+            const t = now - state['p'+id].last;
 
-                // --- LÓGICA DE PRIMER CRUCE (SALIDA) ---
-                // Si el piloto NO ha cruzado aún la meta tras el semáforo verde
-                if(!state['p'+id].validStart) {
-                    state['p'+id].validStart = true;
-                    state['p'+id].last = now; // AQUI empieza a contar la vuelta real
-                    playLapSound(id);
-                    
-                    // Feedback visual
-                    const lastEl = get('disp-p'+id+'-last');
-                    if(lastEl) {
-                        lastEl.innerText = "SALIDA";
-                        lastEl.classList.add('text-gold-500');
-                        setTimeout(() => lastEl.classList.remove('text-gold-500'), 1000);
-                    }
-                    return; // NO contamos vuelta, solo iniciamos el reloj del piloto
+            // --- LÓGICA "PASO 0" (SMART START) ---
+            if (state['p'+id].laps === 0 && t < 4000) {
+                state['p'+id].last = now; 
+                const elLast = get('disp-p'+id+'-last');
+                if(elLast) {
+                    const original = elLast.innerText;
+                    elLast.innerText = "SALIDA";
+                    elLast.classList.add('text-green-500');
+                    setTimeout(() => {
+                         elLast.innerText = original;
+                         elLast.classList.remove('text-green-500');
+                    }, 1000);
                 }
+                return; 
+            }
 
-                // --- CÁLCULO DE VUELTA ---
-                const t = now - state['p'+id].last;
+            if(t < 2000) return; 
+            
+            state['p'+id].last = now;
+            state['p'+id].laps++;
+            state['p'+id].h.push(t);
+            
+            playLapSound(id);
 
-                // --- FILTRO DE TIEMPO MÍNIMO (CRÍTICO) ---
-                // Si la vuelta dura menos de 3 segundos, es un error/rebote. Ignorar.
-                if (t < MIN_LAP_TIME) return;
+            // Record VUELTA RÁPIDA
+            if(t < state['p'+id].best) {
+                state['p'+id].best = t;
+                const name = get(`in-p${id}-n`).value;
+                speak(`Récord ${name}, ${fmt(t)}`);
+                showOverlay(`${name} - ${fmt(t)}`);
+            }
 
-                // Si pasa el filtro, es una vuelta válida
-                state['p'+id].last = now;
-                state['p'+id].laps++;
-                state['p'+id].h.push(t);
-                
-                playLapSound(id);
+            updUI(); drawChart();
 
-                if(t < state['p'+id].best) {
-                    state['p'+id].best = t;
-                    const name = get(`in-p${id}-n`).value;
-                    speak(`Récord ${name}, ${fmt(t)}`);
-                    showOverlay(`${name} - ${fmt(t)}`);
+            // Finish logic
+            const max = parseInt(get('in-laps').value);
+            if(max !== 9999) {
+                const rem = max - state['p'+id].laps;
+                if(rem === 5 && !state.flags.f5) {
+                    state.flags.f5 = true;
+                    speak("Quedan 5 vueltas");
                 }
-
-                updUI(); 
-                drawChart();
-
-                const max = parseInt(get('in-laps').value);
-                if(max !== 9999) {
-                    const rem = max - state['p'+id].laps;
-                    if(rem === 5 && !state.flags.f5) {
-                        state.flags.f5 = true;
-                        speak("Quedan 5 vueltas");
-                    }
-                    if(rem === 1 && !state.flags.f1) {
-                        state.flags.f1 = true;
-                        playBell();
-                        speak("Última vuelta");
-                    }
-                    if(state['p'+id].laps >= max) {
-                        finish(id, now);
-                    }
+                if(rem === 1 && !state.flags.f1) {
+                    state.flags.f1 = true;
+                    playBell();
+                    speak("Última vuelta");
                 }
-            } catch(e) {
-                // Fallo controlado
+                if(state['p'+id].laps >= max) {
+                    finish(id, now);
+                }
             }
         }
 
@@ -838,24 +1154,23 @@
             state['p'+id].fin = true;
             state['p'+id].total = now - state.start;
             
+            const p = state['p'+id];
+            // Calculos
+            const totalTime = p.total;
+            const bestLap = p.best < 999999 ? p.best : 0;
+            const avgTime = p.h.length ? (p.total / p.h.length) : 0;
+            const totalDistMeters = p.laps * 25; 
+            const avgSpeed = totalTime > 0 ? (totalDistMeters / (totalTime/1000)) * 3.6 : 0;
+
+            saveRecord(p.n, p.c, totalTime, bestLap, avgTime, avgSpeed);
+
             const oid = id===1?2:1;
             if(!state['p'+oid].fin) {
                 stopRace();
-                saveSessionRecords();
                 const name = get(`in-p${id}-n`).value;
                 speak(`Victoria para ${name}`);
                 showRes(id);
             }
-        }
-        
-        function saveSessionRecords() {
-            [1,2].forEach(id => {
-                const p = state['p'+id];
-                if(p.h.length > 0 && p.best < 999999) {
-                     const bestSpd = (25 / (p.best/1000)) * 3.6;
-                     saveRecord(p.n, p.c, p.best, bestSpd);
-                }
-            });
         }
 
         function showOverlay(txt) {
@@ -869,89 +1184,80 @@
             }, 2500);
         }
 
+        // --- UI UPDATES ---
         function updUI() {
-            try {
-                const max = get('in-laps').value;
-                [1,2].forEach(id=>{
-                    const p = state['p'+id];
-                    p.n = get('in-p'+id+'-n').value;
-                    p.c = get('in-p'+id+'-c').value;
-                    
-                    set('disp-p'+id+'-n', p.n);
-                    set('disp-p'+id+'-c', p.c);
-                    set('disp-p'+id+'-l', p.laps);
-                    
-                    const last = p.h.length ? p.h[p.h.length-1] : 0;
-                    set('disp-p'+id+'-last', last ? fmt(last) : "--.--");
-                    
-                    set('disp-p'+id+'-best', p.best<999999 ? fmt(p.best) : "--.--");
-                    
-                    const tot = p.h.reduce((a,b)=>a+b,0);
-                    set('disp-p'+id+'-tot', tot ? fmtTime(tot) : "00:00");
-                    
-                    const spd = last ? ((25/(last/1000))*3.6).toFixed(1) : 0;
-                    set('disp-p'+id+'-spd', spd+" km/h");
-                });
+            const max = get('in-laps').value;
+            [1,2].forEach(id=>{
+                const p = state['p'+id];
+                p.n = get('in-p'+id+'-n').value;
+                p.c = get('in-p'+id+'-c').value;
                 
-                const lead = Math.max(state.p1.laps, state.p2.laps);
-                set('lap-counter', `VUELTA ${lead} / ${max==='9999'?'∞':max}`);
-            } catch(e) {}
+                set('disp-p'+id+'-n', p.n);
+                set('disp-p'+id+'-c', p.c);
+                set('disp-p'+id+'-l', p.laps);
+                
+                const last = p.h.length ? p.h[p.h.length-1] : 0;
+                if(last) set('disp-p'+id+'-last', fmt(last));
+                else if(get('disp-p'+id+'-last').innerText !== "SALIDA") set('disp-p'+id+'-last', "--.--");
+                
+                set('disp-p'+id+'-best', p.best<999999 ? fmt(p.best) : "--.--");
+                
+                const tot = p.h.reduce((a,b)=>a+b,0);
+                set('disp-p'+id+'-tot', tot ? fmtTime(tot) : "00:00");
+                
+                const spd = last ? ((25/(last/1000))*3.6).toFixed(1) : 0;
+                set('disp-p'+id+'-spd', spd+" km/h");
+            });
+            
+            const lead = Math.max(state.p1.laps, state.p2.laps);
+            set('lap-counter', `VUELTA ${lead} / ${max==='9999'?'∞':max}`);
         }
 
+        // --- GRAFICA (GOLD) ---
         function drawChart() {
-            try {
-                const svg = get('chart-svg');
-                svg.innerHTML = `
-                    <line x1="0" y1="25%" x2="100%" y2="25%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-                    <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-                    <line x1="0" y1="75%" x2="100%" y2="75%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-                `;
-                
-                const h1 = state.p1.h, h2 = state.p2.h;
-                const len = Math.max(h1.length, h2.length);
-                if(len === 0) return;
-                
-                // SAFEGUARD: Minimo 5s para evitar división por cero
-                const times = [...h1, ...h2];
-                const maxVal = Math.max(...times);
-                const maxT = maxVal > 5000 ? maxVal : 5000;
-                
-                set('chart-max', (maxT/1000).toFixed(1)+'s');
-                set('chart-mid', (maxT/2000).toFixed(1)+'s');
-                
-                const w = 100/len;
-                
-                for(let i=0; i<len; i++) {
-                    const x = i * w;
-                    // BLINDAJE: Solo dibujamos si el valor es numérico válido
-                    if(h1[i] && isFinite(h1[i])) {
-                        const h = (h1[i]/maxT)*100;
-                        if(isFinite(h)) {
-                            const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                            r.setAttribute("x", x+"%"); r.setAttribute("y", (100-h)+"%");
-                            r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
-                            r.setAttribute("fill", "#FFD700"); r.setAttribute("rx", "2");
-                            r.classList.add('chart-bar');
-                            svg.appendChild(r);
-                        }
-                    }
-                    if(h2[i] && isFinite(h2[i])) {
-                        const h = (h2[i]/maxT)*100;
-                        if(isFinite(h)) {
-                            const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                            r.setAttribute("x", (x + w/2)+"%"); r.setAttribute("y", (100-h)+"%");
-                            r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
-                            r.setAttribute("fill", "#B8860B"); r.setAttribute("rx", "2");
-                            r.classList.add('chart-bar');
-                            svg.appendChild(r);
-                        }
-                    }
+            const svg = get('chart-svg');
+            svg.innerHTML = `
+                <line x1="0" y1="25%" x2="100%" y2="25%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
+                <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
+                <line x1="0" y1="75%" x2="100%" y2="75%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
+            `;
+            
+            const h1 = state.p1.h, h2 = state.p2.h;
+            const len = Math.max(h1.length, h2.length);
+            if(len === 0) return;
+            
+            const maxT = Math.max(...h1, ...h2, 5000); 
+            
+            set('chart-max', (maxT/1000).toFixed(1)+'s');
+            set('chart-mid', (maxT/2000).toFixed(1)+'s');
+            
+            const w = 100/len;
+            
+            for(let i=0; i<len; i++) {
+                const x = i * w;
+                if(h1[i]) {
+                    const h = (h1[i]/maxT)*100;
+                    const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    r.setAttribute("x", x+"%"); r.setAttribute("y", (100-h)+"%");
+                    r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
+                    r.setAttribute("fill", "#FFD700"); r.setAttribute("rx", "2");
+                    r.classList.add('chart-bar');
+                    svg.appendChild(r);
                 }
-            } catch(e) {}
+                if(h2[i]) {
+                    const h = (h2[i]/maxT)*100;
+                    const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    r.setAttribute("x", (x + w/2)+"%"); r.setAttribute("y", (100-h)+"%");
+                    r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
+                    r.setAttribute("fill", "#B8860B"); r.setAttribute("rx", "2");
+                    r.classList.add('chart-bar');
+                    svg.appendChild(r);
+                }
+            }
         }
 
         // --- RECORDS LOCALSTORAGE ---
-        function saveRecord(name, car, time, speed) {
+        function saveRecord(name, car, total, best, avg, speed) {
             let recs = [];
             try {
                 recs = JSON.parse(localStorage.getItem('krono_dual_v2') || '[]');
@@ -960,9 +1266,10 @@
             const date = new Date().toLocaleDateString();
             const hour = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
             
-            recs.push({name, car, time, speed, date, hour});
-            recs.sort((a,b)=>a.time - b.time);
-            recs = recs.slice(0, 50); 
+            recs.push({ name, car, total, best, avg, speed, date, hour });
+            recs.sort((a,b) => 0); // Mantener orden de inserción
+            
+            if (recs.length > 50) recs.shift(); 
             localStorage.setItem('krono_dual_v2', JSON.stringify(recs));
         }
 
@@ -975,81 +1282,49 @@
             } catch(e) { recs = []; }
             
             if(recs.length===0) {
-                tb.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">Sin registros</td></tr>';
+                tb.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Sin registros</td></tr>';
             } else {
-                recs.forEach(r => {
+                [...recs].reverse().forEach(r => {
                     const tr = document.createElement('tr');
                     tr.className = "border-b border-gray-800 hover:bg-gray-800/50";
-                    const h = r.hour ? r.hour : '';
                     tr.innerHTML = `
-                        <td class="p-3 text-gold-300">
-                            ${r.date} <span class="text-[10px] text-gray-500 block">${h}</span>
-                        </td>
-                        <td class="p-3 text-gold-500 font-bold">${r.name}</td>
+                        <td class="p-3 text-gold-300">${r.date} <span class="text-[8px] opacity-50 block">${r.hour}</span></td>
+                        <td class="p-3 text-cyan-400 font-bold">${r.name}</td>
                         <td class="p-3 text-gray-400">${r.car}</td>
-                        <td class="p-3 text-right text-white font-bold font-arial">${fmt(r.time)}</td>
-                        <td class="p-3 text-right text-gray-500 font-arial">${r.speed.toFixed(1)}</td>
+                        <td class="p-3 text-right text-yellow-400 font-bold font-arial">${fmtTime(r.total || 0)}</td>
+                        <td class="p-3 text-right text-green-400 font-arial">${fmt(r.best || 0)}</td>
+                        <td class="p-3 text-right text-blue-400 font-arial">${fmt(r.avg || 0)}</td>
+                        <td class="p-3 text-right text-gray-500 font-arial">${(r.speed || 0).toFixed(1)}</td>
                     `;
                     tb.appendChild(tr);
                 });
             }
-            const btn = get('btn-del-rec');
-            if(btn && !deleteConfirm) {
-                btn.innerText = "BORRAR HISTORIAL";
-                btn.className = "text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase";
-            }
             get('rec-modal').classList.remove('hidden');
         }
 
-        let clearTimer;
-        let deleteConfirm = false;
+        // --- BORRAR HISTORIAL CON CONFIRMACIÓN ---
+        function tryClearRecords() {
+            get('conf-modal').classList.remove('hidden');
+        }
 
-        function tryClearRecords(btn) {
-            if (!deleteConfirm) {
-                deleteConfirm = true;
-                btn.innerText = "¿ESTÁS SEGURO?";
-                btn.className = "text-white bg-red-600 px-2 py-1 rounded text-xs font-bold uppercase animate-pulse";
-                clearTimer = setTimeout(() => {
-                    deleteConfirm = false;
-                    btn.innerText = "BORRAR HISTORIAL";
-                    btn.className = "text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase";
-                }, 3000);
-            } else {
-                clearTimeout(clearTimer);
-                deleteConfirm = false;
-                try { localStorage.removeItem('krono_dual_v2'); } catch(e) {}
+        function confirmDelete(yes) {
+            if(yes) {
+                try {
+                    localStorage.removeItem('krono_dual_v2');
+                } catch(e) { console.error(e); }
                 showRecords();
-                btn.innerText = "HISTORIAL BORRADO";
-                btn.className = "text-green-500 text-xs font-bold uppercase";
-                setTimeout(()=>{
-                    btn.innerText = "BORRAR HISTORIAL";
-                    btn.className = "text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase";
-                }, 1500);
             }
+            get('conf-modal').classList.add('hidden');
         }
         
+        // --- MODALES & UTIL ---
         function toggleConfig() { get('config').classList.toggle('hidden'); }
         function closeModal(id) { 
             get(id).classList.add('hidden'); 
             if(id === 'rec-modal') {
-                deleteConfirm = false; 
-                clearTimeout(clearTimer);
+                 get('conf-modal').classList.add('hidden');
             }
         }
-
-        // --- PANTALLA COMPLETA ---
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Error al intentar activar pantalla completa: ${err.message}`);
-                });
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
-        }
-
         function newRace() { closeModal('res-modal'); resetRace(); }
         
         function showRes(wid) {
@@ -1082,79 +1357,23 @@
             [1,2].forEach(id=>{
                 state['p'+id].laps=0; state['p'+id].h=[]; state['p'+id].best=999999;
                 state['p'+id].last=state.start; state['p'+id].fin=false; state['p'+id].blk=false;
-                // V1.02 Reset flag
-                state['p'+id].validStart = false;
+                state['p'+id].total=0;
             });
             state.flags = {f5:false, f1:false};
             updUI(); drawChart();
         }
 
-        // --- EXPORTAR A EXCEL (CSV) ---
-        function exportToExcel() {
-            const p1 = state.p1;
-            const p2 = state.p2;
-            let csv = [];
-            
-            // Metadatos
-            csv.push(["KRONODUAL V.1.02 - RESULTADOS DE CARRERA"]);
-            csv.push(["Fecha", new Date().toLocaleString()]);
-            csv.push(["Ganador", get('res-winner').innerText]);
-            csv.push(["Tiempo Total", get('res-total').innerText]);
-            csv.push(["Mejor Vuelta", get('res-best').innerText]);
-            csv.push([]); // Espacio
-
-            // Encabezados Tabla
-            csv.push(["VUELTA", `TIEMPO P1 (${p1.n})`, "VELOCIDAD P1", `TIEMPO P2 (${p2.n})`, "VELOCIDAD P2"]);
-            
-            // Filas de datos
-            const maxLaps = Math.max(p1.h.length, p2.h.length);
-            for(let i=0; i<maxLaps; i++) {
-                let row = [i+1];
-                
-                // P1
-                if(p1.h[i]) {
-                    row.push(fmt(p1.h[i]).replace('.', ',')); // Excel ES usa coma decimal a veces, pero mantenemos formato limpio
-                    let spd = ((25 / (p1.h[i]/1000)) * 3.6).toFixed(1);
-                    row.push(spd + " km/h");
-                } else {
-                    row.push("--", "--");
-                }
-                
-                // P2
-                if(p2.h[i]) {
-                    row.push(fmt(p2.h[i]).replace('.', ','));
-                    let spd = ((25 / (p2.h[i]/1000)) * 3.6).toFixed(1);
-                    row.push(spd + " km/h");
-                } else {
-                    row.push("--", "--");
-                }
-                csv.push(row);
-            }
-            
-            // Crear Blob con BOM para UTF-8 (acentos correctos en Excel)
-            const csvString = csv.map(e => e.join(";")).join("\n"); // Usamos ; para mejor compatibilidad con Excel en regiones ES/EU
-            const blob = new Blob(["\uFEFF"+csvString], { type: 'text/csv;charset=utf-8;' });
-            
-            // Descargar
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `KronoDual_Resultados_${Date.now()}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // --- DRAG LOGIC (V2.1 ORIGINAL) ---
+        // --- DRAG LOGIC ---
         function setupDrag(id) {
             const el = get(id);
+            if (!el) return; // Guard clause in case elements aren't ready
             const h = el.querySelector('.roi-handle');
             let m=null, s={};
             
             const down = (e) => {
                 if(state.race) return;
                 e.preventDefault();
-                try { el.setPointerCapture(e.pointerId); } catch(e){}
+                el.setPointerCapture(e.pointerId);
                 m = (e.target === h) ? 'size' : 'move';
                 const r = el.getBoundingClientRect();
                 const p = el.parentElement.getBoundingClientRect();
@@ -1179,20 +1398,15 @@
                     el.style.height = Math.max(5, s.h+dy) + '%';
                 }
             };
-            const up = (e) => { 
-                if(m){ m=null; try { el.releasePointerCapture(e.pointerId); } catch(e){} }
-            };
+            const up = (e) => { if(m){ m=null; el.releasePointerCapture(e.pointerId); }};
             
             el.addEventListener('pointerdown', down);
             el.addEventListener('pointermove', move);
             el.addEventListener('pointerup', up);
         }
 
-        window.onload = () => {
-            setupDrag('roi1');
-            setupDrag('roi2');
-            updUI();
-        };
+        // Wait for boot screen to finish before running drag setup
+        // setupDrag is called in enterApp()
     </script>
 </body>
 </html>
