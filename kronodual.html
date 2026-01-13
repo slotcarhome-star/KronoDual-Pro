@@ -426,9 +426,16 @@
                 </div>
             </div>
 
-            <div class="p-4 bg-black border-t border-gold-900 flex gap-3">
-                <button onclick="closeModal('res-modal')" class="flex-1 bg-dark-800 hover:bg-dark-700 text-white font-bold py-3 rounded-lg text-xs transition-all border border-gray-700">CERRAR</button>
-                <button onclick="newRace()" class="flex-1 btn-gold py-3 rounded-lg text-xs transition-all shadow-lg uppercase">NUEVA CARRERA</button>
+            <!-- FOOTER MODAL CON EXPORTACIÓN -->
+            <div class="p-4 bg-black border-t border-gold-900 flex flex-col gap-3">
+                <button onclick="exportToExcel()" class="w-full btn-gold py-3 rounded-lg text-xs transition-all shadow-lg uppercase flex justify-center items-center gap-2 neon-text-g border-gold-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    EXPORTAR DATOS (EXCEL)
+                </button>
+                <div class="flex gap-3 w-full">
+                    <button onclick="closeModal('res-modal')" class="flex-1 bg-dark-800 hover:bg-dark-700 text-white font-bold py-3 rounded-lg text-xs transition-all border border-gray-700">CERRAR</button>
+                    <button onclick="newRace()" class="flex-1 btn-gold py-3 rounded-lg text-xs transition-all shadow-lg uppercase">NUEVA CARRERA</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1071,6 +1078,62 @@
             });
             state.flags = {f5:false, f1:false};
             updUI(); drawChart();
+        }
+
+        // --- EXPORTAR A EXCEL (CSV) ---
+        function exportToExcel() {
+            const p1 = state.p1;
+            const p2 = state.p2;
+            let csv = [];
+            
+            // Metadatos
+            csv.push(["KRONODUAL V.1.02 - RESULTADOS DE CARRERA"]);
+            csv.push(["Fecha", new Date().toLocaleString()]);
+            csv.push(["Ganador", get('res-winner').innerText]);
+            csv.push(["Tiempo Total", get('res-total').innerText]);
+            csv.push(["Mejor Vuelta", get('res-best').innerText]);
+            csv.push([]); // Espacio
+
+            // Encabezados Tabla
+            csv.push(["VUELTA", `TIEMPO P1 (${p1.n})`, "VELOCIDAD P1", `TIEMPO P2 (${p2.n})`, "VELOCIDAD P2"]);
+            
+            // Filas de datos
+            const maxLaps = Math.max(p1.h.length, p2.h.length);
+            for(let i=0; i<maxLaps; i++) {
+                let row = [i+1];
+                
+                // P1
+                if(p1.h[i]) {
+                    row.push(fmt(p1.h[i]).replace('.', ',')); // Excel ES usa coma decimal a veces, pero mantenemos formato limpio
+                    let spd = ((25 / (p1.h[i]/1000)) * 3.6).toFixed(1);
+                    row.push(spd + " km/h");
+                } else {
+                    row.push("--", "--");
+                }
+                
+                // P2
+                if(p2.h[i]) {
+                    row.push(fmt(p2.h[i]).replace('.', ','));
+                    let spd = ((25 / (p2.h[i]/1000)) * 3.6).toFixed(1);
+                    row.push(spd + " km/h");
+                } else {
+                    row.push("--", "--");
+                }
+                csv.push(row);
+            }
+            
+            // Crear Blob con BOM para UTF-8 (acentos correctos en Excel)
+            const csvString = csv.map(e => e.join(";")).join("\n"); // Usamos ; para mejor compatibilidad con Excel en regiones ES/EU
+            const blob = new Blob(["\uFEFF"+csvString], { type: 'text/csv;charset=utf-8;' });
+            
+            // Descargar
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `KronoDual_Resultados_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // --- DRAG LOGIC (V2.1 ORIGINAL) ---
