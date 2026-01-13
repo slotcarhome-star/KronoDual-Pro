@@ -766,28 +766,37 @@
         function lap(id) {
             try {
                 const now = Date.now();
-                // Check básico anti-rebote muy corto
-                if(now - state['p'+id].last < 1000) return;
                 
-                // --- LÓGICA V.1.02: PRIMER PASO POR META ---
-                // Si el piloto NO ha validado salida (primer cruce tras semáforo verde)
+                // --- DEFINIR TIEMPO MÍNIMO (3 SEGUNDOS) ---
+                // Cualquier "vuelta" detectada en menos de 3 segundos desde la anterior (o desde la salida)
+                // se considera un rebote del sensor y se descarta.
+                const MIN_LAP_TIME = 3000; 
+
+                // --- LÓGICA DE PRIMER CRUCE (SALIDA) ---
+                // Si el piloto NO ha cruzado aún la meta tras el semáforo verde
                 if(!state['p'+id].validStart) {
                     state['p'+id].validStart = true;
-                    state['p'+id].last = now; // Reiniciamos el cronómetro de vuelta aquí
-                    playLapSound(id); // Sonido para confirmar detección
+                    state['p'+id].last = now; // AQUI empieza a contar la vuelta real
+                    playLapSound(id);
                     
-                    // Feedback visual en la tarjeta
+                    // Feedback visual
                     const lastEl = get('disp-p'+id+'-last');
                     if(lastEl) {
                         lastEl.innerText = "SALIDA";
                         lastEl.classList.add('text-gold-500');
                         setTimeout(() => lastEl.classList.remove('text-gold-500'), 1000);
                     }
-                    return; // SALIMOS: No cuenta vuelta, no cuenta récord
+                    return; // NO contamos vuelta, solo iniciamos el reloj del piloto
                 }
 
-                // --- LÓGICA NORMAL DE VUELTA ---
+                // --- CÁLCULO DE VUELTA ---
                 const t = now - state['p'+id].last;
+
+                // --- FILTRO DE TIEMPO MÍNIMO (CRÍTICO) ---
+                // Si la vuelta dura menos de 3 segundos, es un error/rebote. Ignorar.
+                if (t < MIN_LAP_TIME) return;
+
+                // Si pasa el filtro, es una vuelta válida
                 state['p'+id].last = now;
                 state['p'+id].laps++;
                 state['p'+id].h.push(t);
