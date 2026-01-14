@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONO DUAL V.2.6 SmartStart</title>
+    <title>KRONO DUAL V.2.5 SmartStart</title>
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -53,7 +53,6 @@
                     },
                     fontFamily: {
                         arial: ['Arial', 'Helvetica', 'sans-serif'],
-                        mono: ['Courier New', 'Courier', 'monospace'] // Para el boot screen
                     },
                     boxShadow: {
                         'gold': '0 0 15px rgba(255, 215, 0, 0.3)',
@@ -75,14 +74,13 @@
             -webkit-user-select: none;
             overscroll-behavior: none;
             font-family: 'Arial', sans-serif;
-            overflow-x: hidden; /* Prevenir scroll horizontal accidental */
         }
 
-        /* Efectos Neón Gold */
+        /* Efectos Neón Gold - RESTAURADOS */
         .neon-text-g { text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); }
         .neon-border-g { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.1); border-color: #FFD700; }
         
-        /* Boton Exportar Neon Extra (Estilizado y más pequeño) */
+        /* Boton Exportar Neon Extra */
         .btn-neon-export {
             background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
             border: 1px solid #FFD700;
@@ -101,7 +99,7 @@
             transform: scale(1.02);
         }
 
-        /* Semáforo */
+        /* Semáforo - RESTAURADO */
         .bulb {
             width: 20px; height: 20px; border-radius: 50%;
             background-color: #222; border: 2px solid #554400;
@@ -110,7 +108,7 @@
         .bulb.red { background-color: #ef4444; box-shadow: 0 0 15px #ef4444; border-color: #ffaaaa; }
         .bulb.green { background-color: #22c55e; box-shadow: 0 0 15px #22c55e; border-color: #aaffaa; }
 
-        /* ROIs - Dorados y Visibles */
+        /* ROIs - Dorados y Visibles - RESTAURADO */
         .roi {
             position: absolute; 
             border: 2px dashed #FFD700;
@@ -141,7 +139,7 @@
             opacity: 1;
         }
 
-        /* Botones Dorados */
+        /* Botones Dorados - RESTAURADO */
         .btn-gold {
             background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
             border: 1px solid #B8860B;
@@ -165,13 +163,13 @@
 
         .btn-adj {
             background: #111; color: #FFD700; border: 1px solid #B8860B;
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 100%; display: flex; align-items: center; justify-content: center;
             border-radius: 8px; font-weight: bold; cursor: pointer; 
             font-size: 1.25rem;
         }
         .btn-adj:active { background: #FFD700; color: #000; }
 
-        /* Animaciones */
+        /* Animaciones - RESTAURADO */
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
@@ -180,104 +178,63 @@
         
         .chart-bar { transition: height 0.3s ease; }
         
-        /* Boot Screen Transition */
-        #boot-screen { transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
-        
         /* Inputs Gold */
         input[type=range] { accent-color: #FFD700; }
+
+        /* Ajustes específicos para móviles muy pequeños */
+        @media (max-width: 380px) {
+            .btn-gold { font-size: 0.6rem; padding: 0.5rem; }
+            h1 { font-size: 1.2rem; }
+            .roi-handle { width: 25px; height: 25px; }
+            .bulb { width: 15px; height: 15px; }
+        }
     </style>
 </head>
-<body id="app-body" class="flex flex-col min-h-screen p-2 max-w-4xl mx-auto w-full font-arial">
-
-    <!-- BOOT / COMPATIBILITY SCREEN -->
-    <div id="boot-screen" class="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center text-gold-500 font-arial p-4">
-        <div class="max-w-md w-full border border-gold-900 p-8 rounded-2xl bg-dark-900 shadow-[0_0_60px_rgba(255,215,0,0.15)] relative overflow-hidden">
-            <!-- Background Gradient - Sleek Tech Look -->
-            <div class="absolute inset-0 bg-gradient-to-b from-black via-dark-900 to-black opacity-95 z-0"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,215,0,0.08)_0%,_transparent_70%)] z-0"></div>
-            
-            <div class="relative z-10 flex flex-col items-center">
-                <!-- Title Neon Gold Style -->
-                <h1 class="text-4xl font-black italic tracking-tighter mb-2 text-center text-white drop-shadow-lg">
-                    KRONO<span class="text-gold-500 neon-text-g">DUAL</span>
-                </h1>
-                <div class="text-[10px] text-center text-gold-600 tracking-[0.6em] uppercase mb-8 font-bold border-b border-gold-900/50 pb-4 w-full">System Check v2.6</div>
-                
-                <div class="w-full space-y-3 text-xs uppercase tracking-widest mb-8 font-bold">
-                    <div class="flex justify-between items-center bg-black/40 p-3 rounded border border-gold-900/20 shadow-inner">
-                        <span class="text-gray-500">DISPOSITIVO</span>
-                        <span id="chk-dev" class="text-gray-400 animate-pulse">ANALIZANDO...</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-black/40 p-3 rounded border border-gold-900/20 shadow-inner">
-                        <span class="text-gray-500">CÁMARA</span>
-                        <span id="chk-cam" class="text-gray-400">ESPERANDO...</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-black/40 p-3 rounded border border-gold-900/20 shadow-inner">
-                        <span class="text-gray-500">AUDIO</span>
-                        <span id="chk-aud" class="text-gray-400">ESPERANDO...</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-black/40 p-3 rounded border border-gold-900/20 shadow-inner">
-                        <span class="text-gray-500">PANTALLA</span>
-                        <span id="chk-res" class="text-gray-400">ESPERANDO...</span>
-                    </div>
-                </div>
-
-                <div id="boot-status" class="text-center font-black text-sm mb-6 text-gray-600 min-h-[20px] tracking-wider">INICIANDO DIAGNÓSTICO...</div>
-
-                <button id="btn-enter" onclick="enterApp()" class="hidden w-full btn-gold py-4 rounded-xl font-black tracking-[0.3em] text-sm animate-pulse shadow-[0_0_30px_rgba(255,215,0,0.4)] transition-transform hover:scale-[1.02]">
-                    ENTRAR AL SISTEMA
-                </button>
-                
-                <div id="boot-error" class="hidden text-red-500 text-center text-[10px] font-bold mt-4 border border-red-900/50 p-3 rounded bg-red-900/10 uppercase tracking-wide">
-                    ERROR CRÍTICO: DISPOSITIVO NO COMPATIBLE
-                </div>
-            </div>
-        </div>
-        <div class="mt-8 text-[10px] text-gray-800 font-bold tracking-widest uppercase">Powered by Albert Closa Tech</div>
-    </div>
+<body id="app-body" class="flex flex-col min-h-screen p-2 max-w-5xl mx-auto w-full font-arial overflow-x-hidden">
 
     <!-- ERROR HANDLER -->
     <div id="err" class="hidden bg-red-900/80 border border-red-500 text-white p-2 text-center text-sm rounded mb-2 z-50 fixed top-0 left-0 w-full"></div>
     <script>window.onerror=function(m){const e=document.getElementById('err');e.classList.remove('hidden');e.innerHTML='ERROR: '+m; setTimeout(()=>e.classList.add('hidden'), 5000);}</script>
 
     <!-- HEADER -->
-    <header class="bg-black/60 backdrop-blur-xl border border-gold-900 rounded-xl p-3 shadow-gold flex flex-wrap justify-between items-center gap-3 mb-4 sticky top-0 z-40">
-        <div class="flex flex-col">
-            <h1 class="text-2xl font-black italic tracking-tighter leading-none text-white">
-                KRONODUAL <span class="text-gold-500 neon-text-g">V.2.6</span>
+    <header class="bg-black/60 backdrop-blur-xl border border-gold-900 rounded-xl p-3 shadow-gold flex flex-wrap justify-between items-center gap-3 mb-4 sticky top-0 z-40 transition-all">
+        <div class="flex flex-col min-w-max">
+            <h1 class="text-xl sm:text-2xl font-black italic tracking-tighter leading-none text-white">
+                KRONODUAL <span class="text-gold-500 neon-text-g">V.2.5</span>
             </h1>
-            <span class="text-[10px] font-bold text-gold-700 tracking-widest uppercase">By Albert Closa</span>
+            <span class="text-[9px] sm:text-[10px] font-bold text-gold-700 tracking-widest uppercase">By Albert Closa</span>
         </div>
 
-        <div class="flex gap-2">
-            <button onclick="toggleConfig()" class="btn-gold text-[10px] py-2 px-4 rounded-full flex items-center gap-2">
+        <div class="flex gap-2 flex-wrap sm:flex-nowrap justify-end flex-1">
+            <button onclick="toggleConfig()" class="btn-gold text-[10px] py-2 px-3 sm:px-4 rounded-full flex items-center gap-2 whitespace-nowrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.35a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.73v.52a2 2 0 0 1-1 1.73l-.15.08a2 2 0 0 0-.73 2.73l.78 1.35a2 2 0 0 0-2.73-.73l-.15-.08a2 2 0 0 1-2 0l-.43.25a2 2 0 0 1-1-1.73V2a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                AJUSTES
+                <span class="hidden sm:inline">AJUSTES</span>
             </button>
-            <button onclick="showRecords()" class="btn-gold text-[10px] py-2 px-4 rounded-full flex items-center gap-2">
-                🏆 HISTORIAL
+            <button onclick="showRecords()" class="btn-gold text-[10px] py-2 px-3 sm:px-4 rounded-full flex items-center gap-2 whitespace-nowrap">
+                🏆 <span class="hidden sm:inline">HISTORIAL</span>
             </button>
-            <button onclick="toggleFullScreen()" class="btn-gold text-[10px] w-8 h-8 rounded-full flex items-center justify-center p-0" title="Pantalla Completa">
+            <button onclick="toggleFullScreen()" class="btn-gold text-[10px] w-8 h-8 rounded-full flex items-center justify-center p-0 shrink-0" title="Pantalla Completa">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
             </button>
         </div>
 
-        <div class="bg-black p-2 rounded-full border border-gold-900 flex gap-2 shadow-inner">
+        <!-- Semáforo con flex-wrap control -->
+        <div class="bg-black p-2 rounded-full border border-gold-900 flex gap-2 shadow-inner shrink-0 scale-90 sm:scale-100 origin-right">
             <div id="l1" class="bulb"></div><div id="l2" class="bulb"></div><div id="l3" class="bulb"></div><div id="l4" class="bulb"></div><div id="l5" class="bulb"></div>
         </div>
     </header>
 
-    <!-- PANEL DE AJUSTES -->
-    <div id="config" class="hidden w-full bg-dark-900/90 backdrop-blur-xl border-x border-b border-gold-900 rounded-b-xl p-4 mb-4 shadow-2xl relative z-30">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
+    <!-- PANEL DE AJUSTES: Scrollable en landscape -->
+    <div id="config" class="hidden w-full bg-dark-900/90 backdrop-blur-xl border-x border-b border-gold-900 rounded-b-xl p-4 mb-4 shadow-2xl relative z-30 max-h-[80vh] overflow-y-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             <!-- COLUMNA P1 -->
             <div class="bg-yellow-900/10 p-3 rounded-lg border border-yellow-700/30">
                 <label class="text-xs font-bold text-gold-400 mb-1 block">PILOTO 1 (ORO)</label>
-                <input id="in-p1-n" value="Piloto 1" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-2 text-sm text-gold-100 mb-2 focus:border-gold-500 outline-none">
-                <input id="in-p1-c" value="Golden Bull" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-2 text-xs text-gold-600 mb-3 focus:border-gold-500 outline-none">
+                <input id="in-p1-n" value="Piloto 1" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-3 text-sm text-gold-100 mb-2 focus:border-gold-500 outline-none placeholder-gray-600">
+                <input id="in-p1-c" value="Golden Bull" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-3 text-xs text-gold-600 mb-3 focus:border-gold-500 outline-none placeholder-gray-600">
                 
                 <label class="text-[10px] font-bold text-gold-700 uppercase">Tono P1</label>
-                <select id="snd-p1" onchange="previewTone(this.value)" class="w-full bg-black border border-gold-900 rounded p-2 text-sm mb-3 text-gold-300">
+                <select id="snd-p1" onchange="previewTone(this.value)" class="w-full bg-black border border-gold-900 rounded p-3 text-sm mb-3 text-gold-300">
                     <option value="C5">Tono Alto (C5)</option>
                     <option value="A4">Tono Medio (A4)</option>
                     <option value="F4">Tono Bajo (F4)</option>
@@ -287,21 +244,21 @@
                 <label class="text-[10px] font-bold text-gold-700 uppercase flex justify-between">
                     <span>Umbral P1</span> <span id="lbl-sens-p1" class="text-gold-400 font-bold text-lg">100</span>
                 </label>
-                <div class="flex items-center gap-3 mt-2">
-                    <button class="btn-adj" onclick="adjSens(1, -5)">-</button>
-                    <input type="range" id="in-sens-p1" min="0" max="255" value="100" oninput="updSensUI(1)" class="flex-1 h-4 bg-dark-800 rounded-lg appearance-none cursor-pointer">
-                    <button class="btn-adj" onclick="adjSens(1, 5)">+</button>
+                <div class="flex items-center gap-3 mt-2 h-8">
+                    <button class="btn-adj touch-manipulation" onclick="adjSens(1, -5)">-</button>
+                    <input type="range" id="in-sens-p1" min="0" max="255" value="100" oninput="updSensUI(1)" class="flex-1 h-full bg-dark-800 rounded-lg appearance-none cursor-pointer mx-2">
+                    <button class="btn-adj touch-manipulation" onclick="adjSens(1, 5)">+</button>
                 </div>
             </div>
 
             <!-- COLUMNA P2 -->
             <div class="bg-orange-900/10 p-3 rounded-lg border border-orange-900/30">
                 <label class="text-xs font-bold text-orange-400 mb-1 block">PILOTO 2 (BRONCE)</label>
-                <input id="in-p2-n" value="Piloto 2" onchange="updUI()" class="w-full bg-black border border-orange-900 rounded p-2 text-sm text-gold-100 mb-2 focus:border-orange-500 outline-none">
-                <input id="in-p2-c" value="Bronze Horse" onchange="updUI()" class="w-full bg-black border border-orange-900 rounded p-2 text-xs text-orange-600 mb-3 focus:border-orange-500 outline-none">
+                <input id="in-p2-n" value="Piloto 2" onchange="updUI()" class="w-full bg-black border border-orange-900 rounded p-3 text-sm text-gold-100 mb-2 focus:border-orange-500 outline-none placeholder-gray-600">
+                <input id="in-p2-c" value="Bronze Horse" onchange="updUI()" class="w-full bg-black border border-orange-900 rounded p-3 text-xs text-orange-600 mb-3 focus:border-orange-500 outline-none placeholder-gray-600">
                 
                 <label class="text-[10px] font-bold text-orange-700 uppercase">Tono P2</label>
-                <select id="snd-p2" onchange="previewTone(this.value)" class="w-full bg-black border border-orange-900 rounded p-2 text-sm mb-3 text-gold-300">
+                <select id="snd-p2" onchange="previewTone(this.value)" class="w-full bg-black border border-orange-900 rounded p-3 text-sm mb-3 text-gold-300">
                     <option value="F4">Tono Bajo (F4)</option>
                     <option value="A4">Tono Medio (A4)</option>
                     <option value="C5">Tono Alto (C5)</option>
@@ -311,10 +268,10 @@
                 <label class="text-[10px] font-bold text-orange-700 uppercase flex justify-between">
                     <span>Umbral P2</span> <span id="lbl-sens-p2" class="text-orange-400 font-bold text-lg">100</span>
                 </label>
-                <div class="flex items-center gap-3 mt-2">
-                    <button class="btn-adj border-orange-900 text-orange-400" onclick="adjSens(2, -5)">-</button>
-                    <input type="range" id="in-sens-p2" min="0" max="255" value="100" oninput="updSensUI(2)" class="flex-1 h-4 bg-dark-800 rounded-lg appearance-none cursor-pointer accent-orange-500">
-                    <button class="btn-adj border-orange-900 text-orange-400" onclick="adjSens(2, 5)">+</button>
+                <div class="flex items-center gap-3 mt-2 h-8">
+                    <button class="btn-adj border-orange-900 text-orange-400 touch-manipulation" onclick="adjSens(2, -5)">-</button>
+                    <input type="range" id="in-sens-p2" min="0" max="255" value="100" oninput="updSensUI(2)" class="flex-1 h-full bg-dark-800 rounded-lg appearance-none cursor-pointer accent-orange-500 mx-2">
+                    <button class="btn-adj border-orange-900 text-orange-400 touch-manipulation" onclick="adjSens(2, 5)">+</button>
                 </div>
             </div>
         </div>
@@ -322,7 +279,7 @@
         <div class="flex flex-col sm:flex-row gap-4 border-t border-gold-900/50 pt-4">
             <div class="w-full">
                 <label class="text-xs font-bold text-gold-700 mb-1 block">VUELTAS DE CARRERA</label>
-                <select id="in-laps" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-2 text-sm text-gold-300">
+                <select id="in-laps" onchange="updUI()" class="w-full bg-black border border-gold-900 rounded p-3 text-sm text-gold-300">
                     <option value="5">5 Vueltas (Sprint)</option>
                     <option value="10" selected>10 Vueltas (Standard)</option>
                     <option value="20">20 Vueltas (Long)</option>
@@ -330,9 +287,9 @@
                     <option value="9999">Práctica Libre (∞)</option>
                 </select>
             </div>
-            <div class="w-full flex items-center justify-center pt-6">
-                <label class="flex items-center cursor-pointer gap-3">
-                    <input type="checkbox" id="voice-chk" checked class="w-5 h-5 accent-gold-500 rounded bg-black border-gold-700">
+            <div class="w-full flex items-center justify-center pt-4 sm:pt-6">
+                <label class="flex items-center cursor-pointer gap-3 p-2 rounded hover:bg-white/5 w-full justify-center">
+                    <input type="checkbox" id="voice-chk" checked class="w-6 h-6 accent-gold-500 rounded bg-black border-gold-700">
                     <span class="text-sm font-bold text-gold-500">LOCUTOR (TTS) ACTIVO</span>
                 </label>
             </div>
@@ -340,93 +297,94 @@
     </div>
 
     <!-- MAIN TIMER -->
-    <div class="relative bg-gradient-to-br from-dark-900 to-black border border-gold-900 rounded-2xl p-6 text-center shadow-[0_0_20px_rgba(184,134,11,0.2)] mb-4 overflow-hidden">
+    <div class="relative bg-gradient-to-br from-dark-900 to-black border border-gold-900 rounded-2xl p-4 sm:p-6 text-center shadow-[0_0_20px_rgba(184,134,11,0.2)] mb-4 overflow-hidden">
         <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDIxNSwwLDAuMDUpIj48cGF0aCBkPSJNMCAwaDIwdjIwSDB6Ii8+PC9zdmc+')] opacity-20"></div>
         <div class="relative z-10">
-            <div class="text-[10px] font-bold text-gold-600 tracking-[0.3em] uppercase mb-1">Tiempo de Carrera</div>
-            <div id="main-timer" class="text-6xl sm:text-7xl font-black text-white tabular-nums tracking-tight drop-shadow-[0_0_10px_rgba(255,215,0,0.3)] font-arial">
+            <div class="text-[9px] sm:text-[10px] font-bold text-gold-600 tracking-[0.3em] uppercase mb-1">Tiempo de Carrera</div>
+            <div id="main-timer" class="text-5xl sm:text-7xl font-black text-white tabular-nums tracking-tight drop-shadow-[0_0_10px_rgba(255,215,0,0.3)] font-arial">
                 00:00.00
             </div>
-            <div id="lap-counter" class="text-xs font-bold text-yellow-400 tracking-[0.2em] uppercase mt-2">
+            <div id="lap-counter" class="text-[10px] sm:text-xs font-bold text-yellow-400 tracking-[0.2em] uppercase mt-2">
                 PREPARADO
             </div>
         </div>
     </div>
 
     <!-- VIDEO ZONE -->
-    <div class="bg-dark-900 border border-gold-900 rounded-xl p-4 shadow-lg mb-4">
+    <div class="bg-dark-900 border border-gold-900 rounded-xl p-3 sm:p-4 shadow-lg mb-4">
         <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
-            <div class="flex gap-2">
-                <button id="btn-cam" onclick="toggleCam()" class="btn-gold text-[10px] py-2 px-4 rounded-full shadow-none border-gold-800 text-gold-500">
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button id="btn-cam" onclick="toggleCam()" class="flex-1 sm:flex-none btn-gold text-[10px] py-3 px-4 rounded-full shadow-none border-gold-800 text-gold-500 font-bold">
                     ENCENDER CÁMARA
                 </button>
-                <button id="btn-auto" onclick="autoCalibrate()" class="hidden btn-gold text-[10px] py-2 px-4 rounded-full shadow-none border-gold-600 text-gold-200 bg-gradient-to-r from-yellow-900 to-black animate-pulse">
+                <button id="btn-auto" onclick="autoCalibrate()" class="hidden flex-1 sm:flex-none btn-gold text-[10px] py-3 px-4 rounded-full shadow-none border-gold-600 text-gold-200 bg-gradient-to-r from-yellow-900 to-black animate-pulse">
                     🎯 AUTO-AJUSTE
                 </button>
             </div>
-            <div class="flex gap-2 text-[10px] font-bold bg-black/50 px-3 py-1 rounded-full border border-gold-900 font-arial items-center">
-                <div class="flex flex-col items-center">
+            <div class="flex gap-2 text-[10px] font-bold bg-black/50 px-3 py-2 rounded-full border border-gold-900 font-arial items-center w-full sm:w-auto justify-center">
+                <div class="flex flex-col items-center flex-1 sm:flex-none">
                     <span class="text-gold-400">P1: <b id="val-p1">0</b></span>
                     <span id="st-p1" class="text-[8px] uppercase font-black text-gray-500">--</span>
                 </div>
                 <span class="text-gold-800 mx-1">|</span>
-                <div class="flex flex-col items-center">
+                <div class="flex flex-col items-center flex-1 sm:flex-none">
                     <span class="text-orange-400">P2: <b id="val-p2">0</b></span>
                     <span id="st-p2" class="text-[8px] uppercase font-black text-gray-500">--</span>
                 </div>
             </div>
         </div>
 
-        <div class="relative w-full h-[25vh] bg-black rounded-lg overflow-hidden border-2 border-gold-900 shadow-inner group">
-            <div id="cam-msg" class="absolute inset-0 flex flex-col items-center justify-center text-gold-800">
+        <!-- VIDEO CONTAINER -->
+        <div class="relative w-full h-[30vh] min-h-[240px] max-h-[60vh] bg-black rounded-lg overflow-hidden border-2 border-gold-900 shadow-inner group">
+            <div id="cam-msg" class="absolute inset-0 flex flex-col items-center justify-center text-gold-800 pointer-events-none">
                 <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                 <p class="text-xs font-bold">CÁMARA APAGADA</p>
             </div>
             <video id="webcam" class="w-full h-full object-cover hidden" autoplay playsinline muted></video>
             
             <!-- OVERLAY RECORD -->
-            <div id="record-overlay" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/90 border-2 border-gold-500 p-6 rounded-xl text-center opacity-0 pointer-events-none transition-all transform scale-90 z-50 shadow-[0_0_50px_rgba(255,215,0,0.5)]">
-                <div class="text-gold-400 text-2xl font-black uppercase mb-1 font-arial">¡NUEVO RÉCORD!</div>
-                <div id="rec-data" class="text-white text-xl font-bold font-arial tracking-widest">--.---</div>
+            <div id="record-overlay" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/90 border-2 border-gold-500 p-6 rounded-xl text-center opacity-0 pointer-events-none transition-all transform scale-90 z-50 shadow-[0_0_50px_rgba(255,215,0,0.5)] w-[80%]">
+                <div class="text-gold-400 text-lg sm:text-2xl font-black uppercase mb-1 font-arial">¡NUEVO RÉCORD!</div>
+                <div id="rec-data" class="text-white text-lg sm:text-xl font-bold font-arial tracking-widest break-words">--.---</div>
             </div>
 
             <!-- ROIS -->
             <div id="roi1" class="roi" style="top: 30%; left: 20%; width: 15%; height: 20%;">
                 <div class="absolute -top-6 left-0 bg-gold-500 text-black text-[10px] font-bold px-2 rounded-sm border border-white">P1</div>
-                <div class="roi-handle"></div>
+                <div class="roi-handle touch-manipulation"></div>
             </div>
             <div id="roi2" class="roi" style="top: 30%; left: 60%; width: 15%; height: 20%;">
                 <div class="absolute -top-6 left-0 bg-orange-600 text-black text-[10px] font-bold px-2 rounded-sm border border-white">P2</div>
-                <div class="roi-handle"></div>
+                <div class="roi-handle touch-manipulation"></div>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mt-4">
-            <button id="btn-start" onclick="toggleRace()" disabled class="btn-gold py-3 px-4 rounded-xl text-sm shadow-md disabled:opacity-50">
+            <button id="btn-start" onclick="toggleRace()" disabled class="btn-gold py-4 px-4 rounded-xl text-sm shadow-md disabled:opacity-50 touch-manipulation font-black">
                 INICIAR
             </button>
-            <button id="btn-reset" onclick="resetRace()" disabled class="bg-dark-800 text-red-500 font-black py-3 px-4 rounded-xl text-sm transition-all border border-red-900/30 shadow-md hover:bg-red-900/10 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button id="btn-reset" onclick="resetRace()" disabled class="bg-dark-800 text-red-500 font-black py-4 px-4 rounded-xl text-sm transition-all border border-red-900/30 shadow-md hover:bg-red-900/10 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation">
                 RESET
             </button>
         </div>
     </div>
 
     <!-- TELEMETRY CARDS -->
-    <div class="bg-dark-900/80 backdrop-blur-lg border border-gold-900 rounded-xl p-4 shadow-lg mb-4">
+    <div class="bg-dark-900/80 backdrop-blur-lg border border-gold-900 rounded-xl p-3 sm:p-4 shadow-lg mb-4">
         <h3 class="text-left text-xs font-bold text-gold-500 tracking-[0.2em] uppercase border-b border-gold-900 pb-2 mb-4 neon-text-g pl-1">Telemetría en Vivo</h3>
         
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 xs:grid-cols-2 gap-4"> 
             <!-- P1 CARD -->
             <div class="bg-gradient-to-b from-dark-800 to-black border-l-4 border-gold-500 p-3 rounded shadow-lg relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-1 opacity-10"><h1 class="text-4xl font-black text-gold-500">1</h1></div>
-                <h3 class="text-lg font-black text-gold-400 leading-none" id="disp-p1-n">P1</h3>
-                <span class="text-[10px] font-bold text-gold-700 uppercase tracking-wider block mb-3" id="disp-p1-c">CAR 1</span>
+                <h3 class="text-lg font-black text-gold-400 leading-none truncate" id="disp-p1-n">P1</h3>
+                <span class="text-[9px] font-bold text-gold-700 uppercase tracking-wider block mb-3 truncate" id="disp-p1-c">CAR 1</span>
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[8px] text-gold-600 block font-bold">VUELTAS</span><span id="disp-p1-l" class="text-sm font-bold text-white font-arial">0</span></div>
-                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[8px] text-gold-600 block font-bold">TOTAL</span><span id="disp-p1-tot" class="text-sm font-bold text-white font-arial">00:00</span></div>
-                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[8px] text-gold-600 block font-bold">VELOCIDAD</span><span id="disp-p1-spd" class="text-xs font-bold text-white font-arial">0</span></div>
-                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[8px] text-gold-600 block font-bold">ÚLTIMA</span><span id="disp-p1-last" class="text-xs font-bold text-white font-arial">--.--</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[7px] sm:text-[8px] text-gold-600 block font-bold">VUELTAS</span><span id="disp-p1-l" class="text-sm font-bold text-white font-arial">0</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[7px] sm:text-[8px] text-gold-600 block font-bold">TOTAL</span><span id="disp-p1-tot" class="text-sm font-bold text-white font-arial">00:00</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[7px] sm:text-[8px] text-gold-600 block font-bold">VELOCIDAD</span><span id="disp-p1-spd" class="text-[10px] sm:text-xs font-bold text-white font-arial">0</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-gold-900/30"><span class="text-[7px] sm:text-[8px] text-gold-600 block font-bold">ÚLTIMA</span><span id="disp-p1-last" class="text-[10px] sm:text-xs font-bold text-white font-arial">--.--</span></div>
                     <div class="col-span-2 bg-yellow-900/20 border border-gold-500/30 p-2 rounded text-center">
                         <span class="text-[8px] text-gold-200 block font-bold uppercase tracking-widest">MEJOR TIEMPO</span>
                         <span id="disp-p1-best" class="text-xl font-black text-white font-arial drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]">--.--</span>
@@ -437,14 +395,14 @@
             <!-- P2 CARD -->
             <div class="bg-gradient-to-b from-dark-800 to-black border-l-4 border-orange-600 p-3 rounded shadow-lg relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-1 opacity-10"><h1 class="text-4xl font-black text-orange-600">2</h1></div>
-                <h3 class="text-lg font-black text-orange-500 leading-none" id="disp-p2-n">P2</h3>
-                <span class="text-[10px] font-bold text-orange-800 uppercase tracking-wider block mb-3" id="disp-p2-c">CAR 2</span>
+                <h3 class="text-lg font-black text-orange-500 leading-none truncate" id="disp-p2-n">P2</h3>
+                <span class="text-[9px] font-bold text-orange-800 uppercase tracking-wider block mb-3 truncate" id="disp-p2-c">CAR 2</span>
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[8px] text-orange-700 block font-bold">VUELTAS</span><span id="disp-p2-l" class="text-sm font-bold text-white font-arial">0</span></div>
-                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[8px] text-orange-700 block font-bold">TOTAL</span><span id="disp-p2-tot" class="text-sm font-bold text-white font-arial">00:00</span></div>
-                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[8px] text-orange-700 block font-bold">VELOCIDAD</span><span id="disp-p2-spd" class="text-xs font-bold text-white font-arial">0</span></div>
-                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[8px] text-orange-700 block font-bold">ÚLTIMA</span><span id="disp-p2-last" class="text-xs font-bold text-white font-arial">--.--</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[7px] sm:text-[8px] text-orange-700 block font-bold">VUELTAS</span><span id="disp-p2-l" class="text-sm font-bold text-white font-arial">0</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[7px] sm:text-[8px] text-orange-700 block font-bold">TOTAL</span><span id="disp-p2-tot" class="text-sm font-bold text-white font-arial">00:00</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[7px] sm:text-[8px] text-orange-700 block font-bold">VELOCIDAD</span><span id="disp-p2-spd" class="text-[10px] sm:text-xs font-bold text-white font-arial">0</span></div>
+                    <div class="bg-dark-800/50 p-1 rounded border border-orange-900/30"><span class="text-[7px] sm:text-[8px] text-orange-700 block font-bold">ÚLTIMA</span><span id="disp-p2-last" class="text-[10px] sm:text-xs font-bold text-white font-arial">--.--</span></div>
                     <div class="col-span-2 bg-orange-900/20 border border-orange-600/30 p-2 rounded text-center">
                         <span class="text-[8px] text-orange-200 block font-bold uppercase tracking-widest">MEJOR TIEMPO</span>
                         <span id="disp-p2-best" class="text-xl font-black text-white font-arial drop-shadow-[0_0_5px_rgba(255,100,0,0.5)]">--.--</span>
@@ -455,7 +413,7 @@
 
         <div class="mt-6">
             <h4 class="text-xs font-bold text-gold-500 mb-2 uppercase neon-text-g text-left pl-1">Ritmo de Carrera</h4>
-            <div class="bg-dark-800/50 border border-gold-900/50 h-56 rounded relative p-2 pl-8">
+            <div class="bg-dark-800/50 border border-gold-900/50 h-40 sm:h-56 rounded relative p-2 pl-8">
                 <div class="absolute left-1 top-2 bottom-2 flex flex-col justify-between text-[8px] text-gold-700 font-bold">
                     <span id="chart-max">10s</span>
                     <span id="chart-mid">5s</span>
@@ -514,14 +472,14 @@
                 </div>
             </div>
 
-            <!-- FOOTER CON BOTONES Y EXCEL -->
             <div class="p-4 bg-black border-t border-gold-900 flex flex-col gap-3">
-                <div class="flex gap-3">
+                <div class="flex gap-3 w-full">
                     <button onclick="closeModal('res-modal')" class="flex-1 bg-dark-800 hover:bg-dark-700 text-white font-bold py-3 rounded-lg text-xs transition-all border border-gray-700">CERRAR</button>
                     <button onclick="newRace()" class="flex-1 btn-gold py-3 rounded-lg text-xs transition-all shadow-lg uppercase">NUEVA CARRERA</button>
                 </div>
-                <button onclick="exportToExcel()" class="btn-neon-export w-full py-2 rounded-lg flex items-center justify-center gap-2 transform hover:scale-105 transition-transform text-xs">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <!-- EXPORTAR EXCEL MOVIDO AQUI -->
+                <button onclick="exportToExcel()" class="btn-neon-export w-full py-2 rounded-lg flex items-center justify-center gap-2 transform hover:bg-gold-900/20 border-gold-900 text-gold-600 hover:text-gold-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Descargar Excel
                 </button>
             </div>
@@ -553,20 +511,33 @@
                 </table>
             </div>
 
-            <div class="p-4 bg-slate-950 border-t border-slate-800 flex justify-between">
-                <button onclick="closeModal('rec-modal')" class="text-yellow-500 text-xs font-bold hover:text-white transition-colors">CERRAR</button>
-                <button onclick="tryClearRecords()" class="text-red-500 text-xs font-bold hover:text-red-400 transition-colors uppercase">BORRAR HISTORIAL</button>
+            <div class="p-3 bg-slate-950 border-t border-slate-800 flex justify-between items-center">
+                <button onclick="closeModal('rec-modal')" class="text-yellow-500 text-[10px] font-bold hover:text-white transition-colors tracking-widest px-2 py-1">CERRAR</button>
+                <button onclick="tryClearRecords()" class="group flex items-center gap-1.5 px-3 py-1 rounded hover:bg-red-900/20 transition-all" title="Borrar Historial">
+                    <span class="text-[9px] text-red-500/70 font-bold uppercase group-hover:text-red-400 transition-colors">Borrar</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500/70 group-hover:text-red-400 group-hover:scale-110 transition-all"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
             </div>
 
-            <!-- CONFIRMATION OVERLAY -->
-            <div id="conf-modal" class="absolute inset-0 bg-black/80 z-50 hidden flex items-center justify-center fade-in">
-                <div class="bg-dark-900 border border-red-900/50 p-5 rounded-xl shadow-2xl max-w-xs w-full mx-4 text-center relative overflow-hidden">
-                    <div class="absolute inset-0 bg-red-500/5 pointer-events-none"></div>
-                    <p class="text-white text-base font-black mb-2 uppercase tracking-wider text-red-500 relative z-10">¿Borrar Historial?</p>
-                    <p class="text-gray-400 text-[10px] mb-4 relative z-10">Esta acción no se puede deshacer.</p>
-                    <div class="flex gap-2 justify-center relative z-10">
-                        <button onclick="confirmDelete(false)" class="flex-1 bg-dark-800 border border-gray-700 text-white py-2 rounded text-[10px] font-bold uppercase hover:bg-gray-700 transition-colors">Cancelar</button>
-                        <button onclick="confirmDelete(true)" class="flex-1 bg-red-900/80 border border-red-500 text-white py-2 rounded text-[10px] font-bold uppercase hover:bg-red-800 transition-colors shadow-[0_0_10px_rgba(239,68,68,0.3)]">Sí, Borrar</button>
+            <!-- CONFIRMATION OVERLAY (Updated Design) -->
+            <div id="conf-modal" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center fade-in">
+                <div class="bg-dark-900 border border-gold-900/50 p-5 rounded-xl shadow-2xl max-w-xs w-[85%] transform scale-100 transition-all ring-1 ring-white/5">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="text-red-500/80 mb-3 bg-red-900/10 p-2 rounded-full ring-1 ring-red-500/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        </div>
+                        <h3 class="text-gold-500 font-bold uppercase text-xs tracking-widest mb-2">¿Borrar Historial?</h3>
+                        <p class="text-gray-400 text-[10px] mb-5 leading-relaxed">
+                            No podrás recuperar los registros.<br>¿Confirmas la eliminación?
+                        </p>
+                        <div class="flex gap-2 w-full">
+                            <button onclick="confirmDelete(false)" class="flex-1 bg-transparent border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 py-2 rounded-lg text-[10px] font-bold uppercase transition-colors">
+                                Cancelar
+                            </button>
+                            <button onclick="confirmDelete(true)" class="flex-1 bg-red-900/20 border border-red-900/40 text-red-500 hover:bg-red-900/40 hover:text-red-400 py-2 rounded-lg text-[10px] font-bold uppercase transition-colors">
+                                Confirmar
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -576,87 +547,6 @@
     <canvas id="cv" class="hidden"></canvas>
 
     <script>
-        // --- BOOT SYSTEM CHECK ---
-        window.addEventListener('load', async () => {
-            const sleep = m => new Promise(r => setTimeout(r, m));
-            
-            // Check 1: User Agent / Mobile
-            await sleep(500);
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const elDev = document.getElementById('chk-dev');
-            elDev.innerText = isMobile ? "MÓVIL / TABLET" : "PC / ESCRITORIO";
-            elDev.classList.remove('animate-pulse');
-            elDev.classList.add('text-gold-400');
-
-            // Check 2: Camera API
-            await sleep(400);
-            const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-            const elCam = document.getElementById('chk-cam');
-            if(hasMedia) {
-                elCam.innerText = "OK - ACTIVO";
-                elCam.classList.add('text-green-500');
-            } else {
-                elCam.innerText = "NO DETECTADO";
-                elCam.classList.add('text-red-500');
-            }
-
-            // Check 3: Audio (WebAudio)
-            await sleep(400);
-            const hasAudio = !!(window.AudioContext || window.webkitAudioContext);
-            const elAud = document.getElementById('chk-aud');
-            if(hasAudio) {
-                elAud.innerText = "OK - ACTIVO";
-                elAud.classList.add('text-green-500');
-            } else {
-                elAud.innerText = "ERROR API";
-                elAud.classList.add('text-red-500');
-            }
-
-            // Check 4: Res
-            await sleep(400);
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            const elRes = document.getElementById('chk-res');
-            elRes.innerText = `${w} x ${h}px`;
-            elRes.classList.add('text-gold-400');
-
-            // Final Decision
-            await sleep(500);
-            const status = document.getElementById('boot-status');
-            
-            if(hasMedia && hasAudio) {
-                status.innerText = "SISTEMA OPERATIVO Y LISTO";
-                status.classList.remove('text-gray-500');
-                status.classList.add('text-green-400', 'animate-pulse');
-                document.getElementById('btn-enter').classList.remove('hidden');
-            } else {
-                status.innerText = "FALLO EN DIAGNÓSTICO";
-                status.classList.remove('text-gray-500');
-                status.classList.add('text-red-500');
-                const errBox = document.getElementById('boot-error');
-                errBox.classList.remove('hidden');
-                
-                let msg = "TU NAVEGADOR NO ES COMPATIBLE.";
-                if(!hasMedia) msg = "NO SE DETECTÓ ACCESO A CÁMARA (WEBCAM/MÓVIL).";
-                else if(!hasAudio) msg = "NO SE PUEDE GENERAR AUDIO (WebAudio API).";
-                
-                errBox.innerText = msg;
-            }
-        });
-
-        function enterApp() {
-            const screen = document.getElementById('boot-screen');
-            screen.style.opacity = '0';
-            screen.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                screen.remove();
-                // Setup Drag after removing overlay to calculate positions correctly
-                setupDrag('roi1');
-                setupDrag('roi2');
-                updUI();
-            }, 500);
-        }
-
         // --- UTILIDADES ---
         const get = (id) => document.getElementById(id);
         const set = (id, txt) => { const el = get(id); if(el) el.innerText = txt; }
@@ -1096,23 +986,25 @@
         function lap(id) {
             const now = Date.now();
             const t = now - state['p'+id].last;
+            const absT = now - state.start; // Tiempo absoluto desde el semáforo verde
 
             // --- LÓGICA "PASO 0" (SMART START) ---
-            if (state['p'+id].laps === 0 && t < 4000) {
-                state['p'+id].last = now; 
+            if (state['p'+id].laps === 0 && absT < 3000) {
                 const elLast = get('disp-p'+id+'-last');
-                if(elLast) {
-                    const original = elLast.innerText;
+                if(elLast && elLast.innerText !== "SALIDA") {
                     elLast.innerText = "SALIDA";
-                    elLast.classList.add('text-green-500');
+                    elLast.classList.add('text-green-500', 'animate-pulse');
                     setTimeout(() => {
-                         elLast.innerText = original;
-                         elLast.classList.remove('text-green-500');
-                    }, 1000);
+                         if(elLast.innerText === "SALIDA") {
+                             elLast.innerText = "--.--";
+                             elLast.classList.remove('text-green-500', 'animate-pulse');
+                         }
+                    }, 1500);
                 }
-                return; 
+                return;
             }
 
+            // Min Lap Time Security (Anti-doble rebote): 2 segundos mínimo entre vueltas
             if(t < 2000) return; 
             
             state['p'+id].last = now;
@@ -1366,7 +1258,6 @@
         // --- DRAG LOGIC ---
         function setupDrag(id) {
             const el = get(id);
-            if (!el) return; // Guard clause in case elements aren't ready
             const h = el.querySelector('.roi-handle');
             let m=null, s={};
             
@@ -1405,8 +1296,11 @@
             el.addEventListener('pointerup', up);
         }
 
-        // Wait for boot screen to finish before running drag setup
-        // setupDrag is called in enterApp()
+        window.onload = () => {
+            setupDrag('roi1');
+            setupDrag('roi2');
+            updUI();
+        };
     </script>
 </body>
 </html>
