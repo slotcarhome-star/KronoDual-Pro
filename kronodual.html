@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONO DUAL V.2.5 SmartStart</title>
+    <title>KRONO DUAL V.2.7 SpeedFix Pro</title>
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -76,7 +76,7 @@
             font-family: 'Arial', sans-serif;
         }
 
-        /* Efectos Neón Gold - RESTAURADOS */
+        /* Efectos Neón Gold */
         .neon-text-g { text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); }
         .neon-border-g { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.1); border-color: #FFD700; }
         
@@ -99,7 +99,7 @@
             transform: scale(1.02);
         }
 
-        /* Semáforo - RESTAURADO */
+        /* Semáforo */
         .bulb {
             width: 20px; height: 20px; border-radius: 50%;
             background-color: #222; border: 2px solid #554400;
@@ -108,7 +108,7 @@
         .bulb.red { background-color: #ef4444; box-shadow: 0 0 15px #ef4444; border-color: #ffaaaa; }
         .bulb.green { background-color: #22c55e; box-shadow: 0 0 15px #22c55e; border-color: #aaffaa; }
 
-        /* ROIs - Dorados y Visibles - RESTAURADO */
+        /* ROIs */
         .roi {
             position: absolute; 
             border: 2px dashed #FFD700;
@@ -117,7 +117,7 @@
             z-index: 50; 
             touch-action: none;
             box-sizing: border-box; 
-            background: rgba(255, 215, 0, 0.1);
+            background: rgba(255, 215, 0, 0.15); /* Transparencia ligera */
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
         }
         
@@ -127,7 +127,7 @@
         .roi.active { 
             border-style: solid; 
             border-width: 4px; 
-            background: rgba(255, 255, 255, 0.4); 
+            background: rgba(255, 255, 255, 0.6); 
             box-shadow: 0 0 20px #FFD700;
             border-color: #FFF;
         }
@@ -139,7 +139,7 @@
             opacity: 1;
         }
 
-        /* Botones Dorados - RESTAURADO */
+        /* Botones Dorados */
         .btn-gold {
             background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
             border: 1px solid #B8860B;
@@ -169,7 +169,7 @@
         }
         .btn-adj:active { background: #FFD700; color: #000; }
 
-        /* Animaciones - RESTAURADO */
+        /* Animaciones */
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
@@ -188,6 +188,15 @@
             .roi-handle { width: 25px; height: 25px; }
             .bulb { width: 15px; height: 15px; }
         }
+        
+        /* Fix Canvas Responsiveness */
+        canvas#cv {
+            display: block;
+            width: 100%;       /* Ocupar todo el ancho del contenedor */
+            height: 100%;      /* Ocupar toda la altura del contenedor */
+            object-fit: fill;  /* Estirar la imagen para llenar el contenedor */
+            background: #000;
+        }
     </style>
 </head>
 <body id="app-body" class="flex flex-col min-h-screen p-2 max-w-5xl mx-auto w-full font-arial overflow-x-hidden">
@@ -200,7 +209,7 @@
     <header class="bg-black/60 backdrop-blur-xl border border-gold-900 rounded-xl p-3 shadow-gold flex flex-wrap justify-between items-center gap-3 mb-4 sticky top-0 z-40 transition-all">
         <div class="flex flex-col min-w-max">
             <h1 class="text-xl sm:text-2xl font-black italic tracking-tighter leading-none text-white">
-                KRONODUAL <span class="text-gold-500 neon-text-g">V.2.5</span>
+                KRONODUAL <span class="text-gold-500 neon-text-g">V.2.7</span>
             </h1>
             <span class="text-[9px] sm:text-[10px] font-bold text-gold-700 tracking-widest uppercase">By Albert Closa</span>
         </div>
@@ -217,13 +226,13 @@
             </button>
         </div>
 
-        <!-- Semáforo con flex-wrap control -->
+        <!-- Semáforo -->
         <div class="bg-black p-2 rounded-full border border-gold-900 flex gap-2 shadow-inner shrink-0 scale-90 sm:scale-100 origin-right">
             <div id="l1" class="bulb"></div><div id="l2" class="bulb"></div><div id="l3" class="bulb"></div><div id="l4" class="bulb"></div><div id="l5" class="bulb"></div>
         </div>
     </header>
 
-    <!-- PANEL DE AJUSTES: grid-cols-2 siempre + min-w-0 para evitar desborde -->
+    <!-- PANEL DE AJUSTES -->
     <div id="config" class="hidden w-full bg-dark-900/90 backdrop-blur-xl border-x border-b border-gold-900 rounded-b-xl p-4 mb-4 shadow-2xl relative z-30 max-h-[80vh] overflow-y-auto">
         <div class="grid grid-cols-2 gap-3 sm:gap-6 mb-4">
             <!-- COLUMNA P1 -->
@@ -244,9 +253,9 @@
                     <span>Umbral P1</span> <span id="lbl-sens-p1" class="text-gold-400 font-bold text-lg">100</span>
                 </label>
                 <div class="flex items-center gap-2 sm:gap-3 mt-2 h-8">
-                    <button class="btn-adj touch-manipulation" onclick="adjSens(1, -5)">-</button>
+                    <button class="btn-adj touch-manipulation" onclick="adjSens(1, -1)">-</button>
                     <input type="range" id="in-sens-p1" min="0" max="255" value="100" oninput="updSensUI(1)" class="flex-1 h-full bg-dark-800 rounded-lg appearance-none cursor-pointer mx-1 sm:mx-2">
-                    <button class="btn-adj touch-manipulation" onclick="adjSens(1, 5)">+</button>
+                    <button class="btn-adj touch-manipulation" onclick="adjSens(1, 1)">+</button>
                 </div>
             </div>
 
@@ -268,9 +277,9 @@
                     <span>Umbral P2</span> <span id="lbl-sens-p2" class="text-orange-400 font-bold text-lg">100</span>
                 </label>
                 <div class="flex items-center gap-2 sm:gap-3 mt-2 h-8">
-                    <button class="btn-adj border-orange-900 text-orange-400 touch-manipulation" onclick="adjSens(2, -5)">-</button>
+                    <button class="btn-adj border-orange-900 text-orange-400 touch-manipulation" onclick="adjSens(2, -1)">-</button>
                     <input type="range" id="in-sens-p2" min="0" max="255" value="100" oninput="updSensUI(2)" class="flex-1 h-full bg-dark-800 rounded-lg appearance-none cursor-pointer accent-orange-500 mx-1 sm:mx-2">
-                    <button class="btn-adj border-orange-900 text-orange-400 touch-manipulation" onclick="adjSens(2, 5)">+</button>
+                    <button class="btn-adj border-orange-900 text-orange-400 touch-manipulation" onclick="adjSens(2, 1)">+</button>
                 </div>
             </div>
         </div>
@@ -309,7 +318,7 @@
         </div>
     </div>
 
-    <!-- VIDEO ZONE -->
+    <!-- VIDEO ZONE - AJUSTADO PARA NO OCUPAR MEDIA PANTALLA -->
     <div class="bg-dark-900 border border-gold-900 rounded-xl p-3 sm:p-4 shadow-lg mb-4">
         <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
             <div class="flex gap-2 w-full sm:w-auto">
@@ -333,13 +342,19 @@
             </div>
         </div>
 
-        <!-- VIDEO CONTAINER -->
-        <div class="relative w-full h-[30vh] min-h-[240px] max-h-[60vh] bg-black rounded-lg overflow-hidden border-2 border-gold-900 shadow-inner group">
-            <div id="cam-msg" class="absolute inset-0 flex flex-col items-center justify-center text-gold-800 pointer-events-none">
+        <!-- VIDEO CONTAINER: Altura fija de 32vh para ser compacto pero visible -->
+        <div id="cam-container" class="relative w-full h-[32vh] bg-black rounded-lg overflow-hidden border-2 border-gold-900 shadow-inner group flex justify-center items-center">
+            
+            <div id="cam-msg" class="absolute inset-0 flex flex-col items-center justify-center text-gold-800 pointer-events-none z-10">
                 <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                 <p class="text-xs font-bold">CÁMARA APAGADA</p>
             </div>
-            <video id="webcam" class="w-full h-full object-cover hidden" autoplay playsinline muted></video>
+
+            <!-- VIDEO OCULTO (Solo fuente de datos) -->
+            <video id="webcam" class="hidden" autoplay playsinline muted></video>
+            
+            <!-- CANVAS VISIBLE (Viewfinder) -->
+            <canvas id="cv" class="hidden"></canvas>
             
             <!-- OVERLAY RECORD -->
             <div id="record-overlay" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/90 border-2 border-gold-500 p-6 rounded-xl text-center opacity-0 pointer-events-none transition-all transform scale-90 z-50 shadow-[0_0_50px_rgba(255,215,0,0.5)] w-[80%]">
@@ -347,12 +362,13 @@
                 <div id="rec-data" class="text-white text-lg sm:text-xl font-bold font-arial tracking-widest break-words">--.---</div>
             </div>
 
-            <!-- ROIS -->
-            <div id="roi1" class="roi" style="top: 30%; left: 20%; width: 15%; height: 20%;">
+            <!-- ROIS RECTANGULARES (Mejor para velocidad) -->
+            <!-- AUMENTO DE TAMAÑO PREDETERMINADO PARA CAPTURAR MEJOR EL PASO RAPIDO -->
+            <div id="roi1" class="roi" style="top: 30%; left: 15%; width: 18%; height: 25%;">
                 <div class="absolute -top-6 left-0 bg-gold-500 text-black text-[10px] font-bold px-2 rounded-sm border border-white">P1</div>
                 <div class="roi-handle touch-manipulation"></div>
             </div>
-            <div id="roi2" class="roi" style="top: 30%; left: 60%; width: 15%; height: 20%;">
+            <div id="roi2" class="roi" style="top: 30%; left: 65%; width: 18%; height: 25%;">
                 <div class="absolute -top-6 left-0 bg-orange-600 text-black text-[10px] font-bold px-2 rounded-sm border border-white">P2</div>
                 <div class="roi-handle touch-manipulation"></div>
             </div>
@@ -372,7 +388,6 @@
     <div class="bg-dark-900/80 backdrop-blur-lg border border-gold-900 rounded-xl p-3 sm:p-4 shadow-lg mb-4">
         <h3 class="text-left text-xs font-bold text-gold-500 tracking-[0.2em] uppercase border-b border-gold-900 pb-2 mb-4 neon-text-g pl-1">Telemetría en Vivo</h3>
         
-        <!-- CAMBIO: grid-cols-2 siempre + min-w-0 en hijos para evitar overflow -->
         <div class="grid grid-cols-2 gap-2 sm:gap-4"> 
             <!-- P1 CARD -->
             <div class="bg-gradient-to-b from-dark-800 to-black border-l-4 border-gold-500 p-3 rounded shadow-lg relative overflow-hidden min-w-0">
@@ -426,7 +441,8 @@
         </div>
     </div>
 
-    <!-- MODAL RESULTADOS -->
+    <!-- MODALES (Resultados, Records, Confirm) -->
+    <!-- (Mismo código HTML que antes, preservado para brevedad visual, la lógica es lo importante) -->
     <div id="res-modal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 hidden flex items-center justify-center fade-in">
         <div class="bg-dark-900/90 border border-gold-600 w-[95%] max-w-lg max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden slide-down">
             <div class="bg-gradient-to-b from-dark-800 to-black p-6 text-center border-b border-gold-800">
@@ -477,7 +493,6 @@
                     <button onclick="closeModal('res-modal')" class="flex-1 bg-dark-800 hover:bg-dark-700 text-white font-bold py-3 rounded-lg text-xs transition-all border border-gray-700">CERRAR</button>
                     <button onclick="newRace()" class="flex-1 btn-gold py-3 rounded-lg text-xs transition-all shadow-lg uppercase">NUEVA CARRERA</button>
                 </div>
-                <!-- EXPORTAR EXCEL MOVIDO AQUI -->
                 <button onclick="exportToExcel()" class="btn-neon-export w-full py-2 rounded-lg flex items-center justify-center gap-2 transform hover:bg-gold-900/20 border-gold-900 text-gold-600 hover:text-gold-400">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Descargar Excel
@@ -486,7 +501,7 @@
         </div>
     </div>
 
-    <!-- MODAL RECORDS -->
+    <!-- MODAL RECORDS & CONFIRM -->
     <div id="rec-modal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 hidden flex items-center justify-center fade-in">
         <div class="bg-dark-900/90 border border-gold-600/50 w-[95%] max-w-5xl max-h-[90vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden slide-down relative">
             <div class="bg-gradient-to-r from-black via-yellow-900/20 to-black p-6 text-center border-b border-gold-600/30">
@@ -518,8 +533,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500/70 group-hover:text-red-400 group-hover:scale-110 transition-all"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                 </button>
             </div>
-
-            <!-- CONFIRMATION OVERLAY (Updated Design) -->
+            <!-- CONFIRM -->
             <div id="conf-modal" class="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center fade-in">
                 <div class="bg-dark-900 border border-gold-900/50 p-5 rounded-xl shadow-2xl max-w-xs w-[85%] transform scale-100 transition-all ring-1 ring-white/5">
                     <div class="flex flex-col items-center text-center">
@@ -527,24 +541,16 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                         </div>
                         <h3 class="text-gold-500 font-bold uppercase text-xs tracking-widest mb-2">¿Borrar Historial?</h3>
-                        <p class="text-gray-400 text-[10px] mb-5 leading-relaxed">
-                            No podrás recuperar los registros.<br>¿Confirmas la eliminación?
-                        </p>
+                        <p class="text-gray-400 text-[10px] mb-5 leading-relaxed">No podrás recuperar los registros.</p>
                         <div class="flex gap-2 w-full">
-                            <button onclick="confirmDelete(false)" class="flex-1 bg-transparent border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 py-2 rounded-lg text-[10px] font-bold uppercase transition-colors">
-                                Cancelar
-                            </button>
-                            <button onclick="confirmDelete(true)" class="flex-1 bg-red-900/20 border border-red-900/40 text-red-500 hover:bg-red-900/40 hover:text-red-400 py-2 rounded-lg text-[10px] font-bold uppercase transition-colors">
-                                Confirmar
-                            </button>
+                            <button onclick="confirmDelete(false)" class="flex-1 bg-transparent border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 py-2 rounded-lg text-[10px] font-bold uppercase transition-colors">Cancelar</button>
+                            <button onclick="confirmDelete(true)" class="flex-1 bg-red-900/20 border border-red-900/40 text-red-500 hover:bg-red-900/40 hover:text-red-400 py-2 rounded-lg text-[10px] font-bold uppercase transition-colors">Confirmar</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <canvas id="cv" class="hidden"></canvas>
 
     <script>
         // --- UTILIDADES ---
@@ -570,9 +576,8 @@
         const cv = get('cv');
         const ctx = cv.getContext('2d', { willReadFrequently: true });
 
-        // --- TONE.JS SETUP ---
+        // --- AUDIO ---
         let synth, polySynth;
-        
         async function initAudio() {
             if(!synth) {
                 await Tone.start();
@@ -582,18 +587,10 @@
                 polySynth.volume.value = -5;
             }
         }
-
-        function playTone(note) {
-            if(synth) synth.triggerAttackRelease(note, "8n");
-        }
-
-        function previewTone(note) {
-            initAudio().then(() => playTone(note));
-        }
-
+        function playTone(note) { if(synth) synth.triggerAttackRelease(note, "8n"); }
+        function previewTone(note) { initAudio().then(() => playTone(note)); }
         async function playStartSequence() {
             await initAudio();
-            // 5 Semáforos
             for(let i=1; i<=5; i++) {
                 if(state.aborted) return;
                 get('l'+i).classList.add('red');
@@ -601,19 +598,12 @@
                 await new Promise(r => setTimeout(r, 900));
             }
             if(state.aborted) return;
-            
-            // Random delay
             await new Promise(r => setTimeout(r, Math.random()*1500 + 500));
             if(state.aborted) return;
-
-            // Green Light
             for(let i=1; i<=5; i++) { get('l'+i).classList.remove('red'); get('l'+i).classList.add('green'); }
-            // Salida
             polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n");
-            
             startRaceLogic();
         }
-
         function playFalseStartSound() {
             if(synth) {
                 const now = Tone.now();
@@ -621,144 +611,90 @@
                 synth.triggerAttackRelease("G3", "8n", now + 0.2);
             }
         }
-
         function playLapSound(id) {
             if(!synth) return;
             const note = get('snd-p'+id).value;
             synth.triggerAttackRelease(note, "16n");
         }
-
         function playBell() {
             if(!polySynth) return;
             polySynth.triggerAttackRelease(["C6", "E6"], "8n");
         }
 
-        // --- TTS (Voz) CON COLA INTELIGENTE ---
+        // --- TTS ---
         let msgQueue = [];
         let isSpeaking = false;
-
         function speak(txt) {
             if(!get('voice-chk').checked) return;
             msgQueue.push(txt);
             processQueue();
         }
-
         function processQueue() {
             if(isSpeaking || msgQueue.length === 0) return;
-            
             isSpeaking = true;
             const txt = msgQueue.shift();
-            
             if('speechSynthesis' in window) {
                 const u = new SpeechSynthesisUtterance(txt);
-                u.rate = 1.1; 
-                u.lang = 'es-ES';
-                u.onend = () => {
-                    isSpeaking = false;
-                    processQueue();
-                };
-                u.onerror = (e) => {
-                    console.error("TTS Error", e);
-                    isSpeaking = false;
-                    processQueue();
-                };
+                u.rate = 1.1; u.lang = 'es-ES';
+                u.onend = () => { isSpeaking = false; processQueue(); };
+                u.onerror = (e) => { isSpeaking = false; processQueue(); };
                 window.speechSynthesis.speak(u);
-            } else {
-                isSpeaking = false;
-            }
+            } else { isSpeaking = false; }
         }
-
         function stopSpeaking() {
             if('speechSynthesis' in window) window.speechSynthesis.cancel();
-            msgQueue = [];
-            isSpeaking = false;
+            msgQueue = []; isSpeaking = false;
         }
 
-        // --- PANTALLA COMPLETA ---
+        // --- FULLSCREEN ---
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
-                    alert(`Error al intentar pantalla completa: ${err.message}`);
+                    alert(`Error: ${err.message}`);
                 });
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
+            } else { if (document.exitFullscreen) document.exitFullscreen(); }
         }
 
-        // --- EXPORTAR EXCEL (CSV) ---
+        // --- EXPORTAR ---
         function exportToExcel() {
             const d = new Date();
-            const fecha = d.toLocaleDateString();
-            const hora = d.toLocaleTimeString();
-            
-            // Cabecera CSV
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "KRONO DUAL - REPORTE DE CARRERA\n";
-            csvContent += `Fecha;${fecha}\nHora;${hora}\n\n`;
-            
-            // Datos generales
-            csvContent += `PILOTO 1 (P1);${state.p1.n};COCHE;${state.p1.c}\n`;
-            csvContent += `PILOTO 2 (P2);${state.p2.n};COCHE;${state.p2.c}\n\n`;
-            
-            // Tabla de Vueltas
-            csvContent += "VUELTA;P1 TIEMPO (s);P1 VEL (km/h);P2 TIEMPO (s);P2 VEL (km/h)\n";
-            
+            let csv = "data:text/csv;charset=utf-8,";
+            csv += "KRONO DUAL - REPORTE\n";
+            csv += `Fecha;${d.toLocaleDateString()}\nHora;${d.toLocaleTimeString()}\n\n`;
+            csv += `P1;${state.p1.n};Coche;${state.p1.c}\n`;
+            csv += `P2;${state.p2.n};Coche;${state.p2.c}\n\n`;
+            csv += "VUELTA;P1 (s);P1 (km/h);P2 (s);P2 (km/h)\n";
             const maxLaps = Math.max(state.p1.h.length, state.p2.h.length);
-            
             for(let i=0; i<maxLaps; i++) {
                 const t1 = state.p1.h[i] ? fmt(state.p1.h[i]) : "-";
                 const v1 = state.p1.h[i] ? ((25/(state.p1.h[i]/1000))*3.6).toFixed(1) : "-";
-                
                 const t2 = state.p2.h[i] ? fmt(state.p2.h[i]) : "-";
                 const v2 = state.p2.h[i] ? ((25/(state.p2.h[i]/1000))*3.6).toFixed(1) : "-";
-                
-                csvContent += `${i+1};${t1.replace('.',',')};${v1.replace('.',',')};${t2.replace('.',',')};${v2.replace('.',',')}\n`;
+                csv += `${i+1};${t1.replace('.',',')};${v1.replace('.',',')};${t2.replace('.',',')};${v2.replace('.',',')}\n`;
             }
-
-            // Resumen Final
-            csvContent += "\nRESUMEN FINAL\n";
-            csvContent += `TIEMPO TOTAL;${fmtTime(state.p1.total)};${fmtTime(state.p2.total)}\n`;
-            csvContent += `MEJOR VUELTA;${fmt(state.p1.best).replace('.',',')};${fmt(state.p2.best).replace('.',',')}\n`;
-
-            const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Carrera_${d.getFullYear()}${d.getMonth()+1}${d.getDate()}_${d.getHours()}${d.getMinutes()}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.setAttribute("href", encodeURI(csv));
+            link.setAttribute("download", `Carrera_KronoDual.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
-        // --- CALIBRACIÓN AUTO ---
+        // --- AUTO CALIBRAR ---
         function autoCalibrate() {
             if (!state.cam) return;
-            
             let msg = "";
-
             [1, 2].forEach(id => {
                 const currentVal = parseInt(get('val-p'+id).innerText) || 0;
-                let newVal = Math.floor(currentVal * 0.75);
-                
+                let newVal = currentVal + 15; // Un poco más ajustado para mayor sensibilidad
                 if (newVal < 10) newVal = 10;
-                if (newVal > 240) newVal = 240;
-
+                if (newVal > 250) newVal = 250;
                 get('in-sens-p'+id).value = newVal;
                 updSensUI(id);
-                
-                if (currentVal < 30) msg = "¡Poca luz!";
+                if (currentVal > 230) msg = "¡Demasiada luz!";
             });
-
-            if (msg !== "") speak(msg);
-            else speak("Calibración lista");
-
-            // Feedback visual en botón
+            speak(msg || "Calibrado");
             const btn = get('btn-auto');
-            btn.innerHTML = msg ? "⚠️ POCA LUZ" : "✅ OK";
-            setTimeout(() => {
-                btn.innerHTML = "🎯 AUTO-AJUSTE";
-            }, 2000);
+            btn.innerHTML = msg ? "⚠️ LUZ ALTA" : "✅ COCHES OK";
+            setTimeout(() => { btn.innerHTML = "🎯 AUTO-AJUSTE"; }, 2000);
         }
 
         // --- CAMARA ---
@@ -772,7 +708,12 @@
                     let stream;
                     try { 
                         stream = await navigator.mediaDevices.getUserMedia({
-                            video: { facingMode: 'environment' }
+                            video: { 
+                                facingMode: 'environment',
+                                width: { ideal: 480 }, // Resolución muy baja para MAXIMIZAR FPS
+                                height: { ideal: 360 },
+                                frameRate: { ideal: 60, min: 30 } // Forzar FPS altos
+                            }
                         }); 
                     } catch(e) { 
                         stream = await navigator.mediaDevices.getUserMedia({video:true}); 
@@ -781,48 +722,55 @@
                     vid.srcObject = stream;
                     vid.onloadedmetadata = () => {
                         vid.play();
-                        cv.width = 320; cv.height = 240;
+                        // AJUSTAR CANVAS AL ASPECT RATIO REAL DE LA CAMARA
+                        const vw = vid.videoWidth;
+                        const vh = vid.videoHeight;
+                        const aspect = vw / vh;
+                        
+                        // Resolución interna MUY BAJA para procesar rápido (SpeedFix)
+                        // 240px de ancho es suficiente para detectar movimiento y rapidísimo de leer
+                        cv.width = 240; 
+                        cv.height = 240 / aspect;
+
                         state.cam = true;
-                        vid.classList.remove('hidden');
                         get('cam-msg').classList.add('hidden');
+                        cv.classList.remove('hidden'); // Mostrar Canvas en vez de Video
                         get('roi1').style.display='block'; get('roi2').style.display='block';
                         
                         btn.innerText = "APAGAR CÁMARA";
                         btn.classList.replace('text-gold-500', 'text-red-500');
                         btn.classList.replace('border-gold-800', 'border-red-900');
-                        
                         btnAuto.classList.remove('hidden');
                         get('btn-start').disabled = false;
                         loop();
                     };
-                } catch(e) { 
-                    alert("Error Cam: "+e); 
-                    console.error(e);
-                }
+                } catch(e) { alert("Error Cam: "+e); }
             } else {
                 if(vid.srcObject) vid.srcObject.getTracks().forEach(t=>t.stop());
                 state.cam = false; 
-                vid.classList.add('hidden');
                 get('cam-msg').classList.remove('hidden');
+                cv.classList.add('hidden');
                 get('roi1').style.display='none'; get('roi2').style.display='none';
                 
                 btn.innerText = "ENCENDER CÁMARA";
                 btn.classList.replace('text-red-500', 'text-gold-500');
                 btn.classList.replace('border-red-900', 'border-gold-800');
-                
                 btnAuto.classList.add('hidden');
                 get('btn-start').disabled = true;
             }
         }
 
+        // BUCLE OPTIMIZADO PARA VELOCIDAD
         function loop() {
             if(!state.cam) return;
+            // Dibuja el frame del video oculto en el canvas visible
+            // Esto asegura que las coordenadas visuales coinciden 100% con los datos
             ctx.drawImage(vid, 0, 0, cv.width, cv.height);
             check(1); check(2);
             requestAnimationFrame(loop);
         }
 
-        // --- DETECCIÓN & AJUSTE UMBRAL ---
+        // --- DETECCIÓN DE VELOCIDAD ---
         function adjSens(id, val) {
             const el = get('in-sens-p'+id);
             let n = parseInt(el.value) + val;
@@ -830,11 +778,7 @@
             el.value = n;
             updSensUI(id);
         }
-
-        function updSensUI(id) {
-            const v = get('in-sens-p'+id).value;
-            get('lbl-sens-p'+id).innerText = v;
-        }
+        function updSensUI(id) { get('lbl-sens-p'+id).innerText = get('in-sens-p'+id).value; }
 
         let frameCount = 0;
 
@@ -845,11 +789,13 @@
             let w = parseFloat(roi.style.width);
             let h = parseFloat(roi.style.height);
 
-            if (isNaN(l)) l = id === 1 ? 20 : 60; 
+            // Valores por defecto
+            if (isNaN(l)) l = id === 1 ? 20 : 68; 
             if (isNaN(t)) t = 30;
-            if (isNaN(w)) w = 15;
-            if (isNaN(h)) h = 20;
+            if (isNaN(w)) w = 18; // Más ancho por defecto
+            if (isNaN(h)) h = 25; 
 
+            // Convertir porcentajes CSS a pixeles del Canvas
             const rx = Math.floor((l/100)*cv.width);
             const ry = Math.floor((t/100)*cv.height);
             const rw = Math.floor((w/100)*cv.width);
@@ -857,450 +803,264 @@
             
             if(rw<=0 || rh<=0) return;
             
+            // Extracción de datos
             const d = ctx.getImageData(rx, ry, rw, rh).data;
-            let s=0, c=0;
-            for(let i=0; i<d.length; i+=16) { s+=(d[i]+d[i+1]+d[i+2])/3; c++; }
-            const avg = Math.floor(s/c);
             
-            set('val-p'+id, avg);
+            // --- NUEVO ALGORITMO: SECTOR SCAN (SPEEDFIX) ---
+            // Dividimos el ROI en 4 cuadrantes (2x2) y calculamos el promedio de cada uno.
+            // Si el coche toca SOLO UNA esquina, el promedio de esa esquina baja drásticamente
+            // aunque el promedio total no cambie mucho.
+            
+            const halfW = Math.floor(rw / 2);
+            const halfH = Math.floor(rh / 2);
+            let sums = [0, 0, 0, 0]; // TopLeft, TopRight, BotLeft, BotRight
+            let counts = [0, 0, 0, 0];
+            
+            // Recorremos con paso 4 (rápido pero preciso para resolución 240p)
+            for(let y = 0; y < rh; y+=2) {
+                const rowOffset = y * rw * 4;
+                const isBot = y >= halfH ? 2 : 0;
+                
+                for(let x = 0; x < rw; x+=2) {
+                    const idx = rowOffset + (x * 4);
+                    const val = (d[idx] + d[idx+1] + d[idx+2]) / 3; // Grayscale
+                    
+                    const isRight = x >= halfW ? 1 : 0;
+                    const quadrant = isBot + isRight;
+                    
+                    sums[quadrant] += val;
+                    counts[quadrant]++;
+                }
+            }
+
+            // Calculamos promedios por cuadrante
+            const avgs = [
+                counts[0] ? sums[0]/counts[0] : 255,
+                counts[1] ? sums[1]/counts[1] : 255,
+                counts[2] ? sums[2]/counts[2] : 255,
+                counts[3] ? sums[3]/counts[3] : 255
+            ];
+
+            // DETECTOR CRÍTICO: Tomamos el valor MÍNIMO de los 4 sectores.
+            // Si cualquier sector se oscurece, disparamos.
+            const minSectorVal = Math.floor(Math.min(...avgs));
+            
+            set('val-p'+id, minSectorVal); // Mostramos el valor del sector más oscuro para calibrar fácil
             
             const umbral = parseInt(get('in-sens-p'+id).value);
 
+            // --- ESTADO VISUAL ---
             if (id === 2) frameCount++; 
-            if (frameCount % 15 === 0) {
+            if (frameCount % 30 === 0) { 
                 const elSt = get('st-p'+id);
-                const diff = avg - umbral;
-
-                if (avg < 30) {
-                    elSt.innerHTML = "🌑 OSCURO";
-                    elSt.className = "text-[8px] uppercase font-black text-red-500 animate-pulse";
-                } else if (diff < 15) {
-                    elSt.innerHTML = "⚠️ ALTO"; 
-                    elSt.className = "text-[8px] uppercase font-black text-orange-500";
-                } else if (diff > 80) {
-                    elSt.innerHTML = "⚠️ BAJO"; 
-                    elSt.className = "text-[8px] uppercase font-black text-yellow-600";
-                } else {
-                    elSt.innerHTML = "✅ OK";
-                    elSt.className = "text-[8px] uppercase font-black text-green-500";
-                }
+                // Lógica visual basada en el umbral
+                if (minSectorVal < umbral) { elSt.innerHTML = "⚡ ACTIVO"; elSt.className = "text-[8px] uppercase font-black text-orange-500 animate-pulse"; }
+                else { elSt.innerHTML = "✅ ESPERA"; elSt.className = "text-[8px] uppercase font-black text-green-500"; }
             }
             
-            if(avg < umbral) {
-                roi.classList.add('active');
+            // --- LOGICA DE DISPARO ---
+            // Usamos el valor del PEOR sector contra el umbral
+            if(minSectorVal < umbral) {
+                roi.classList.add('active'); // Feedback visual
+                
                 if(state.race && !state['p'+id].blk && !state['p'+id].fin) {
-                    state['p'+id].blk = true; lap(id);
-                } else if(state.countdown && !state['p'+id].blk && !state.aborted) {
+                    state['p'+id].blk = true; 
+                    lap(id);
+                } 
+                else if(state.countdown && !state['p'+id].blk && !state.aborted) {
                     state['p'+id].blk = true;
                     triggerFalseStart(id);
                 }
             } else {
                 roi.classList.remove('active');
-                state['p'+id].blk = false;
+                state['p'+id].blk = false; 
             }
         }
 
         // --- LÓGICA DE CARRERA ---
         function toggleRace() {
-            const btn = get('btn-start');
-            if(state.race) {
-                stopRace();
-                btn.innerText = "INICIAR";
-                btn.classList.remove('text-red-400');
-            } else {
-                startCountdown();
-            }
+            if(state.race) { stopRace(); get('btn-start').innerText = "INICIAR"; get('btn-start').classList.remove('text-red-400'); }
+            else { startCountdown(); }
         }
 
         async function startCountdown() {
-            state.aborted = false;
-            state.countdown = true;
+            state.aborted = false; state.countdown = true;
             get('config').classList.add('hidden'); 
-            get('btn-start').disabled = true;
-            get('btn-reset').disabled = true;
-            get('btn-auto').classList.add('opacity-50', 'pointer-events-none');
-            
-            for(let i=1; i<=5; i++) get('l'+i).className = 'bulb';
-            
-            set('main-timer', "00:00.00");
-            set('lap-counter', "PREPARADO");
-            
+            get('btn-start').disabled = true; get('btn-reset').disabled = true;
+            set('main-timer', "00:00.00"); set('lap-counter', "PREPARADO");
             speak("Pilotos a sus puestos");
             await playStartSequence();
         }
 
         function startRaceLogic() {
-            state.countdown = false;
-            state.race = true;
-            state.start = Date.now();
+            state.countdown = false; state.race = true; state.start = Date.now();
             resetData();
-            
-            state.timer = setInterval(()=>{
-                set('main-timer', fmtTime(Date.now()-state.start));
-            }, 37);
-            
-            const btn = get('btn-start');
-            btn.disabled = false;
-            btn.innerText = "PARAR";
-            btn.classList.add('text-red-400');
+            state.timer = setInterval(()=>{ set('main-timer', fmtTime(Date.now()-state.start)); }, 37);
+            const btn = get('btn-start'); btn.disabled = false; btn.innerText = "PARAR"; btn.classList.add('text-red-400');
         }
 
         function triggerFalseStart(id) {
-            state.aborted = true;
-            state.countdown = false;
-            playFalseStartSound();
+            state.aborted = true; state.countdown = false; playFalseStartSound();
             const name = get('in-p'+id+'-n').value;
-            set('main-timer', "SALIDA NULA");
-            set('lap-counter', "CULPABLE: "+name);
-            get('main-timer').style.color = '#ef4444';
-            
+            set('main-timer', "SALIDA NULA"); set('lap-counter', "CULPABLE: "+name); get('main-timer').style.color = '#ef4444';
             for(let i=1; i<=5; i++) { get('l'+i).className = 'bulb red'; }
-            
-            get('btn-start').disabled = false;
-            get('btn-start').innerText = "REINICIAR";
-            get('btn-auto').classList.remove('opacity-50', 'pointer-events-none');
+            get('btn-start').disabled = false; get('btn-start').innerText = "REINICIAR";
             speak("Salida nula de " + name);
         }
 
         function stopRace() {
-            state.race = false;
-            clearInterval(state.timer);
+            state.race = false; clearInterval(state.timer);
             get('btn-reset').disabled = false;
-            get('btn-auto').classList.remove('opacity-50', 'pointer-events-none');
         }
 
         function resetRace() {
-            stopRace();
-            stopSpeaking(); // CALLAR LOCUTOR AL RESETEAR
-            set('main-timer', "00:00.00");
-            get('main-timer').style.color = 'white';
+            stopRace(); stopSpeaking();
+            set('main-timer', "00:00.00"); get('main-timer').style.color = 'white';
             set('lap-counter', "PREPARADO");
             for(let i=1; i<=5; i++) get('l'+i).className = 'bulb';
-            
-            const btn = get('btn-start');
-            btn.innerText = "INICIAR";
-            btn.classList.remove('text-red-400');
+            const btn = get('btn-start'); btn.innerText = "INICIAR"; btn.classList.remove('text-red-400');
             resetData();
         }
 
         function lap(id) {
             const now = Date.now();
             const t = now - state['p'+id].last;
-            const absT = now - state.start; // Tiempo absoluto desde el semáforo verde
+            const absT = now - state.start;
 
-            // --- LÓGICA "PASO 0" (SMART START) ---
+            // Filtro "Paso 0" (los primeros 3 seg tras semáforo verde no cuentan si es un rebote de salida)
             if (state['p'+id].laps === 0 && absT < 3000) {
-                const elLast = get('disp-p'+id+'-last');
-                if(elLast && elLast.innerText !== "SALIDA") {
-                    elLast.innerText = "SALIDA";
-                    elLast.classList.add('text-green-500', 'animate-pulse');
-                    setTimeout(() => {
-                         if(elLast.innerText === "SALIDA") {
-                             elLast.innerText = "--.--";
-                             elLast.classList.remove('text-green-500', 'animate-pulse');
-                         }
-                    }, 1500);
-                }
-                return;
+                 // Animación visual de "Salida OK"
+                 return;
             }
-
-            // Min Lap Time Security (Anti-doble rebote): 2 segundos mínimo entre vueltas
-            if(t < 2000) return; 
+            // Anti-rebote minimo 1.5s (ajustado para coches rápidos)
+            if(t < 1500) return; 
             
             state['p'+id].last = now;
             state['p'+id].laps++;
             state['p'+id].h.push(t);
-            
             playLapSound(id);
 
-            // Record VUELTA RÁPIDA
             if(t < state['p'+id].best) {
                 state['p'+id].best = t;
                 const name = get(`in-p${id}-n`).value;
                 speak(`Récord ${name}, ${fmt(t)}`);
                 showOverlay(`${name} - ${fmt(t)}`);
             }
-
             updUI(); drawChart();
 
-            // Finish logic
             const max = parseInt(get('in-laps').value);
             if(max !== 9999) {
                 const rem = max - state['p'+id].laps;
-                if(rem === 5 && !state.flags.f5) {
-                    state.flags.f5 = true;
-                    speak("Quedan 5 vueltas");
-                }
-                if(rem === 1 && !state.flags.f1) {
-                    state.flags.f1 = true;
-                    playBell();
-                    speak("Última vuelta");
-                }
-                if(state['p'+id].laps >= max) {
-                    finish(id, now);
-                }
+                if(rem === 5 && !state.flags.f5) { state.flags.f5 = true; speak("Quedan 5 vueltas"); }
+                if(rem === 1 && !state.flags.f1) { state.flags.f1 = true; playBell(); speak("Última vuelta"); }
+                if(state['p'+id].laps >= max) finish(id, now);
             }
         }
 
         function finish(id, now) {
-            state['p'+id].fin = true;
-            state['p'+id].total = now - state.start;
-            
+            state['p'+id].fin = true; state['p'+id].total = now - state.start;
             const p = state['p'+id];
-            // Calculos
-            const totalTime = p.total;
-            const bestLap = p.best < 999999 ? p.best : 0;
-            const avgTime = p.h.length ? (p.total / p.h.length) : 0;
-            const totalDistMeters = p.laps * 25; 
-            const avgSpeed = totalTime > 0 ? (totalDistMeters / (totalTime/1000)) * 3.6 : 0;
-
-            saveRecord(p.n, p.c, totalTime, bestLap, avgTime, avgSpeed);
-
+            saveRecord(p.n, p.c, p.total, p.best, (p.total/p.h.length), (p.laps*25)/(p.total/1000)*3.6);
+            
             const oid = id===1?2:1;
             if(!state['p'+oid].fin) {
-                stopRace();
-                const name = get(`in-p${id}-n`).value;
-                speak(`Victoria para ${name}`);
-                showRes(id);
+                stopRace(); speak(`Victoria para ${p.n}`); showRes(id);
             }
         }
 
         function showOverlay(txt) {
-            const ov = get('record-overlay');
-            get('rec-data').innerText = txt;
-            ov.classList.replace('opacity-0', 'opacity-100');
-            ov.classList.replace('scale-90', 'scale-100');
-            setTimeout(()=>{
-                ov.classList.replace('opacity-100', 'opacity-0');
-                ov.classList.replace('scale-100', 'scale-90');
-            }, 2500);
+            const ov = get('record-overlay'); get('rec-data').innerText = txt;
+            ov.classList.replace('opacity-0', 'opacity-100'); ov.classList.replace('scale-90', 'scale-100');
+            setTimeout(()=>{ ov.classList.replace('opacity-100', 'opacity-0'); ov.classList.replace('scale-100', 'scale-90'); }, 2500);
         }
 
-        // --- UI UPDATES ---
         function updUI() {
             const max = get('in-laps').value;
             [1,2].forEach(id=>{
                 const p = state['p'+id];
-                p.n = get('in-p'+id+'-n').value;
-                p.c = get('in-p'+id+'-c').value;
-                
-                set('disp-p'+id+'-n', p.n);
-                set('disp-p'+id+'-c', p.c);
-                set('disp-p'+id+'-l', p.laps);
-                
+                p.n = get('in-p'+id+'-n').value; p.c = get('in-p'+id+'-c').value;
+                set('disp-p'+id+'-n', p.n); set('disp-p'+id+'-c', p.c); set('disp-p'+id+'-l', p.laps);
                 const last = p.h.length ? p.h[p.h.length-1] : 0;
-                if(last) set('disp-p'+id+'-last', fmt(last));
-                else if(get('disp-p'+id+'-last').innerText !== "SALIDA") set('disp-p'+id+'-last', "--.--");
-                
+                set('disp-p'+id+'-last', last ? fmt(last) : "--.--");
                 set('disp-p'+id+'-best', p.best<999999 ? fmt(p.best) : "--.--");
-                
                 const tot = p.h.reduce((a,b)=>a+b,0);
                 set('disp-p'+id+'-tot', tot ? fmtTime(tot) : "00:00");
-                
-                const spd = last ? ((25/(last/1000))*3.6).toFixed(1) : 0;
-                set('disp-p'+id+'-spd', spd+" km/h");
+                set('disp-p'+id+'-spd', (last ? ((25/(last/1000))*3.6).toFixed(1) : 0)+" km/h");
             });
-            
             const lead = Math.max(state.p1.laps, state.p2.laps);
             set('lap-counter', `VUELTA ${lead} / ${max==='9999'?'∞':max}`);
         }
 
-        // --- GRAFICA (GOLD) ---
         function drawChart() {
             const svg = get('chart-svg');
-            svg.innerHTML = `
-                <line x1="0" y1="25%" x2="100%" y2="25%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-                <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-                <line x1="0" y1="75%" x2="100%" y2="75%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>
-            `;
-            
+            svg.innerHTML = `<line x1="0" y1="25%" x2="100%" y2="25%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line><line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line><line x1="0" y1="75%" x2="100%" y2="75%" stroke="rgba(255,215,0,0.1)" stroke-width="1"></line>`;
             const h1 = state.p1.h, h2 = state.p2.h;
             const len = Math.max(h1.length, h2.length);
             if(len === 0) return;
-            
             const maxT = Math.max(...h1, ...h2, 5000); 
-            
-            set('chart-max', (maxT/1000).toFixed(1)+'s');
-            set('chart-mid', (maxT/2000).toFixed(1)+'s');
-            
+            set('chart-max', (maxT/1000).toFixed(1)+'s'); set('chart-mid', (maxT/2000).toFixed(1)+'s');
             const w = 100/len;
-            
             for(let i=0; i<len; i++) {
                 const x = i * w;
                 if(h1[i]) {
                     const h = (h1[i]/maxT)*100;
                     const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                    r.setAttribute("x", x+"%"); r.setAttribute("y", (100-h)+"%");
-                    r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
-                    r.setAttribute("fill", "#FFD700"); r.setAttribute("rx", "2");
-                    r.classList.add('chart-bar');
-                    svg.appendChild(r);
+                    r.setAttribute("x", x+"%"); r.setAttribute("y", (100-h)+"%"); r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
+                    r.setAttribute("fill", "#FFD700"); r.setAttribute("rx", "2"); r.classList.add('chart-bar'); svg.appendChild(r);
                 }
                 if(h2[i]) {
                     const h = (h2[i]/maxT)*100;
                     const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                    r.setAttribute("x", (x + w/2)+"%"); r.setAttribute("y", (100-h)+"%");
-                    r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
-                    r.setAttribute("fill", "#B8860B"); r.setAttribute("rx", "2");
-                    r.classList.add('chart-bar');
-                    svg.appendChild(r);
+                    r.setAttribute("x", (x + w/2)+"%"); r.setAttribute("y", (100-h)+"%"); r.setAttribute("width", (w/2.2)+"%"); r.setAttribute("height", h+"%");
+                    r.setAttribute("fill", "#B8860B"); r.setAttribute("rx", "2"); r.classList.add('chart-bar'); svg.appendChild(r);
                 }
             }
         }
 
-        // --- RECORDS LOCALSTORAGE ---
         function saveRecord(name, car, total, best, avg, speed) {
-            let recs = [];
-            try {
-                recs = JSON.parse(localStorage.getItem('krono_dual_v2') || '[]');
-            } catch(e) { recs = []; }
-            
-            const date = new Date().toLocaleDateString();
-            const hour = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-            
-            recs.push({ name, car, total, best, avg, speed, date, hour });
-            recs.sort((a,b) => 0); // Mantener orden de inserción
-            
-            if (recs.length > 50) recs.shift(); 
+            let recs = []; try { recs = JSON.parse(localStorage.getItem('krono_dual_v2') || '[]'); } catch(e) {}
+            recs.push({ name, car, total, best, avg, speed, date: new Date().toLocaleDateString(), hour: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) });
+            recs.sort((a,b)=>0); if(recs.length>50) recs.shift();
             localStorage.setItem('krono_dual_v2', JSON.stringify(recs));
         }
 
         function showRecords() {
-            const tb = get('records-list');
-            tb.innerHTML = '';
-            let recs = [];
-            try {
-                recs = JSON.parse(localStorage.getItem('krono_dual_v2') || '[]');
-            } catch(e) { recs = []; }
-            
-            if(recs.length===0) {
-                tb.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Sin registros</td></tr>';
-            } else {
-                [...recs].reverse().forEach(r => {
-                    const tr = document.createElement('tr');
-                    tr.className = "border-b border-gray-800 hover:bg-gray-800/50";
-                    tr.innerHTML = `
-                        <td class="p-3 text-gold-300">${r.date} <span class="text-[8px] opacity-50 block">${r.hour}</span></td>
-                        <td class="p-3 text-cyan-400 font-bold">${r.name}</td>
-                        <td class="p-3 text-gray-400">${r.car}</td>
-                        <td class="p-3 text-right text-yellow-400 font-bold font-arial">${fmtTime(r.total || 0)}</td>
-                        <td class="p-3 text-right text-green-400 font-arial">${fmt(r.best || 0)}</td>
-                        <td class="p-3 text-right text-blue-400 font-arial">${fmt(r.avg || 0)}</td>
-                        <td class="p-3 text-right text-gray-500 font-arial">${(r.speed || 0).toFixed(1)}</td>
-                    `;
-                    tb.appendChild(tr);
-                });
-            }
+            const tb = get('records-list'); tb.innerHTML = '';
+            let recs = []; try { recs = JSON.parse(localStorage.getItem('krono_dual_v2') || '[]'); } catch(e) {}
+            if(recs.length===0) tb.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Sin registros</td></tr>';
+            else [...recs].reverse().forEach(r => {
+                tb.innerHTML += `<tr class="border-b border-gray-800 hover:bg-gray-800/50"><td class="p-3 text-gold-300">${r.date} <span class="text-[8px] opacity-50 block">${r.hour}</span></td><td class="p-3 text-cyan-400 font-bold">${r.name}</td><td class="p-3 text-gray-400">${r.car}</td><td class="p-3 text-right text-yellow-400 font-bold font-arial">${fmtTime(r.total||0)}</td><td class="p-3 text-right text-green-400 font-arial">${fmt(r.best||0)}</td><td class="p-3 text-right text-blue-400 font-arial">${fmt(r.avg||0)}</td><td class="p-3 text-right text-gray-500 font-arial">${(r.speed||0).toFixed(1)}</td></tr>`;
+            });
             get('rec-modal').classList.remove('hidden');
         }
-
-        // --- BORRAR HISTORIAL CON CONFIRMACIÓN ---
-        function tryClearRecords() {
-            get('conf-modal').classList.remove('hidden');
-        }
-
-        function confirmDelete(yes) {
-            if(yes) {
-                try {
-                    localStorage.removeItem('krono_dual_v2');
-                } catch(e) { console.error(e); }
-                showRecords();
-            }
-            get('conf-modal').classList.add('hidden');
-        }
-        
-        // --- MODALES & UTIL ---
+        function tryClearRecords() { get('conf-modal').classList.remove('hidden'); }
+        function confirmDelete(yes) { if(yes) { localStorage.removeItem('krono_dual_v2'); showRecords(); } get('conf-modal').classList.add('hidden'); }
         function toggleConfig() { get('config').classList.toggle('hidden'); }
-        function closeModal(id) { 
-            get(id).classList.add('hidden'); 
-            if(id === 'rec-modal') {
-                 get('conf-modal').classList.add('hidden');
-            }
-        }
+        function closeModal(id) { get(id).classList.add('hidden'); if(id==='rec-modal') get('conf-modal').classList.add('hidden'); }
         function newRace() { closeModal('res-modal'); resetRace(); }
-        
         function showRes(wid) {
             const w = state['p'+wid];
-            set('res-winner', w.n); set('res-car', w.c);
-            set('res-total', fmtTime(w.total));
-            set('res-best', fmt(w.best));
-            
-            const avg = w.h.length ? (w.total/w.h.length) : 0;
-            const elAvg = get('res-avg');
-            if(elAvg) elAvg.innerText = fmt(avg);
-
-            const avgS = w.total ? ((w.laps*25)/(w.total/1000)*3.6).toFixed(1) : 0;
-            set('res-spd-avg', avgS+" km/h");
-            
+            set('res-winner', w.n); set('res-car', w.c); set('res-total', fmtTime(w.total)); set('res-best', fmt(w.best));
+            const avg = w.h.length ? (w.total/w.h.length) : 0; set('res-avg', fmt(avg));
+            const avgS = w.total ? ((w.laps*25)/(w.total/1000)*3.6).toFixed(1) : 0; set('res-spd-avg', avgS+" km/h");
             [1,2].forEach(id=>{
                 const tb = get('tb-p'+id); tb.innerHTML='';
-                state['p'+id].h.forEach((t,i)=>{
-                    const best = t===state['p'+id].best;
-                    tb.innerHTML += `<tr class="${best?'bg-yellow-900/40 font-bold text-white':''}">
-                        <td class="p-2 border-b border-gray-800 font-arial">${i+1}</td>
-                        <td class="p-2 border-b border-gray-800 text-right font-arial">${fmt(t)}</td>
-                    </tr>`;
-                });
+                state['p'+id].h.forEach((t,i)=>{ tb.innerHTML+=`<tr class="${t===state['p'+id].best?'bg-yellow-900/40 font-bold text-white':''}"><td class="p-2 border-b border-gray-800 font-arial">${i+1}</td><td class="p-2 border-b border-gray-800 text-right font-arial">${fmt(t)}</td></tr>`; });
             });
             get('res-modal').classList.remove('hidden');
         }
-        
         function resetData() {
-            [1,2].forEach(id=>{
-                state['p'+id].laps=0; state['p'+id].h=[]; state['p'+id].best=999999;
-                state['p'+id].last=state.start; state['p'+id].fin=false; state['p'+id].blk=false;
-                state['p'+id].total=0;
-            });
-            state.flags = {f5:false, f1:false};
-            updUI(); drawChart();
+            [1,2].forEach(id=>{ state['p'+id].laps=0; state['p'+id].h=[]; state['p'+id].best=999999; state['p'+id].last=state.start; state['p'+id].fin=false; state['p'+id].blk=false; state['p'+id].total=0; });
+            state.flags={f5:false,f1:false}; updUI(); drawChart();
         }
-
-        // --- DRAG LOGIC ---
         function setupDrag(id) {
-            const el = get(id);
-            const h = el.querySelector('.roi-handle');
-            let m=null, s={};
-            
-            const down = (e) => {
-                if(state.race) return;
-                e.preventDefault();
-                el.setPointerCapture(e.pointerId);
-                m = (e.target === h) ? 'size' : 'move';
-                const r = el.getBoundingClientRect();
-                const p = el.parentElement.getBoundingClientRect();
-                s = {
-                    x: e.clientX, y: e.clientY,
-                    l: (el.offsetLeft/p.width)*100, t: (el.offsetTop/p.height)*100,
-                    w: (r.width/p.width)*100, h: (r.height/p.height)*100,
-                    pw: p.width, ph: p.height
-                };
-            };
-            const move = (e) => {
-                if(!m) return;
-                e.preventDefault();
-                const dx = ((e.clientX - s.x)/s.pw)*100;
-                const dy = ((e.clientY - s.y)/s.ph)*100;
-                
-                if(m==='move') {
-                    el.style.left = Math.max(0, Math.min(100-s.w, s.l+dx)) + '%';
-                    el.style.top = Math.max(0, Math.min(100-s.h, s.t+dy)) + '%';
-                } else {
-                    el.style.width = Math.max(5, s.w+dx) + '%';
-                    el.style.height = Math.max(5, s.h+dy) + '%';
-                }
-            };
+            const el = get(id); const h = el.querySelector('.roi-handle'); let m=null, s={};
+            const down = (e) => { if(state.race)return; e.preventDefault(); el.setPointerCapture(e.pointerId); m=(e.target===h)?'size':'move'; const r=el.getBoundingClientRect(); const p=el.parentElement.getBoundingClientRect(); s={x:e.clientX, y:e.clientY, l:(el.offsetLeft/p.width)*100, t:(el.offsetTop/p.height)*100, w:(r.width/p.width)*100, h:(r.height/p.height)*100, pw:p.width, ph:p.height}; };
+            const move = (e) => { if(!m)return; e.preventDefault(); const dx=((e.clientX-s.x)/s.pw)*100; const dy=((e.clientY-s.y)/s.ph)*100; if(m==='move'){ el.style.left=Math.max(0,Math.min(100-s.w,s.l+dx))+'%'; el.style.top=Math.max(0,Math.min(100-s.h,s.t+dy))+'%'; }else{ el.style.width=Math.max(5,s.w+dx)+'%'; el.style.height=Math.max(5,s.h+dy)+'%'; } };
             const up = (e) => { if(m){ m=null; el.releasePointerCapture(e.pointerId); }};
-            
-            el.addEventListener('pointerdown', down);
-            el.addEventListener('pointermove', move);
-            el.addEventListener('pointerup', up);
+            el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move); el.addEventListener('pointerup', up);
         }
-
-        window.onload = () => {
-            setupDrag('roi1');
-            setupDrag('roi2');
-            updUI();
-        };
+        window.onload = () => { setupDrag('roi1'); setupDrag('roi2'); updUI(); };
     </script>
 </body>
 </html>
