@@ -646,13 +646,33 @@
             msgQueue = []; isSpeaking = false;
         }
 
-        // --- FULLSCREEN ---
+        // --- FULLSCREEN MEJORADO ---
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    alert(`Error: ${err.message}`);
-                });
-            } else { if (document.exitFullscreen) document.exitFullscreen(); }
+            var doc = window.document;
+            var docEl = doc.documentElement;
+
+            var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+            var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+            if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                if(requestFullScreen) {
+                    requestFullScreen.call(docEl).catch(err => {
+                        const e = get('err');
+                        e.classList.remove('hidden');
+                        e.innerHTML = "Fullscreen bloqueado o no soportado (En iOS usa 'Añadir a Inicio')";
+                        setTimeout(()=>e.classList.add('hidden'), 4000);
+                    });
+                } else {
+                    const e = get('err');
+                    e.classList.remove('hidden');
+                    e.innerHTML = "Tu dispositivo no soporta pantalla completa web.";
+                    setTimeout(()=>e.classList.add('hidden'), 4000);
+                }
+            } else {
+                if(cancelFullScreen) {
+                    cancelFullScreen.call(doc);
+                }
+            }
         }
 
         // --- EXPORTAR ---
