@@ -1175,29 +1175,25 @@
             if (voiceToggle.checked) {
                 const name = document.getElementById(p.nameId).value;
                 
-                // 1. Announce ONLY if it's a NEW RECORD (Vuelta Rápida)
+                // --- CAMBIO: SOLO HABLA SI ES RÉCORD ---
                 if (isNewRecord) {
                     const lapTimeSec = (lapTime/1000).toFixed(2);
                     const msg = new SpeechSynthesisUtterance(`¡Vuelta rápida de ${name}! ${lapTimeSec}`);
                     msg.rate = 1.3; 
                     window.speechSynthesis.speak(msg);
                 }
+                // ---------------------------------------
 
-                // 2. Countdown Logic
-                if (totalLapsTarget !== Infinity) {
+                if(totalLapsTarget !== Infinity) {
                     const remaining = totalLapsTarget - p.laps;
-                    
-                    if (remaining === 5) {
+                    if(remaining === 5) {
                         const msg5 = new SpeechSynthesisUtterance(`Atención ${name}, quedan 5 vueltas.`);
-                        msg5.rate = 1.2;
-                        window.speechSynthesis.speak(msg5);
+                        msg5.rate = 1.2; window.speechSynthesis.speak(msg5);
                     }
-                     
-                     // Correct Logic for Last Lap
-                    if (remaining === 1) {
+                    if(remaining === 1) { // Logic fix: remaining is calculated after incrementing lap
+                         // Actually, if total is 10. Lap 9 just finished. p.laps is 9. remaining is 1. Correct.
                         const msgLast = new SpeechSynthesisUtterance(`¡Última vuelta para ${name}!`);
-                        msgLast.rate = 1.2; 
-                        window.speechSynthesis.speak(msgLast);
+                        msgLast.rate = 1.2; window.speechSynthesis.speak(msgLast);
                     }
                 }
             }
