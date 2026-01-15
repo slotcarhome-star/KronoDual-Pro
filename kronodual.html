@@ -1162,9 +1162,11 @@
             p.laps++;
             p.lapStartTime = now;
             
+            let isNewRecord = false;
             if (lapTime < p.bestLap) {
                 p.bestLap = lapTime;
                 showNotification(`RÉCORD P${p.id}!`);
+                isNewRecord = true;
             }
 
             synth.triggerAttackRelease(p.soundTone, "0.1");
@@ -1172,12 +1174,14 @@
             
             if (voiceToggle.checked) {
                 const name = document.getElementById(p.nameId).value;
-                const lapTimeSec = (lapTime/1000).toFixed(2);
                 
-                // 1. Announce Lap Time
-                const msg = new SpeechSynthesisUtterance(`${name}, ${lapTimeSec}`);
-                msg.rate = 1.3; 
-                window.speechSynthesis.speak(msg);
+                // 1. Announce ONLY if it's a NEW RECORD (Vuelta Rápida)
+                if (isNewRecord) {
+                    const lapTimeSec = (lapTime/1000).toFixed(2);
+                    const msg = new SpeechSynthesisUtterance(`¡Vuelta rápida de ${name}! ${lapTimeSec}`);
+                    msg.rate = 1.3; 
+                    window.speechSynthesis.speak(msg);
+                }
 
                 // 2. Countdown Logic
                 if (totalLapsTarget !== Infinity) {
@@ -1187,10 +1191,6 @@
                         const msg5 = new SpeechSynthesisUtterance(`Atención ${name}, quedan 5 vueltas.`);
                         msg5.rate = 1.2;
                         window.speechSynthesis.speak(msg5);
-                    } else if (remaining === 0) { // Just finished penultimate lap, so 1 remaining? No. 
-                        // If total is 10. Lap 9 done -> remaining is 1.
-                        // Wait, previous logic: remaining = total - laps.
-                        // Lap 9 done -> p.laps = 9. remaining = 1. "Last Lap".
                     }
                      
                      // Correct Logic for Last Lap
