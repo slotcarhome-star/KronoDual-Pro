@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.5.3 - Anti-Glare Core</title>
+    <title>KRONODUAL V.6.0 - Spectral Lock</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -362,6 +362,9 @@
         /* TUTORIAL MODAL */
         .tut-step { background: rgba(255,255,255,0.9); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #b8860b; color: #333; text-align: left; }
         .tut-icon { font-size: 2rem; margin-right: 10px; vertical-align: middle; }
+        
+        /* COLOR DOTS FOR CALIBRATION UI */
+        .color-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #000; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -374,12 +377,16 @@
                     <h1 class="text-4xl sm:text-5xl main-title-glow font-black tracking-widest italic mr-2">
                         KRONODUAL
                     </h1>
-                    <span class="text-xl text-yellow-800 font-bold">V.5.3</span>
+                    <span class="text-xl text-yellow-800 font-bold">V.6.0</span>
                 </div>
                 <span class="text-[10px] text-yellow-900 font-serif tracking-[0.3em] uppercase ml-1 font-bold">By Albert Closa</span>
             </div>
             
             <div class="flex items-center gap-4 mt-2 sm:mt-0">
+                 <button id="debug-btn" class="p-2 px-3 rounded-full bg-white/30 border border-amber-500/30 hover:bg-white/60 transition shadow-lg text-amber-900 text-xs font-bold uppercase tracking-wider flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M2 12h5"/><path d="M17 12h5"/><path d="M12 2v5"/><path d="M12 17v5"/><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                    VER SENSOR
+                </button>
                  <button id="history-btn" class="flex items-center text-amber-900 hover:text-black transition-colors px-3 py-1 rounded-full bg-white/30 border border-amber-500/30 hover:bg-white/60 shadow-sm group" title="Ver Historial">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history mr-2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/><path d="M12 7v5l4 2"/></svg>
                     <span class="text-[10px] font-bold uppercase tracking-wider">Historial</span>
@@ -446,7 +453,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- COLUMNA JUGADOR 1 -->
                 <div class="p-3 bg-yellow-100/30 rounded-xl border border-yellow-400 shadow-inner">
-                    <h3 class="text-xs font-black text-amber-900 uppercase mb-2 border-b border-amber-300 pb-1 tracking-wider">JUGADOR 1 (ORO)</h3>
+                    <h3 class="text-xs font-black text-amber-900 uppercase mb-2 border-b border-amber-300 pb-1 tracking-wider flex justify-between">
+                        JUGADOR 1 (ORO) <span id="p1-color-dot" class="color-dot bg-gray-400"></span>
+                    </h3>
                     <div class="space-y-3">
                         <div>
                             <label class="block text-[10px] font-bold text-amber-900 mb-1">Nombre</label>
@@ -454,22 +463,13 @@
                         </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD</label>
-                                <span id="p1-threshold-disp" class="text-xs font-black text-amber-700 bg-amber-100 px-2 rounded">10</span>
+                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD COLOR</label>
+                                <span id="p1-threshold-disp" class="text-xs font-black text-amber-700 bg-amber-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
                                 <button class="btn-adjust" onclick="adjT(1, -5)">-</button>
-                                <input type="range" id="p1-threshold" min="2" max="50" value="10" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                                <input type="range" id="p1-threshold" min="5" max="50" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
                                 <button class="btn-adjust" onclick="adjT(1, 5)">+</button>
-                             </div>
-                        </div>
-                        <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
-                             <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">ANTI-REFLEJO (LUZ)</label>
-                                <span id="p1-glare-disp" class="text-xs font-black text-amber-700 bg-amber-100 px-2 rounded">80</span>
-                             </div>
-                             <div class="flex items-center space-x-2">
-                                <input type="range" id="p1-glare" min="20" max="150" value="80" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
                              </div>
                         </div>
                         <div>
@@ -486,7 +486,9 @@
 
                 <!-- COLUMNA JUGADOR 2 -->
                 <div class="p-3 bg-orange-100/30 rounded-xl border border-orange-400 shadow-inner">
-                    <h3 class="text-xs font-black text-orange-900 uppercase mb-2 border-b border-orange-300 pb-1 tracking-wider">JUGADOR 2 (COBRE)</h3>
+                    <h3 class="text-xs font-black text-orange-900 uppercase mb-2 border-b border-orange-300 pb-1 tracking-wider flex justify-between">
+                        JUGADOR 2 (COBRE) <span id="p2-color-dot" class="color-dot bg-gray-400"></span>
+                    </h3>
                     <div class="space-y-3">
                         <div>
                             <label class="block text-[10px] font-bold text-amber-900 mb-1">Nombre</label>
@@ -494,22 +496,13 @@
                         </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD</label>
-                                <span id="p2-threshold-disp" class="text-xs font-black text-orange-700 bg-orange-100 px-2 rounded">10</span>
+                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD COLOR</label>
+                                <span id="p2-threshold-disp" class="text-xs font-black text-orange-700 bg-orange-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
                                 <button class="btn-adjust" onclick="adjT(2, -5)">-</button>
-                                <input type="range" id="p2-threshold" min="2" max="50" value="10" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
+                                <input type="range" id="p2-threshold" min="5" max="50" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
                                 <button class="btn-adjust" onclick="adjT(2, 5)">+</button>
-                             </div>
-                        </div>
-                        <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
-                             <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">ANTI-REFLEJO (LUZ)</label>
-                                <span id="p2-glare-disp" class="text-xs font-black text-orange-700 bg-orange-100 px-2 rounded">80</span>
-                             </div>
-                             <div class="flex items-center space-x-2">
-                                <input type="range" id="p2-glare" min="20" max="150" value="80" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
                              </div>
                         </div>
                          <div>
@@ -560,12 +553,11 @@
             <div class="flex justify-between items-center border-b-2 border-amber-800/20 pb-3 mb-3">
                 <h2 class="text-base neon-gold-title">Cámara ROI</h2>
                 <div class="flex space-x-2">
-                    <button id="debug-btn" class="p-2 px-4 rounded-full bg-white/30 border border-amber-500/30 hover:bg-white/60 transition shadow-lg text-amber-900 text-xs font-bold uppercase tracking-wider flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M2 12h5"/><path d="M17 12h5"/><path d="M12 2v5"/><path d="M12 17v5"/><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-                        VER SENSOR
+                    <button id="calib-p1-btn" class="p-2 px-3 rounded-full bg-gradient-to-b from-yellow-400 to-yellow-600 text-white hover:from-yellow-500 hover:to-yellow-700 transition shadow-lg border border-yellow-200 text-[10px] font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
+                        Captura Color P1
                     </button>
-                    <button id="calibrate-btn" class="p-2 px-4 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 text-white hover:from-amber-500 hover:to-amber-700 transition shadow-lg border border-amber-200 text-xs font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
-                        Calibrar Fondo
+                    <button id="calib-p2-btn" class="p-2 px-3 rounded-full bg-gradient-to-b from-orange-400 to-orange-600 text-white hover:from-orange-500 hover:to-orange-700 transition shadow-lg border border-orange-200 text-[10px] font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
+                        Captura Color P2
                     </button>
                     <button id="camera-on-btn" class="p-2 rounded-full bg-gradient-to-b from-green-500 to-green-700 text-white hover:from-green-600 hover:to-green-800 disabled:opacity-50 transition shadow-lg border border-green-300">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
@@ -602,7 +594,7 @@
                 <div id="roi-p1" class="movable-rectangle" style="top: 25%; left: 10%;">
                     <div class="roi-label">P1</div>
                     <div id="msg-p1" class="test-msg"></div>
-                    <div id="val-p1" class="detection-val">0%</div>
+                    <div id="val-p1" class="detection-val">0</div>
                     <div class="signal-bar-container"><div id="bar-p1" class="signal-bar"></div></div>
                     <div class="resize-handle handle-tl"></div>
                     <div class="resize-handle handle-br"></div>
@@ -611,7 +603,7 @@
                 <div id="roi-p2" class="movable-rectangle" style="top: 25%; left: 60%;">
                     <div class="roi-label">P2</div>
                     <div id="msg-p2" class="test-msg"></div>
-                    <div id="val-p2" class="detection-val">0%</div>
+                    <div id="val-p2" class="detection-val">0</div>
                      <div class="signal-bar-container"><div id="bar-p2" class="signal-bar"></div></div>
                     <div class="resize-handle handle-tl"></div>
                     <div class="resize-handle handle-br"></div>
@@ -689,26 +681,26 @@
     <div id="tutorialModal" class="modal-overlay">
         <div class="modal-content p-8 w-full max-w-lg neon-border-box text-center">
             <div class="mb-6 border-b-2 border-amber-300 pb-4">
-                <h3 class="text-3xl font-black text-amber-950 uppercase">Guía Rápida</h3>
-                <p class="text-amber-800 font-bold text-sm">Configuración en 3 pasos</p>
+                <h3 class="text-3xl font-black text-amber-950 uppercase">Guía Rápida V.6</h3>
+                <p class="text-amber-800 font-bold text-sm">Sistema Spectral Lock</p>
             </div>
             
             <div class="text-left space-y-4 mb-8">
                 <div class="tut-step">
                     <span class="tut-icon">📱</span>
-                    <strong>1. CÁMARA FIJA:</strong> Enfoca la pista. Importante: ¡Que no se mueva!
+                    <strong>1. CÁMARA FIJA:</strong> Enfoca la pista.
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">🎯</span>
                     <strong>2. SENSORES:</strong> Arrastra los cuadrados sobre los carriles.
                 </div>
                 <div class="tut-step">
-                    <span class="tut-icon">✨</span>
-                    <strong>3. CALIBRAR:</strong> Con la pista <b>VACÍA</b>, pulsa "Calibrar Fondo".
+                    <span class="tut-icon">🚗</span>
+                    <strong>3. CALIBRAR P1:</strong> Pon el coche debajo del recuadro P1 y pulsa "Captura Color P1".
                 </div>
                 <div class="tut-step">
-                    <span class="tut-icon">💡</span>
-                    <strong>4. REFLEJOS:</strong> Sube "ANTI-REFLEJO" si los faros dan falsas vueltas.
+                    <span class="tut-icon">🚙</span>
+                    <strong>4. CALIBRAR P2:</strong> Repite con el coche P2.
                 </div>
             </div>
 
@@ -808,7 +800,10 @@
         const resetRaceBtn = document.getElementById('reset-race-btn');
         const configPanel = document.getElementById('config-panel');
         const centralConfigBtn = document.getElementById('central-config-btn');
-        const calibrateBtn = document.getElementById('calibrate-btn');
+        
+        const calibP1Btn = document.getElementById('calib-p1-btn');
+        const calibP2Btn = document.getElementById('calib-p2-btn');
+        
         const calibOverlay = document.getElementById('calib-overlay');
         const calibStepTitle = document.getElementById('calib-step-title');
         const calibStepDesc = document.getElementById('calib-step-desc');
@@ -862,11 +857,11 @@
                 hasCrossedStart: false, 
                 currentMinLapTime: 3000,
                 
-                // --- GRID-LOCK CORE STATE (V5.3) ---
-                sensitivity: 10,
-                antiGlare: 80, // Default Anti-Glare Threshold
-                glareId: 'p1-glare', glareDispId: 'p1-glare-disp',
-                refData: null,
+                // --- SPECTRAL LOCK CORE STATE (V6.0) ---
+                sensitivity: 20,
+                targetH: 0, targetS: 0, targetL: 0, // Targeted HSL values
+                isCalibrated: false,
+                dotId: 'p1-color-dot',
                 
                 soundTone: "C5",
                 activeFrames: 0,
@@ -888,11 +883,11 @@
                 hasCrossedStart: false,
                 currentMinLapTime: 3000,
                 
-                // --- GRID-LOCK CORE STATE (V5.3) ---
-                sensitivity: 10,
-                antiGlare: 80,
-                glareId: 'p2-glare', glareDispId: 'p2-glare-disp',
-                refData: null,
+                // --- SPECTRAL LOCK CORE STATE (V6.0) ---
+                sensitivity: 20,
+                targetH: 0, targetS: 0, targetL: 0,
+                isCalibrated: false,
+                dotId: 'p2-color-dot',
                 
                 soundTone: "G5",
                 activeFrames: 0,
@@ -913,7 +908,7 @@
         window.adjT = function(pId, delta) {
             const p = players[pId-1];
             let val = parseInt(document.getElementById(p.thresholdId).value);
-            val = Math.max(2, Math.min(50, val + delta));
+            val = Math.max(5, Math.min(50, val + delta));
             document.getElementById(p.thresholdId).value = val;
             updateThreshold(pId);
         }
@@ -921,9 +916,7 @@
         function updateThreshold(pId) {
             const p = players[pId-1];
             p.sensitivity = parseInt(document.getElementById(p.thresholdId).value);
-            p.antiGlare = parseInt(document.getElementById(p.glareId).value);
             document.getElementById(p.thresholdDispId).textContent = p.sensitivity;
-            document.getElementById(p.glareDispId).textContent = p.antiGlare;
         }
 
         // --- CAMERA ---
@@ -957,7 +950,8 @@
                     videoStatus.className = "text-center text-sm mt-2 text-green-600 font-bold uppercase";
                     cameraOnBtn.disabled = true;
                     cameraOffBtn.disabled = false;
-                    calibrateBtn.disabled = false;
+                    calibP1Btn.disabled = false;
+                    calibP2Btn.disabled = false;
                 };
             } catch (err) {
                 videoStatus.textContent = 'Error: ' + err.name;
@@ -970,13 +964,33 @@
             cameraStream = null; isProcessing = false; videoElement.srcObject = null;
             document.querySelectorAll('.movable-rectangle').forEach(el => el.style.display = 'none');
             cameraOnBtn.disabled = false; cameraOffBtn.disabled = true;
-            calibrateBtn.disabled = true;
+            calibP1Btn.disabled = true; calibP2Btn.disabled = true;
             videoStatus.textContent = 'Cámara apagada.'; videoStatus.className = "text-amber-900 text-center text-sm mt-2";
         }
 
-        // --- CORE: GRID-LOCK PIXEL DIFFERENCE (V.5.3) ---
-        // Extracts raw pixel data for a specific ROI
-        function getRoiPixels(roi) {
+        // --- HELPER: RGB TO HSL ---
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0; // achromatic
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return { h: h * 360, s: s * 100, l: l * 100 };
+        }
+
+        // --- CORE: GET ROI PIXELS & HSL ---
+        function getRoiData(roi) {
             const vw = videoElement.videoWidth; const vh = videoElement.videoHeight;
             if (!vw || !vh) return null;
             
@@ -1012,35 +1026,30 @@
             const roi1 = document.getElementById(p1.roiId);
             const roi2 = document.getElementById(p2.roiId);
             
-            const snap1 = getRoiPixels(roi1);
-            const snap2 = getRoiPixels(roi2);
+            const snap1 = getRoiData(roi1);
+            const snap2 = getRoiData(roi2);
             
             if (!snap1 || !snap2) { requestAnimationFrame(processVideo); return; }
 
-            // Auto-Initialize Reference if missing (First Frame or Reset)
-            if (!p1.refData) p1.refData = new Uint8ClampedArray(snap1.data);
-            if (!p2.refData) p2.refData = new Uint8ClampedArray(snap2.data);
-            
-            // Re-Initialize if dimensions change (User resized ROI)
-            if (p1.refData.length !== snap1.data.length) p1.refData = new Uint8ClampedArray(snap1.data);
-            if (p2.refData.length !== snap2.data.length) p2.refData = new Uint8ClampedArray(snap2.data);
-
-            // --- DETECCION ---
+            // --- DETECCION SPECTRAL ---
             const dCtx = debugCanvas.getContext('2d');
             if (isDebugMode) dCtx.clearRect(0, 0, debugCanvas.width, debugCanvas.height);
 
-            // Calculate Difference with Anti-Glare
-            let score1 = calculateDifference(snap1, p1.refData, p1.sensitivity, p1.antiGlare, isDebugMode ? dCtx : null);
-            let score2 = calculateDifference(snap2, p2.refData, p2.sensitivity, p2.antiGlare, isDebugMode ? dCtx : null);
+            // Calculate "Spectral Matches"
+            const matches1 = countColorMatches(snap1, p1, isDebugMode ? dCtx : null);
+            const matches2 = countColorMatches(snap2, p2, isDebugMode ? dCtx : null);
             
-            document.getElementById(p1.valId).textContent = score1.toFixed(0) + "%";
-            document.getElementById(p2.valId).textContent = score2.toFixed(0) + "%";
+            document.getElementById(p1.valId).textContent = matches1.toFixed(0);
+            document.getElementById(p2.valId).textContent = matches2.toFixed(0);
             
-            document.getElementById(p1.barId).style.width = Math.min(100, score1 * 2) + '%';
-            document.getElementById(p2.barId).style.width = Math.min(100, score2 * 2) + '%';
+            // UI Feedback: Max possible matches depends on size, but we normalize for bar
+            document.getElementById(p1.barId).style.width = Math.min(100, matches1 * 5) + '%';
+            document.getElementById(p2.barId).style.width = Math.min(100, matches2 * 5) + '%';
 
-            let crossed1 = score1 > p1.sensitivity;
-            let crossed2 = score2 > p2.sensitivity;
+            // Threshold is essentially "Number of pixels matching the color"
+            // Default 20 roughly means "a decent blob"
+            let crossed1 = matches1 > p1.sensitivity;
+            let crossed2 = matches2 > p2.sensitivity;
 
             const now = Date.now();
             
@@ -1062,7 +1071,7 @@
                     roi.classList.remove('roi-blocked');
                 }
                 
-                const validTrigger = crossed && !p.isPermanentlyBlocked;
+                const validTrigger = crossed && !p.isPermanentlyBlocked && p.isCalibrated;
 
                 if (validTrigger) roi.classList.add('roi-detected');
                 else roi.classList.remove('roi-detected');
@@ -1110,87 +1119,112 @@
             requestAnimationFrame(processVideo);
         }
         
-        // --- CORE ALGORITHM: ANTI-GLARE PIXEL COUNT (V5.3) ---
-        function calculateDifference(current, ref, sens, antiGlareThreshold, ctx) {
+        // --- CORE ALGORITHM: HSL COLOR MATCHING (V6.0) ---
+        function countColorMatches(current, player, ctx) {
+            if (!player.isCalibrated) return 0;
+            
             const data = current.data;
-            let changedPixels = 0;
-            let totalPixels = data.length / 4;
-            // Basic Noise Floor
-            const NOISE_FLOOR = 60; 
+            let matches = 0;
+            const tH = player.targetH;
+            const tS = player.targetS;
+            const tL = player.targetL;
             
             if (ctx) {
                 var imgData = ctx.createImageData(current.w, current.h);
                 var debugData = imgData.data;
             }
 
-            for (let i = 0; i < data.length; i += 4) { // Stride 1 for accuracy
+            // Stride 4 for speed
+            for (let i = 0; i < data.length; i += 16) { 
                 const r = data[i]; const g = data[i+1]; const b = data[i+2];
-                const rr = ref[i]; const rg = ref[i+1]; const rb = ref[i+2];
+                const hsl = rgbToHsl(r, g, b);
 
-                // 1. Calculate Brightness Delta
-                const brightnessCur = r + g + b;
-                const brightnessRef = rr + rg + rb;
-                const brightnessDiff = brightnessCur - brightnessRef; // Positive = brighter
+                // --- SPECTRAL FILTER ---
+                // 1. Lightness Filter: Ignore White Lights (Headlights) and Black Shadows
+                // Headlights usually have L > 90% and low Saturation
+                if (hsl.l > 90 || hsl.l < 15) continue; 
 
-                // 2. ANTI-GLARE CHECK: If pixel became significantly brighter (headlight), IGNORE IT
-                // Multiplied by 3 because we summed R+G+B
-                if (brightnessDiff > (antiGlareThreshold * 3)) {
-                     // It's just light/glare. Skip.
-                     if (ctx) {
-                        debugData[i] = 255; debugData[i+1] = 255; debugData[i+2] = 0; debugData[i+3] = 100; // Yellow for ignored glare
-                     }
-                     continue; 
-                }
+                // 2. Saturation Filter: Ignore Grey Asphalt
+                // Asphalt is low saturation. Cars are usually high saturation.
+                if (hsl.s < 20) continue;
 
-                // 3. Normal Difference Check
-                const diff = Math.abs(r - rr) + Math.abs(g - rg) + Math.abs(b - rb);
-                
-                if (diff > NOISE_FLOOR) {
-                    changedPixels++;
+                // 3. Hue Match: Is it the right color?
+                // Hue is a circle (0-360). Distance wraps around.
+                let hueDist = Math.abs(hsl.h - tH);
+                if (hueDist > 180) hueDist = 360 - hueDist;
+
+                // Match condition: Close Hue AND Decent Saturation match
+                if (hueDist < 30 && Math.abs(hsl.s - tS) < 50) {
+                    matches++;
                     if (ctx) {
-                        debugData[i] = 255; debugData[i+1] = 255; debugData[i+2] = 255; debugData[i+3] = 255; // White for detection
+                        debugData[i] = r; debugData[i+1] = g; debugData[i+2] = b; debugData[i+3] = 255; 
                     }
-                } else {
-                    if (ctx) debugData[i+3] = 0; // Transparent
                 }
             }
             
             if (ctx) ctx.putImageData(imgData, current.x, current.y);
 
-            return (changedPixels / totalPixels) * 100;
+            // Scale down raw count to make "Sensitivity" slider number make sense (0-50 range)
+            return matches / 5; 
         }
         
-        // --- CALIBRATION: JUST SNAPSHOT THE EMPTY TRACK ---
-        async function runAutoCalibration() {
+        // --- NEW CALIBRATION: CAPTURE TARGET COLOR ---
+        async function calibrateColor(playerIndex) {
             if (!isProcessing) return;
+            const p = players[playerIndex];
+            
             isCalibrating = true;
             calibOverlay.classList.add('active');
-            calibStepTitle.textContent = "CAPTURA FONDO";
-            calibStepDesc.textContent = "No muevas nada.";
+            calibStepTitle.textContent = "CALIBRANDO COLOR";
+            calibStepDesc.textContent = "Analizando coche...";
             
-            speak("Capturando fondo.", 1.0, true);
+            speak("Analizando color.", 1.0, true);
             await new Promise(r => setTimeout(r, 1000));
             
-            // TAKE SNAPSHOT
-            const s1 = getRoiPixels(document.getElementById('roi-p1'));
-            const s2 = getRoiPixels(document.getElementById('roi-p2'));
-            
-            if (s1) players[0].refData = new Uint8ClampedArray(s1.data);
-            if (s2) players[1].refData = new Uint8ClampedArray(s2.data);
+            const snap = getRoiData(document.getElementById(p.roiId));
+            if (snap) {
+                // Calculate Average HSL of the CENTER of the ROI
+                const data = snap.data;
+                let sumH=0, sumS=0, sumL=0, count=0;
+                
+                for(let i=0; i<data.length; i+=4) {
+                    const r=data[i]; const g=data[i+1]; const b=data[i+2];
+                    const hsl = rgbToHsl(r,g,b);
+                    // Filter extreme darks/lights to capture the actual body color
+                    if (hsl.l > 20 && hsl.l < 80 && hsl.s > 20) {
+                        sumH += hsl.h; sumS += hsl.s; sumL += hsl.l;
+                        count++;
+                    }
+                }
+                
+                if (count > 0) {
+                    p.targetH = sumH / count;
+                    p.targetS = sumS / count;
+                    p.targetL = sumL / count;
+                    p.isCalibrated = true;
+                    
+                    // Update UI Dot
+                    const dot = document.getElementById(p.dotId);
+                    dot.style.backgroundColor = `hsl(${p.targetH}, ${p.targetS}%, ${p.targetL}%)`;
+                    
+                    speak("Color capturado.", 1.0, true);
+                } else {
+                    speak("Fallo. Coche no detectado.", 1.0, true);
+                }
+            }
             
             calibStepTitle.textContent = "¡LISTO!";
-            calibStepDesc.textContent = `Referencia guardada.`;
+            calibStepDesc.textContent = `Color guardado.`;
             polySynth.triggerAttackRelease(["E5", "A5"], "0.3");
             
-            speak("Listo.", 1.0, true);
             await new Promise(r => setTimeout(r, 1000));
             isCalibrating = false;
             calibOverlay.classList.remove('active');
         }
 
+        // --- STANDARD FUNCTIONS (Race, Timer, etc) ---
         function handleFalseStart(player) {
-            raceAborted = true;
-            isCountdown = false;
+            raceAborted = true; isCountdown = false;
             polySynth.triggerAttackRelease(["C2", "F#2", "C3"], "1");
             const pName = document.getElementById(player.nameId).value;
             falseStartPlayerName.textContent = pName;
@@ -1209,6 +1243,10 @@
         }
 
         function startRace() {
+            if (!players[0].isCalibrated || !players[1].isCalibrated) {
+                alert("¡CALIBRA LOS COLORES PRIMERO!");
+                return;
+            }
             configPanel.classList.remove('open');
             startRaceBtn.disabled = true; resetRaceBtn.disabled = true;
             falseStartAlert.classList.remove('show');
@@ -1544,7 +1582,8 @@
             }
         };
 
-        calibrateBtn.onclick = runAutoCalibration;
+        calibP1Btn.onclick = () => calibrateColor(0);
+        calibP2Btn.onclick = () => calibrateColor(1);
         exportExcelBtn.onclick = exportToExcel;
         
         closeTutorialBtn.onclick = () => {
@@ -1612,17 +1651,9 @@
             players[0].sensitivity = parseInt(e.target.value);
             document.getElementById('p1-threshold-disp').textContent = e.target.value;
         });
-        document.getElementById('p1-glare').addEventListener('input', (e) => { 
-            players[0].antiGlare = parseInt(e.target.value);
-            document.getElementById('p1-glare-disp').textContent = e.target.value;
-        });
         document.getElementById('p2-threshold').addEventListener('input', (e) => { 
             players[1].sensitivity = parseInt(e.target.value);
             document.getElementById('p2-threshold-disp').textContent = e.target.value;
-        });
-        document.getElementById('p2-glare').addEventListener('input', (e) => { 
-            players[1].antiGlare = parseInt(e.target.value);
-            document.getElementById('p2-glare-disp').textContent = e.target.value;
         });
 
         startRaceBtn.onclick = startRace;
