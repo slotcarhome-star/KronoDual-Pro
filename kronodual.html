@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.4.9 - Chromatic Core</title>
+    <title>KRONODUAL V.5.0 - Grid-Lock Core</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -90,17 +90,6 @@
             font-family: Arial, sans-serif;
         }
         
-        /* ESTILO NEON ORO PURO (ARIAL) */
-        .main-title-glow {
-            font-family: Arial, sans-serif !important;
-            color: #fff;
-            text-shadow: 
-                0 0 5px #ffd700,
-                0 0 15px #ffd700,
-                0 0 30px #ffaa00,
-                0 0 50px #ff8c00;
-        }
-        
         .traffic-light-container.five-lights { display: flex; gap: 10px; }
         .light {
             width: 30px; height: 30px; border-radius: 50%;
@@ -122,7 +111,6 @@
         #webcam-feed {
             max-height: 320px; object-fit: cover; width: 100%;
             display: block; transform: scaleX(1);
-            /* NO USAR FILTROS AQUÍ PARA NO FALSEAR COLOR */
         }
 
         .movable-rectangle {
@@ -186,6 +174,15 @@
             font-size: 10px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3);
             pointer-events: none; font-weight: bold; font-family: Arial, sans-serif;
         }
+        
+        /* DEBUG OVERLAY */
+        .debug-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; opacity: 0; transition: opacity 0.2s;
+            mix-blend-mode: screen;
+        }
+        .debug-mode .debug-canvas { opacity: 0.8; }
+        .debug-mode .movable-rectangle { background-color: rgba(0,0,0,0.8); border-style: dashed; }
         
         /* MENSAJE DE TEST EN ROI */
         .test-msg {
@@ -377,12 +374,16 @@
                     <h1 class="text-4xl sm:text-5xl main-title-glow font-black tracking-widest italic mr-2">
                         KRONODUAL
                     </h1>
-                    <span class="text-xl text-yellow-800 font-bold">V.4.9</span>
+                    <span class="text-xl text-yellow-800 font-bold">V.5.0</span>
                 </div>
                 <span class="text-[10px] text-yellow-900 font-serif tracking-[0.3em] uppercase ml-1 font-bold">By Albert Closa</span>
             </div>
             
             <div class="flex items-center gap-4 mt-2 sm:mt-0">
+                 <button id="debug-btn" class="flex items-center text-amber-900 hover:text-black transition-colors px-3 py-1 rounded-full bg-white/30 border border-amber-500/30 hover:bg-white/60 shadow-sm group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M2 12h5"/><path d="M17 12h5"/><path d="M12 2v5"/><path d="M12 17v5"/><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span class="text-[10px] font-bold uppercase tracking-wider">VER SENSOR</span>
+                </button>
                  <button id="history-btn" class="flex items-center text-amber-900 hover:text-black transition-colors px-3 py-1 rounded-full bg-white/30 border border-amber-500/30 hover:bg-white/60 shadow-sm group" title="Ver Historial">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history mr-2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/><path d="M12 7v5l4 2"/></svg>
                     <span class="text-[10px] font-bold uppercase tracking-wider">Historial</span>
@@ -466,7 +467,7 @@
                              </div>
                              <div class="flex items-center space-x-2">
                                 <button class="btn-adjust" onclick="adjT(1, -5)">-</button>
-                                <input type="range" id="p1-threshold" min="5" max="150" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                                <input type="range" id="p1-threshold" min="2" max="50" value="10" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
                                 <button class="btn-adjust" onclick="adjT(1, 5)">+</button>
                              </div>
                         </div>
@@ -503,7 +504,7 @@
                              </div>
                              <div class="flex items-center space-x-2">
                                 <button class="btn-adjust" onclick="adjT(2, -5)">-</button>
-                                <input type="range" id="p2-threshold" min="5" max="150" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
+                                <input type="range" id="p2-threshold" min="2" max="50" value="10" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
                                 <button class="btn-adjust" onclick="adjT(2, 5)">+</button>
                              </div>
                         </div>
@@ -574,8 +575,9 @@
             </div>
             
             <!-- OVERLAYS SOBRE EL VIDEO -->
-            <div id="video-container" class="rounded-xl border-4 border-yellow-400/50">
+            <div id="video-container" class="rounded-xl border-4 border-yellow-400/50 relative">
                 <video id="webcam-feed" class="w-full shadow-inner" autoplay playsinline></video>
+                <canvas id="debug-canvas" class="debug-canvas"></canvas>
                 
                 <!-- ALERT DE CALIBRACION -->
                 <div id="calib-overlay" class="calib-overlay">
@@ -594,7 +596,7 @@
                 <div id="roi-p1" class="movable-rectangle" style="top: 25%; left: 10%;">
                     <div class="roi-label">P1</div>
                     <div id="msg-p1" class="test-msg"></div>
-                    <div id="val-p1" class="detection-val">0</div>
+                    <div id="val-p1" class="detection-val">0%</div>
                     <div class="signal-bar-container"><div id="bar-p1" class="signal-bar"></div></div>
                     <div class="resize-handle handle-tl"></div>
                     <div class="resize-handle handle-br"></div>
@@ -603,7 +605,7 @@
                 <div id="roi-p2" class="movable-rectangle" style="top: 25%; left: 60%;">
                     <div class="roi-label">P2</div>
                     <div id="msg-p2" class="test-msg"></div>
-                    <div id="val-p2" class="detection-val">0</div>
+                    <div id="val-p2" class="detection-val">0%</div>
                      <div class="signal-bar-container"><div id="bar-p2" class="signal-bar"></div></div>
                     <div class="resize-handle handle-tl"></div>
                     <div class="resize-handle handle-br"></div>
@@ -700,7 +702,7 @@
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">🏎️</span>
-                    <strong>4. LISTO:</strong> Detecta <b>COLOR</b> y <b>BRILLO</b>. Ignora sombras.
+                    <strong>4. LISTO:</strong> Ajusta la sensibilidad hasta que marque 0% en reposo.
                 </div>
             </div>
 
@@ -791,6 +793,9 @@
         const videoElement = document.getElementById('webcam-feed');
         const videoContainer = document.getElementById('video-container');
         const canvas = document.getElementById('video-canvas');
+        const debugCanvas = document.getElementById('debug-canvas');
+        const debugBtn = document.getElementById('debug-btn');
+        let isDebugMode = false;
         
         // UI Elements
         const startRaceBtn = document.getElementById('start-race-btn');
@@ -851,12 +856,11 @@
                 hasCrossedStart: false, 
                 currentMinLapTime: 3000,
                 
-                // CHROMATIC STATE
-                sensitivity: 20,
-                baseR: 0, baseG: 0, baseB: 0,
-                soundTone: "C5",
+                // --- GRID-LOCK CORE STATE (V5.0) ---
+                sensitivity: 10, // Percentage of changed pixels
+                refData: null, // The "Empty Track" snapshot
                 
-                // WATCHDOG
+                soundTone: "C5",
                 activeFrames: 0,
                 isPermanentlyBlocked: false
             },
@@ -876,12 +880,11 @@
                 hasCrossedStart: false,
                 currentMinLapTime: 3000,
                 
-                // CHROMATIC STATE
-                sensitivity: 20,
-                baseR: 0, baseG: 0, baseB: 0,
-                soundTone: "G5",
+                // --- GRID-LOCK CORE STATE (V5.0) ---
+                sensitivity: 10,
+                refData: null,
                 
-                // WATCHDOG
+                soundTone: "G5",
                 activeFrames: 0,
                 isPermanentlyBlocked: false
             }
@@ -900,7 +903,7 @@
         window.adjT = function(pId, delta) {
             const p = players[pId-1];
             let val = parseInt(document.getElementById(p.thresholdId).value);
-            val = Math.max(5, Math.min(150, val + delta));
+            val = Math.max(2, Math.min(50, val + delta));
             document.getElementById(p.thresholdId).value = val;
             updateThreshold(pId);
         }
@@ -934,6 +937,8 @@
                     videoElement.play();
                     canvas.width = videoElement.videoWidth;
                     canvas.height = videoElement.videoHeight;
+                    debugCanvas.width = videoElement.videoWidth;
+                    debugCanvas.height = videoElement.videoHeight;
                     isProcessing = true;
                     processVideo();
                     document.querySelectorAll('.movable-rectangle').forEach(el => el.style.display = 'block');
@@ -958,11 +963,11 @@
             videoStatus.textContent = 'Cámara apagada.'; videoStatus.className = "text-amber-900 text-center text-sm mt-2";
         }
 
-        // --- CORE: CHROMATIC DETECTION (V.4.9) ---
-        // Returns average R, G, B
-        function getRoiStats(roi) {
+        // --- CORE: GRID-LOCK PIXEL DIFFERENCE (V.5.0) ---
+        // Extracts raw pixel data for a specific ROI
+        function getRoiPixels(roi) {
             const vw = videoElement.videoWidth; const vh = videoElement.videoHeight;
-            if (!vw || !vh) return { r:0, g:0, b:0, valid:false };
+            if (!vw || !vh) return null;
             
             const rect = roi.getBoundingClientRect();
             const parentRect = videoContainer.getBoundingClientRect();
@@ -977,28 +982,15 @@
             const w = Math.ceil(Math.min(vw - x, relW * vw));
             const h = Math.ceil(Math.min(vh - y, relH * vh));
             
-            if (w <= 0 || h <= 0) return { r:0, g:0, b:0, valid:false };
+            if (w <= 0 || h <= 0) return null;
 
             const ctx = canvas.getContext('2d', {willReadFrequently:true});
             ctx.drawImage(videoElement, x, y, w, h, 0, 0, w, h);
             
-            try {
-                const d = ctx.getImageData(0,0,w,h).data;
-                let sumR = 0, sumG = 0, sumB = 0;
-                let count = 0;
-                
-                // STRIDE 4 (Fast)
-                for(let i=0; i < d.length; i+=16) { 
-                    sumR += d[i];
-                    sumG += d[i+1];
-                    sumB += d[i+2];
-                    count++;
-                }
-                
-                if (count === 0) return { r:0, g:0, b:0, valid:false };
-                return { r: sumR/count, g: sumG/count, b: sumB/count, valid:true };
-                
-            } catch(e){ return { r:0, g:0, b:0, valid:false }; }
+            return {
+                data: ctx.getImageData(0,0,w,h).data,
+                x: x, y: y, w: w, h: h
+            };
         }
 
         function processVideo() {
@@ -1009,42 +1001,32 @@
             const roi1 = document.getElementById(p1.roiId);
             const roi2 = document.getElementById(p2.roiId);
             
-            // 1. Get Stats
-            const s1 = getRoiStats(roi1);
-            const s2 = getRoiStats(roi2);
+            const snap1 = getRoiPixels(roi1);
+            const snap2 = getRoiPixels(roi2);
             
-            if (!s1.valid || !s2.valid) { requestAnimationFrame(processVideo); return; }
+            if (!snap1 || !snap2) { requestAnimationFrame(processVideo); return; }
 
-            // 2. Initialize Base
-            if (p1.baseR === 0) { p1.baseR = s1.r; p1.baseG = s1.g; p1.baseB = s1.b; }
-            if (p2.baseR === 0) { p2.baseR = s2.r; p2.baseG = s2.g; p2.baseB = s2.b; }
+            // Auto-Initialize Reference if missing (First Frame or Reset)
+            if (!p1.refData) p1.refData = new Uint8ClampedArray(snap1.data);
+            if (!p2.refData) p2.refData = new Uint8ClampedArray(snap2.data);
+            
+            // Re-Initialize if dimensions change (User resized ROI)
+            if (p1.refData.length !== snap1.data.length) p1.refData = new Uint8ClampedArray(snap1.data);
+            if (p2.refData.length !== snap2.data.length) p2.refData = new Uint8ClampedArray(snap2.data);
 
-            // 3. CHROMATICITY CALCULATION (Normalized RGB)
-            // This is the "Unique System": It ignores brightness (auto-exposure) entirely.
-            // Formula: r = R / (R+G+B). This ratio stays constant even if light goes up/down.
-            
-            const sum1 = s1.r + s1.g + s1.b || 1;
-            const sum2 = s2.r + s2.g + s2.b || 1;
-            
-            const baseSum1 = p1.baseR + p1.baseG + p1.baseB || 1;
-            const baseSum2 = p2.baseR + p2.baseG + p2.baseB || 1;
+            // --- DETECCION ---
+            const dCtx = debugCanvas.getContext('2d');
+            if (isDebugMode) dCtx.clearRect(0, 0, debugCanvas.width, debugCanvas.height);
 
-            const r1 = s1.r / sum1; const g1 = s1.g / sum1;
-            const br1 = p1.baseR / baseSum1; const bg1 = p1.baseG / baseSum1;
+            // Calculate Difference
+            const score1 = calculateDifference(snap1, p1.refData, p1.sensitivity, isDebugMode ? dCtx : null);
+            const score2 = calculateDifference(snap2, p2.refData, p2.sensitivity, isDebugMode ? dCtx : null);
             
-            const r2 = s2.r / sum2; const g2 = s2.g / sum2;
-            const br2 = p2.baseR / baseSum2; const bg2 = p2.baseG / baseSum2;
-
-            // Distance = (diffR + diffG) * Scaler
-            // We multiply by 1000 because normalized diffs are small (0.0 - 1.0)
-            const score1 = (Math.abs(r1 - br1) + Math.abs(g1 - bg1)) * 1500; 
-            const score2 = (Math.abs(r2 - br2) + Math.abs(g2 - bg2)) * 1500;
+            document.getElementById(p1.valId).textContent = score1.toFixed(0) + "%";
+            document.getElementById(p2.valId).textContent = score2.toFixed(0) + "%";
             
-            document.getElementById(p1.valId).textContent = score1.toFixed(0);
-            document.getElementById(p2.valId).textContent = score2.toFixed(0);
-            
-            document.getElementById(p1.barId).style.width = Math.min(100, (score1/100)*100) + '%';
-            document.getElementById(p2.barId).style.width = Math.min(100, (score2/100)*100) + '%';
+            document.getElementById(p1.barId).style.width = Math.min(100, score1 * 2) + '%';
+            document.getElementById(p2.barId).style.width = Math.min(100, score2 * 2) + '%';
 
             let crossed1 = score1 > p1.sensitivity;
             let crossed2 = score2 > p2.sensitivity;
@@ -1054,12 +1036,11 @@
             [p1, p2].forEach((p, idx) => {
                 const roi = document.getElementById(p.roiId);
                 const crossed = (idx === 0) ? crossed1 : crossed2;
-                const cur = (idx === 0) ? s1 : s2;
                 
-                // WATCHDOG
+                // WATCHDOG (Hand Rejection)
                 if (crossed && !isCalibrating) {
                     p.activeFrames++;
-                    if (p.activeFrames > 45) {
+                    if (p.activeFrames > 45) { // 1.5s blocked
                         p.isPermanentlyBlocked = true;
                         roi.classList.add('roi-blocked');
                         document.getElementById(p.msgId).textContent = "BLOQUEADO";
@@ -1068,12 +1049,6 @@
                     p.activeFrames = 0;
                     p.isPermanentlyBlocked = false;
                     roi.classList.remove('roi-blocked');
-                    // SLOW ADAPTATION (Background Update)
-                    if (!isCalibrating && !crossed) {
-                         p.baseR = (p.baseR * 0.95) + (cur.r * 0.05);
-                         p.baseG = (p.baseG * 0.95) + (cur.g * 0.05);
-                         p.baseB = (p.baseB * 0.95) + (cur.b * 0.05);
-                    }
                 }
                 
                 const validTrigger = crossed && !p.isPermanentlyBlocked;
@@ -1124,67 +1099,66 @@
             requestAnimationFrame(processVideo);
         }
         
+        // --- CORE ALGORITHM: NOISE-GATED PIXEL COUNT ---
+        function calculateDifference(current, ref, sens, ctx) {
+            const data = current.data;
+            let changedPixels = 0;
+            let totalPixels = data.length / 4;
+            // NOISE GATE: This is the magic number. 
+            // It ignores light changes (usually < 40 diff).
+            // A solid car is > 60 diff.
+            const NOISE_FLOOR = 60; 
+            
+            if (ctx) {
+                var imgData = ctx.createImageData(current.w, current.h);
+                var debugData = imgData.data;
+            }
+
+            for (let i = 0; i < data.length; i += 4) { // Stride 1 for accuracy on small cars
+                // Simple Euclidean Distance per pixel channel
+                const diff = Math.abs(data[i] - ref[i]) + 
+                             Math.abs(data[i+1] - ref[i+1]) + 
+                             Math.abs(data[i+2] - ref[i+2]);
+                
+                if (diff > NOISE_FLOOR) {
+                    changedPixels++;
+                    if (ctx) {
+                        debugData[i] = 255; debugData[i+1] = 255; debugData[i+2] = 255; debugData[i+3] = 255; 
+                    }
+                } else {
+                    if (ctx) debugData[i+3] = 0; // Transparent
+                }
+            }
+            
+            if (ctx) ctx.putImageData(imgData, current.x, current.y);
+
+            return (changedPixels / totalPixels) * 100;
+        }
+        
+        // --- CALIBRATION: JUST SNAPSHOT THE EMPTY TRACK ---
         async function runAutoCalibration() {
             if (!isProcessing) return;
             isCalibrating = true;
             calibOverlay.classList.add('active');
-            calibStepTitle.textContent = "CALIBRANDO COLOR";
+            calibStepTitle.textContent = "CAPTURA FONDO";
             calibStepDesc.textContent = "No muevas nada.";
             
-            speak("Calibrando.", 1.0, true);
+            speak("Capturando fondo.", 1.0, true);
             await new Promise(r => setTimeout(r, 1000));
             
-            let p1Max = 0, p2Max = 0;
-            const measureFrames = 60; 
+            // TAKE SNAPSHOT
+            const s1 = getRoiPixels(document.getElementById('roi-p1'));
+            const s2 = getRoiPixels(document.getElementById('roi-p2'));
             
-            // Baseline snapshot
-            let s1 = getRoiStats(document.getElementById('roi-p1'));
-            let s2 = getRoiStats(document.getElementById('roi-p2'));
-            players[0].baseR = s1.r; players[0].baseG = s1.g; players[0].baseB = s1.b;
-            players[1].baseR = s2.r; players[1].baseG = s2.g; players[1].baseB = s2.b;
-            
-            // Measure Noise (Chromatic Variance)
-            for(let i=0; i<measureFrames; i++) {
-                s1 = getRoiStats(document.getElementById('roi-p1'));
-                s2 = getRoiStats(document.getElementById('roi-p2'));
-                
-                // Chromaticity logic inside calibration loop
-                const sum1 = s1.r+s1.g+s1.b||1; const r1 = s1.r/sum1; const g1 = s1.g/sum1;
-                const bSum1 = players[0].baseR+players[0].baseG+players[0].baseB||1;
-                const br1 = players[0].baseR/bSum1; const bg1 = players[0].baseG/bSum1;
-                
-                const sum2 = s2.r+s2.g+s2.b||1; const r2 = s2.r/sum2; const g2 = s2.g/sum2;
-                const bSum2 = players[1].baseR+players[1].baseG+players[1].baseB||1;
-                const br2 = players[1].baseR/bSum2; const bg2 = players[1].baseG/bSum2;
-
-                const score1 = (Math.abs(r1-br1) + Math.abs(g1-bg1)) * 1500;
-                const score2 = (Math.abs(r2-br2) + Math.abs(g2-bg2)) * 1500;
-                
-                p1Max = Math.max(p1Max, score1);
-                p2Max = Math.max(p2Max, score2);
-                
-                await new Promise(r => requestAnimationFrame(r));
-            }
-            
-            // Set Thresholds (Noise * 3, Min 20)
-            const minThresh = 20; 
-            let thresh1 = Math.max(minThresh, p1Max * 3);
-            let thresh2 = Math.max(minThresh, p2Max * 3);
-            
-            thresh1 = Math.min(150, thresh1);
-            thresh2 = Math.min(150, thresh2);
-
-            document.getElementById('p1-threshold').value = Math.ceil(thresh1);
-            document.getElementById('p2-threshold').value = Math.ceil(thresh2);
-            updateThreshold(1);
-            updateThreshold(2);
+            if (s1) players[0].refData = new Uint8ClampedArray(s1.data);
+            if (s2) players[1].refData = new Uint8ClampedArray(s2.data);
             
             calibStepTitle.textContent = "¡LISTO!";
-            calibStepDesc.textContent = `Fondo Calibrado.`;
+            calibStepDesc.textContent = `Referencia guardada.`;
             polySynth.triggerAttackRelease(["E5", "A5"], "0.3");
             
             speak("Listo.", 1.0, true);
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 1000));
             isCalibrating = false;
             calibOverlay.classList.remove('active');
         }
@@ -1529,6 +1503,22 @@
             document.getElementById('race-time').textContent = "00:00.000";
             isRaceActive=false; clearInterval(raceIntervalId); startRaceBtn.disabled=false;
         };
+        
+        // --- DEBUG MODE TOGGLE ---
+        debugBtn.onclick = () => {
+            isDebugMode = !isDebugMode;
+            document.body.classList.toggle('debug-mode');
+            if (isDebugMode) {
+                debugBtn.classList.add('bg-red-500', 'text-white');
+                debugBtn.classList.remove('bg-white/30');
+            } else {
+                debugBtn.classList.remove('bg-red-500', 'text-white');
+                debugBtn.classList.add('bg-white/30');
+                const dCtx = debugCanvas.getContext('2d');
+                dCtx.clearRect(0, 0, debugCanvas.width, debugCanvas.height);
+            }
+        };
+
         calibrateBtn.onclick = runAutoCalibration;
         exportExcelBtn.onclick = exportToExcel;
         
