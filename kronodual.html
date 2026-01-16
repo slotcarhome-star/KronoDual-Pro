@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.4.6 - Sound Preview</title>
+    <title>KRONODUAL V.4.7 - Fixed History</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -377,7 +377,7 @@
                     <h1 class="text-4xl sm:text-5xl main-title-glow font-black tracking-widest italic mr-2">
                         KRONODUAL
                     </h1>
-                    <span class="text-xl text-yellow-800 font-bold">V.4.6</span>
+                    <span class="text-xl text-yellow-800 font-bold">V.4.7</span>
                 </div>
                 <span class="text-[10px] text-yellow-900 font-serif tracking-[0.3em] uppercase ml-1 font-bold">By Albert Closa</span>
             </div>
@@ -1395,6 +1395,8 @@
             else winner = p1.laps > p2.laps ? p1 : p2;
 
             const wName = document.getElementById(winner.nameId).value;
+            const wTime = winner.totalTime; // Get time directly from object
+            
             document.getElementById('winner-text').textContent = `Ganador: ${wName}`;
             
             // VOICE: Winner (Prioridad Alta)
@@ -1424,7 +1426,7 @@
                     ul.appendChild(li);
                 });
             });
-            saveHistory(wName);
+            saveHistory(wName, wTime); // Pass both name AND time
             document.getElementById('resultsModal').classList.remove('hidden');
             setTimeout(()=>document.getElementById('resultsModal').classList.add('open'),10);
         }
@@ -1516,18 +1518,31 @@
             setTimeout(()=>recordNotification.classList.remove('show'),2000);
         }
 
-        // --- HISTORIAL ---
-        function saveHistory(winner) {
+        // --- HISTORIAL FIX ---
+        function saveHistory(winner, winnerTimeMs) {
+            // FIX: Use the passed time, or fallback if undefined, to avoid lookup errors
+            let finalTime = "--.---";
+            if (winnerTimeMs) {
+                finalTime = formatTime(winnerTimeMs);
+            } else {
+                 // Fallback (old risky method just in case)
+                 const pObj = players.find(p => document.getElementById(p.nameId).value === winner);
+                 if (pObj) finalTime = formatTime(pObj.totalTime);
+            }
+
             const rec = {
                 date: new Date().toLocaleString(),
                 winner: winner,
-                time: formatTime(players.find(p => document.getElementById(p.nameId).value === winner).totalTime),
+                time: finalTime,
                 p1Best: formatTime(players[0].bestLap),
                 p2Best: formatTime(players[1].bestLap)
             };
+            
             let hist = JSON.parse(localStorage.getItem('krono_twin_hist') || '[]');
             hist.unshift(rec);
-            localStorage.setItem('krono_twin_hist', JSON.stringify(hist.slice(50)));
+            
+            // FIX: Correct slice usage to KEEP the first 50 items
+            localStorage.setItem('krono_twin_hist', JSON.stringify(hist.slice(0, 50)));
         }
 
         function loadHistory() {
