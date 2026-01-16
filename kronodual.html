@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.6.0 - Spectral Lock</title>
+    <title>KRONODUAL V.2.0 - Luxury Gold</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -90,6 +90,17 @@
             font-family: Arial, sans-serif;
         }
         
+        /* ESTILO NEON ORO PURO (ARIAL) */
+        .main-title-glow {
+            font-family: Arial, sans-serif !important;
+            color: #fff;
+            text-shadow: 
+                0 0 5px #ffd700,
+                0 0 15px #ffd700,
+                0 0 30px #ffaa00,
+                0 0 50px #ff8c00;
+        }
+        
         .traffic-light-container.five-lights { display: flex; gap: 10px; }
         .light {
             width: 30px; height: 30px; border-radius: 50%;
@@ -111,6 +122,7 @@
         #webcam-feed {
             max-height: 320px; object-fit: cover; width: 100%;
             display: block; transform: scaleX(1);
+            filter: contrast(1.1) grayscale(0.1);
         }
 
         .movable-rectangle {
@@ -119,18 +131,6 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
             transition: background-color 0.1s ease, border-color 0.1s ease; 
             z-index: 10; box-sizing: border-box; touch-action: none; display: none;
-        }
-        
-        /* ESTADOS ESPECIALES */
-        .movable-rectangle.roi-dead {
-            border-color: #555 !important;
-            background-color: rgba(100, 100, 100, 0.2) !important;
-            box-shadow: none !important; opacity: 0.5;
-        }
-        .movable-rectangle.roi-blocked {
-            border-color: #ff0000 !important;
-            background-color: rgba(255, 0, 0, 0.2) !important;
-            box-shadow: 0 0 20px #ff0000 !important;
         }
         
         /* ROI P1: ORO */
@@ -157,32 +157,12 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         
-        /* BARRAS DE SEÑAL VISUAL */
-        .signal-bar-container {
-            position: absolute; bottom: 2px; left: 2px; right: 2px;
-            height: 6px; background: rgba(0,0,0,0.8); border: 1px solid #555;
-            border-radius: 3px; overflow: hidden; pointer-events: none;
-        }
-        .signal-bar {
-            height: 100%; width: 0%; background: linear-gradient(to right, #00ff00, #ffff00, #ff0000);
-            transition: width 0.05s linear;
-        }
-        
         .detection-val {
-            position: absolute; bottom: 10px; right: 2px;
+            position: absolute; bottom: 2px; right: 2px;
             background-color: rgba(0,0,0,0.7); color: #fff;
             font-size: 10px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3);
             pointer-events: none; font-weight: bold; font-family: Arial, sans-serif;
         }
-        
-        /* DEBUG OVERLAY */
-        .debug-canvas {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; opacity: 0; transition: opacity 0.2s;
-            mix-blend-mode: screen;
-        }
-        .debug-mode .debug-canvas { opacity: 0.8; }
-        .debug-mode .movable-rectangle { background-color: rgba(0,0,0,0.8); border-style: dashed; }
         
         /* MENSAJE DE TEST EN ROI */
         .test-msg {
@@ -192,7 +172,6 @@
             white-space: nowrap; font-family: Arial, sans-serif; z-index: 20;
         }
         .roi-detected .test-msg { display: block; }
-        .roi-blocked .test-msg { display: block; color: #ff0000; text-shadow: 0 0 10px #000; font-size: 14px; }
 
         .resize-handle {
             position: absolute; width: 34px; height: 34px;
@@ -362,9 +341,6 @@
         /* TUTORIAL MODAL */
         .tut-step { background: rgba(255,255,255,0.9); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #b8860b; color: #333; text-align: left; }
         .tut-icon { font-size: 2rem; margin-right: 10px; vertical-align: middle; }
-        
-        /* COLOR DOTS FOR CALIBRATION UI */
-        .color-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #000; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -377,16 +353,12 @@
                     <h1 class="text-4xl sm:text-5xl main-title-glow font-black tracking-widest italic mr-2">
                         KRONODUAL
                     </h1>
-                    <span class="text-xl text-yellow-800 font-bold">V.6.0</span>
+                    <span class="text-xl text-yellow-800 font-bold">V.2.0</span>
                 </div>
                 <span class="text-[10px] text-yellow-900 font-serif tracking-[0.3em] uppercase ml-1 font-bold">By Albert Closa</span>
             </div>
             
             <div class="flex items-center gap-4 mt-2 sm:mt-0">
-                 <button id="debug-btn" class="p-2 px-3 rounded-full bg-white/30 border border-amber-500/30 hover:bg-white/60 transition shadow-lg text-amber-900 text-xs font-bold uppercase tracking-wider flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M2 12h5"/><path d="M17 12h5"/><path d="M12 2v5"/><path d="M12 17v5"/><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-                    VER SENSOR
-                </button>
                  <button id="history-btn" class="flex items-center text-amber-900 hover:text-black transition-colors px-3 py-1 rounded-full bg-white/30 border border-amber-500/30 hover:bg-white/60 shadow-sm group" title="Ver Historial">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history mr-2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/><path d="M12 7v5l4 2"/></svg>
                     <span class="text-[10px] font-bold uppercase tracking-wider">Historial</span>
@@ -453,23 +425,25 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- COLUMNA JUGADOR 1 -->
                 <div class="p-3 bg-yellow-100/30 rounded-xl border border-yellow-400 shadow-inner">
-                    <h3 class="text-xs font-black text-amber-900 uppercase mb-2 border-b border-amber-300 pb-1 tracking-wider flex justify-between">
-                        JUGADOR 1 (ORO) <span id="p1-color-dot" class="color-dot bg-gray-400"></span>
-                    </h3>
+                    <h3 class="text-xs font-black text-amber-900 uppercase mb-2 border-b border-amber-300 pb-1 tracking-wider">JUGADOR 1 (ORO)</h3>
                     <div class="space-y-3">
                         <div>
                             <label class="block text-[10px] font-bold text-amber-900 mb-1">Nombre</label>
                             <input type="text" id="p1-name" value="Piloto 1" class="gold-input w-full p-1.5 rounded-lg border-l-8 border-yellow-500 text-xs" />
                         </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-amber-900 mb-1">Coche</label>
+                            <input type="text" id="p1-car" value="Porsche 911" class="gold-input w-full p-1.5 rounded-lg text-xs" />
+                        </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD COLOR</label>
+                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD IA</label>
                                 <span id="p1-threshold-disp" class="text-xs font-black text-amber-700 bg-amber-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
-                                <button class="btn-adjust" onclick="adjT(1, -5)">-</button>
-                                <input type="range" id="p1-threshold" min="5" max="50" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
-                                <button class="btn-adjust" onclick="adjT(1, 5)">+</button>
+                                <button class="btn-adjust" onclick="adjT(1, -1)">-</button>
+                                <input type="range" id="p1-threshold" min="5" max="80" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                                <button class="btn-adjust" onclick="adjT(1, 1)">+</button>
                              </div>
                         </div>
                         <div>
@@ -477,8 +451,10 @@
                              <select id="p1-sound" class="gold-input w-full p-1.5 rounded-lg text-xs">
                                 <option value="C4">Grave (C4)</option>
                                 <option value="E4">Medio (E4)</option>
+                                <option value="G4">Alto (G4)</option>
                                 <option value="C5" selected>Beep (C5)</option>
                                 <option value="G5">Agudo (G5)</option>
+                                <option value="C6">Muy Agudo (C6)</option>
                              </select>
                         </div>
                     </div>
@@ -486,23 +462,25 @@
 
                 <!-- COLUMNA JUGADOR 2 -->
                 <div class="p-3 bg-orange-100/30 rounded-xl border border-orange-400 shadow-inner">
-                    <h3 class="text-xs font-black text-orange-900 uppercase mb-2 border-b border-orange-300 pb-1 tracking-wider flex justify-between">
-                        JUGADOR 2 (COBRE) <span id="p2-color-dot" class="color-dot bg-gray-400"></span>
-                    </h3>
+                    <h3 class="text-xs font-black text-orange-900 uppercase mb-2 border-b border-orange-300 pb-1 tracking-wider">JUGADOR 2 (COBRE)</h3>
                     <div class="space-y-3">
                         <div>
                             <label class="block text-[10px] font-bold text-amber-900 mb-1">Nombre</label>
                             <input type="text" id="p2-name" value="Piloto 2" class="gold-input w-full p-1.5 rounded-lg border-l-8 border-orange-500 text-xs" />
                         </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-amber-900 mb-1">Coche</label>
+                            <input type="text" id="p2-car" value="Audi R8" class="gold-input w-full p-1.5 rounded-lg text-xs" />
+                        </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD COLOR</label>
+                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD IA</label>
                                 <span id="p2-threshold-disp" class="text-xs font-black text-orange-700 bg-orange-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
-                                <button class="btn-adjust" onclick="adjT(2, -5)">-</button>
-                                <input type="range" id="p2-threshold" min="5" max="50" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
-                                <button class="btn-adjust" onclick="adjT(2, 5)">+</button>
+                                <button class="btn-adjust" onclick="adjT(2, -1)">-</button>
+                                <input type="range" id="p2-threshold" min="5" max="80" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
+                                <button class="btn-adjust" onclick="adjT(2, 1)">+</button>
                              </div>
                         </div>
                          <div>
@@ -510,8 +488,10 @@
                              <select id="p2-sound" class="gold-input w-full p-1.5 rounded-lg text-xs">
                                 <option value="C4">Grave (C4)</option>
                                 <option value="E4">Medio (E4)</option>
+                                <option value="G4">Alto (G4)</option>
                                 <option value="C5">Beep (C5)</option>
                                 <option value="G5" selected>Agudo (G5)</option>
+                                <option value="C6">Muy Agudo (C6)</option>
                              </select>
                         </div>
                     </div>
@@ -524,10 +504,6 @@
                         <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Longitud Pista (m)</label>
                         <input type="number" id="track-length-input" value="15" min="1" step="0.5" class="gold-input w-full p-1.5 rounded-lg text-xs" />
                     </div>
-                    <div>
-                         <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Punto Muerto Min (s)</label>
-                         <input type="number" id="min-lap-time-input" value="3.0" min="0.5" step="0.5" class="gold-input w-full p-1.5 rounded-lg text-xs" />
-                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Vueltas</label>
                         <select id="lap-limit-select" class="gold-input w-full p-1.5 rounded-lg text-xs">
@@ -551,13 +527,10 @@
         <!-- VIDEO BOX -->
         <div id="video-feed-box" class="gold-panel px-4 py-3 w-full mb-6 relative">
             <div class="flex justify-between items-center border-b-2 border-amber-800/20 pb-3 mb-3">
-                <h2 class="text-base neon-gold-title">Cámara ROI</h2>
+                <h2 class="text-base neon-gold-title">Cámara Twin ROI</h2>
                 <div class="flex space-x-2">
-                    <button id="calib-p1-btn" class="p-2 px-3 rounded-full bg-gradient-to-b from-yellow-400 to-yellow-600 text-white hover:from-yellow-500 hover:to-yellow-700 transition shadow-lg border border-yellow-200 text-[10px] font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
-                        Captura Color P1
-                    </button>
-                    <button id="calib-p2-btn" class="p-2 px-3 rounded-full bg-gradient-to-b from-orange-400 to-orange-600 text-white hover:from-orange-500 hover:to-orange-700 transition shadow-lg border border-orange-200 text-[10px] font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
-                        Captura Color P2
+                    <button id="calibrate-btn" class="p-2 px-4 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 text-white hover:from-amber-500 hover:to-amber-700 transition shadow-lg border border-amber-200 text-xs font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
+                        Auto Calibrar
                     </button>
                     <button id="camera-on-btn" class="p-2 rounded-full bg-gradient-to-b from-green-500 to-green-700 text-white hover:from-green-600 hover:to-green-800 disabled:opacity-50 transition shadow-lg border border-green-300">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
@@ -573,15 +546,14 @@
             </div>
             
             <!-- OVERLAYS SOBRE EL VIDEO -->
-            <div id="video-container" class="rounded-xl border-4 border-yellow-400/50 relative">
+            <div id="video-container" class="rounded-xl border-4 border-yellow-400/50">
                 <video id="webcam-feed" class="w-full shadow-inner" autoplay playsinline></video>
-                <canvas id="debug-canvas" class="debug-canvas"></canvas>
                 
                 <!-- ALERT DE CALIBRACION -->
                 <div id="calib-overlay" class="calib-overlay">
                     <div class="spinner"></div>
-                    <h3 id="calib-step-title" class="text-2xl font-black text-yellow-300 uppercase tracking-widest drop-shadow-md">Calibrando Sensores</h3>
-                    <p id="calib-step-desc" class="text-base mt-2 text-white font-bold bg-black/50 px-4 py-1 rounded-full">Mantén la pista despejada</p>
+                    <h3 class="text-2xl font-black text-yellow-300 uppercase tracking-widest drop-shadow-md">Calibrando Sensores</h3>
+                    <p class="text-base mt-2 text-white font-bold bg-black/50 px-4 py-1 rounded-full">Mantén la pista despejada</p>
                 </div>
 
                 <!-- ALERT DE SALIDA NULA -->
@@ -595,7 +567,6 @@
                     <div class="roi-label">P1</div>
                     <div id="msg-p1" class="test-msg"></div>
                     <div id="val-p1" class="detection-val">0</div>
-                    <div class="signal-bar-container"><div id="bar-p1" class="signal-bar"></div></div>
                     <div class="resize-handle handle-tl"></div>
                     <div class="resize-handle handle-br"></div>
                 </div>
@@ -604,7 +575,6 @@
                     <div class="roi-label">P2</div>
                     <div id="msg-p2" class="test-msg"></div>
                     <div id="val-p2" class="detection-val">0</div>
-                     <div class="signal-bar-container"><div id="bar-p2" class="signal-bar"></div></div>
                     <div class="resize-handle handle-tl"></div>
                     <div class="resize-handle handle-br"></div>
                 </div>
@@ -681,26 +651,26 @@
     <div id="tutorialModal" class="modal-overlay">
         <div class="modal-content p-8 w-full max-w-lg neon-border-box text-center">
             <div class="mb-6 border-b-2 border-amber-300 pb-4">
-                <h3 class="text-3xl font-black text-amber-950 uppercase">Guía Rápida V.6</h3>
-                <p class="text-amber-800 font-bold text-sm">Sistema Spectral Lock</p>
+                <h3 class="text-3xl font-black text-amber-950 uppercase">Guía Rápida</h3>
+                <p class="text-amber-800 font-bold text-sm">Configuración en 4 pasos</p>
             </div>
             
             <div class="text-left space-y-4 mb-8">
                 <div class="tut-step">
                     <span class="tut-icon">📱</span>
-                    <strong>1. CÁMARA FIJA:</strong> Enfoca la pista.
+                    <strong>1. CÁMARA FIJA:</strong> Enfoca la pista con tu dispositivo (Móvil, PC, Tablet). El ángulo no importa, evita que los sensores se toquen.
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">🎯</span>
-                    <strong>2. SENSORES:</strong> Arrastra los cuadrados sobre los carriles.
+                    <strong>2. SENSORES:</strong> Arrastra los cuadrados (ORO y COBRE) sobre cada carril donde pasan los coches.
                 </div>
                 <div class="tut-step">
-                    <span class="tut-icon">🚗</span>
-                    <strong>3. CALIBRAR P1:</strong> Pon el coche debajo del recuadro P1 y pulsa "Captura Color P1".
+                    <span class="tut-icon">✨</span>
+                    <strong>3. CALIBRAR:</strong> Con la pista VACÍA, pulsa "AUTO CALIBRAR". La IA ajustará la luz sola.
                 </div>
                 <div class="tut-step">
-                    <span class="tut-icon">🚙</span>
-                    <strong>4. CALIBRAR P2:</strong> Repite con el coche P2.
+                    <span class="tut-icon">🏎️</span>
+                    <strong>4. PRUEBA:</strong> Pasa un coche con la mano. Si sale <span class="text-green-600 font-black">"TEST OK"</span>, ¡estás listo!
                 </div>
             </div>
 
@@ -791,26 +761,17 @@
         const videoElement = document.getElementById('webcam-feed');
         const videoContainer = document.getElementById('video-container');
         const canvas = document.getElementById('video-canvas');
-        const debugCanvas = document.getElementById('debug-canvas');
-        const debugBtn = document.getElementById('debug-btn');
-        let isDebugMode = false;
         
         // UI Elements
         const startRaceBtn = document.getElementById('start-race-btn');
         const resetRaceBtn = document.getElementById('reset-race-btn');
         const configPanel = document.getElementById('config-panel');
         const centralConfigBtn = document.getElementById('central-config-btn');
-        
-        const calibP1Btn = document.getElementById('calib-p1-btn');
-        const calibP2Btn = document.getElementById('calib-p2-btn');
-        
+        const calibrateBtn = document.getElementById('calibrate-btn');
         const calibOverlay = document.getElementById('calib-overlay');
-        const calibStepTitle = document.getElementById('calib-step-title');
-        const calibStepDesc = document.getElementById('calib-step-desc');
         
         const trackLengthInput = document.getElementById('track-length-input');
         const lapLimitSelect = document.getElementById('lap-limit-select');
-        const minLapTimeInput = document.getElementById('min-lap-time-input'); 
         const voiceToggle = document.getElementById('voice-toggle');
         const recordNotification = document.getElementById('record-notification');
         const cameraOnBtn = document.getElementById('camera-on-btn');
@@ -844,7 +805,7 @@
             {
                 id: 1,
                 nameId: 'p1-name', carId: 'p1-car',
-                roiId: 'roi-p1', valId: 'val-p1', msgId: 'msg-p1', barId: 'bar-p1',
+                roiId: 'roi-p1', valId: 'val-p1', msgId: 'msg-p1',
                 lapCountId: 'p1-lap-count', currentLapId: 'p1-current-lap',
                 bestLapId: 'p1-best-lap', lastLapId: 'p1-last-lap', avgSpeedId: 'p1-avg-speed',
                 avgTimeId: 'p1-avg-time', gapId: 'p1-gap',
@@ -854,23 +815,17 @@
                 // State for game
                 laps: 0, lapHistory: [], bestLap: Infinity, lapStartTime: 0, lastRecordTime: 0,
                 totalTime: 0, isBlocked: false, finished: false,
-                hasCrossedStart: false, 
-                currentMinLapTime: 3000,
+                hasCrossedStart: false, // FLAG for first crossing logic
                 
-                // --- SPECTRAL LOCK CORE STATE (V6.0) ---
-                sensitivity: 20,
-                targetH: 0, targetS: 0, targetL: 0, // Targeted HSL values
-                isCalibrated: false,
-                dotId: 'p1-color-dot',
-                
-                soundTone: "C5",
-                activeFrames: 0,
-                isPermanentlyBlocked: false
+                // Smart Detection State
+                sensitivity: 20, // Delta threshold
+                baseBrightness: null,
+                soundTone: "C5"
             },
             {
                 id: 2,
                 nameId: 'p2-name', carId: 'p2-car',
-                roiId: 'roi-p2', valId: 'val-p2', msgId: 'msg-p2', barId: 'bar-p2',
+                roiId: 'roi-p2', valId: 'val-p2', msgId: 'msg-p2',
                 lapCountId: 'p2-lap-count', currentLapId: 'p2-current-lap',
                 bestLapId: 'p2-best-lap', lastLapId: 'p2-last-lap', avgSpeedId: 'p2-avg-speed',
                 avgTimeId: 'p2-avg-time', gapId: 'p2-gap',
@@ -880,43 +835,29 @@
                 // State for game
                 laps: 0, lapHistory: [], bestLap: Infinity, lapStartTime: 0, lastRecordTime: 0,
                 totalTime: 0, isBlocked: false, finished: false,
-                hasCrossedStart: false,
-                currentMinLapTime: 3000,
+                hasCrossedStart: false, // FLAG for first crossing logic
                 
-                // --- SPECTRAL LOCK CORE STATE (V6.0) ---
+                // Smart Detection State
                 sensitivity: 20,
-                targetH: 0, targetS: 0, targetL: 0,
-                isCalibrated: false,
-                dotId: 'p2-color-dot',
-                
-                soundTone: "G5",
-                activeFrames: 0,
-                isPermanentlyBlocked: false
+                baseBrightness: null,
+                soundTone: "G5"
             }
         ];
-
-        // --- SPEECH HELPER ---
-        function speak(text, rate = 1.0, force = false) {
-            if (!voiceToggle.checked) return;
-            if (force) window.speechSynthesis.cancel();
-            const msg = new SpeechSynthesisUtterance(text);
-            msg.lang = "es-ES"; msg.rate = rate;
-            window.speechSynthesis.speak(msg);
-        }
 
         // --- HELPER: ADJUST SENSITIVITY ---
         window.adjT = function(pId, delta) {
             const p = players[pId-1];
             let val = parseInt(document.getElementById(p.thresholdId).value);
-            val = Math.max(5, Math.min(50, val + delta));
+            val = Math.max(5, Math.min(100, val + delta));
             document.getElementById(p.thresholdId).value = val;
             updateThreshold(pId);
         }
 
         function updateThreshold(pId) {
             const p = players[pId-1];
-            p.sensitivity = parseInt(document.getElementById(p.thresholdId).value);
-            document.getElementById(p.thresholdDispId).textContent = p.sensitivity;
+            const val = document.getElementById(p.thresholdId).value;
+            p.sensitivity = parseInt(val);
+            document.getElementById(p.thresholdDispId).textContent = val;
         }
 
         // --- CAMERA ---
@@ -924,25 +865,13 @@
             if (cameraStream) return;
             videoStatus.textContent = 'INICIANDO...';
             try {
-                const constraints = { 
-                    video: { 
-                        facingMode: "environment",
-                        width: { ideal: 640 },
-                        height: { ideal: 480 },
-                        frameRate: { ideal: 30 }
-                    } 
-                };
-                
-                cameraStream = await navigator.mediaDevices.getUserMedia(constraints)
-                    .catch(() => navigator.mediaDevices.getUserMedia({ video: true }));
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).catch(() => navigator.mediaDevices.getUserMedia({ video: true }));
 
                 videoElement.srcObject = cameraStream;
                 videoElement.onloadedmetadata = () => {
                     videoElement.play();
                     canvas.width = videoElement.videoWidth;
                     canvas.height = videoElement.videoHeight;
-                    debugCanvas.width = videoElement.videoWidth;
-                    debugCanvas.height = videoElement.videoHeight;
                     isProcessing = true;
                     processVideo();
                     document.querySelectorAll('.movable-rectangle').forEach(el => el.style.display = 'block');
@@ -950,8 +879,7 @@
                     videoStatus.className = "text-center text-sm mt-2 text-green-600 font-bold uppercase";
                     cameraOnBtn.disabled = true;
                     cameraOffBtn.disabled = false;
-                    calibP1Btn.disabled = false;
-                    calibP2Btn.disabled = false;
+                    calibrateBtn.disabled = false;
                 };
             } catch (err) {
                 videoStatus.textContent = 'Error: ' + err.name;
@@ -964,276 +892,185 @@
             cameraStream = null; isProcessing = false; videoElement.srcObject = null;
             document.querySelectorAll('.movable-rectangle').forEach(el => el.style.display = 'none');
             cameraOnBtn.disabled = false; cameraOffBtn.disabled = true;
-            calibP1Btn.disabled = true; calibP2Btn.disabled = true;
+            calibrateBtn.disabled = true;
             videoStatus.textContent = 'Cámara apagada.'; videoStatus.className = "text-amber-900 text-center text-sm mt-2";
         }
 
-        // --- HELPER: RGB TO HSL ---
-        function rgbToHsl(r, g, b) {
-            r /= 255; g /= 255; b /= 255;
-            const max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h, s, l = (max + min) / 2;
-
-            if (max === min) {
-                h = s = 0; // achromatic
-            } else {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    case b: h = (r - g) / d + 4; break;
-                }
-                h /= 6;
-            }
-            return { h: h * 360, s: s * 100, l: l * 100 };
-        }
-
-        // --- CORE: GET ROI PIXELS & HSL ---
-        function getRoiData(roi) {
+        // --- FAST DETECTION LOGIC ---
+        function getRoiBrightness(roi) {
             const vw = videoElement.videoWidth; const vh = videoElement.videoHeight;
-            if (!vw || !vh) return null;
+            if (!vw || !vh) return 0;
+            const rs = roi.style;
+            const x = Math.floor(vw * (parseFloat(rs.left)||0)/100);
+            const y = Math.floor(vh * (parseFloat(rs.top)||0)/100);
+            const w = Math.ceil(vw * (parseFloat(rs.width)||10)/100);
+            const h = Math.ceil(vh * (parseFloat(rs.height)||10)/100);
             
-            const rect = roi.getBoundingClientRect();
-            const parentRect = videoContainer.getBoundingClientRect();
-            
-            const relX = (rect.left - parentRect.left) / parentRect.width;
-            const relY = (rect.top - parentRect.top) / parentRect.height;
-            const relW = rect.width / parentRect.width;
-            const relH = rect.height / parentRect.height;
-            
-            const x = Math.floor(Math.max(0, relX * vw));
-            const y = Math.floor(Math.max(0, relY * vh));
-            const w = Math.ceil(Math.min(vw - x, relW * vw));
-            const h = Math.ceil(Math.min(vh - y, relH * vh));
-            
-            if (w <= 0 || h <= 0) return null;
-
+            // Optimization: Only get the small patch data
             const ctx = canvas.getContext('2d', {willReadFrequently:true});
             ctx.drawImage(videoElement, x, y, w, h, 0, 0, w, h);
             
-            return {
-                data: ctx.getImageData(0,0,w,h).data,
-                x: x, y: y, w: w, h: h
-            };
+            try {
+                const d = ctx.getImageData(0,0,w,h).data;
+                let t = 0; 
+                // Sample every 4th pixel for speed, adequate for brightness avg
+                for(let i=0; i<d.length; i+=16) { 
+                    t+=(d[i]+d[i+1]+d[i+2]); // Sum RGB
+                }
+                return (t/3) / (d.length/16);
+            } catch(e){return 0;}
         }
 
         function processVideo() {
             if (!isProcessing) return;
             
-            const p1 = players[0];
-            const p2 = players[1];
-            const roi1 = document.getElementById(p1.roiId);
-            const roi2 = document.getElementById(p2.roiId);
-            
-            const snap1 = getRoiData(roi1);
-            const snap2 = getRoiData(roi2);
-            
-            if (!snap1 || !snap2) { requestAnimationFrame(processVideo); return; }
-
-            // --- DETECCION SPECTRAL ---
-            const dCtx = debugCanvas.getContext('2d');
-            if (isDebugMode) dCtx.clearRect(0, 0, debugCanvas.width, debugCanvas.height);
-
-            // Calculate "Spectral Matches"
-            const matches1 = countColorMatches(snap1, p1, isDebugMode ? dCtx : null);
-            const matches2 = countColorMatches(snap2, p2, isDebugMode ? dCtx : null);
-            
-            document.getElementById(p1.valId).textContent = matches1.toFixed(0);
-            document.getElementById(p2.valId).textContent = matches2.toFixed(0);
-            
-            // UI Feedback: Max possible matches depends on size, but we normalize for bar
-            document.getElementById(p1.barId).style.width = Math.min(100, matches1 * 5) + '%';
-            document.getElementById(p2.barId).style.width = Math.min(100, matches2 * 5) + '%';
-
-            // Threshold is essentially "Number of pixels matching the color"
-            // Default 20 roughly means "a decent blob"
-            let crossed1 = matches1 > p1.sensitivity;
-            let crossed2 = matches2 > p2.sensitivity;
-
-            const now = Date.now();
-            
-            [p1, p2].forEach((p, idx) => {
+            players.forEach(p => {
                 const roi = document.getElementById(p.roiId);
-                const crossed = (idx === 0) ? crossed1 : crossed2;
+                const currentBri = getRoiBrightness(roi);
+                document.getElementById(p.valId).textContent = currentBri.toFixed(0);
                 
-                // WATCHDOG (Hand Rejection)
-                if (crossed && !isCalibrating) {
-                    p.activeFrames++;
-                    if (p.activeFrames > 45) { // 1.5s blocked
-                        p.isPermanentlyBlocked = true;
-                        roi.classList.add('roi-blocked');
-                        document.getElementById(p.msgId).textContent = "BLOQUEADO";
-                    }
+                // Initialize baseline if needed
+                if (p.baseBrightness === null) p.baseBrightness = currentBri;
+
+                // Smart Detection Logic (Differential)
+                const diff = Math.abs(currentBri - p.baseBrightness);
+                const crossed = diff > p.sensitivity;
+
+                if (crossed) {
+                    roi.classList.add('roi-detected');
                 } else {
-                    p.activeFrames = 0;
-                    p.isPermanentlyBlocked = false;
-                    roi.classList.remove('roi-blocked');
+                    roi.classList.remove('roi-detected');
+                    // Slow adaptation to ambient light changes if not crossed
+                    // This prevents the "ghost" of a car from becoming the new background
+                    if (!isCalibrating) {
+                        p.baseBrightness = (p.baseBrightness * 0.95) + (currentBri * 0.05);
+                    }
                 }
-                
-                const validTrigger = crossed && !p.isPermanentlyBlocked && p.isCalibrated;
 
-                if (validTrigger) roi.classList.add('roi-detected');
-                else roi.classList.remove('roi-detected');
-                
-                const inDeadTime = (now - p.lastRecordTime < p.currentMinLapTime) && isRaceActive && p.hasCrossedStart;
-                if (inDeadTime) roi.classList.add('roi-dead');
-                else roi.classList.remove('roi-dead');
-
+                // Logic Dispatch
                 if (!isCalibrating) {
-                    if (!isRaceActive && !isCountdown && validTrigger) {
-                         document.getElementById(p.msgId).textContent = "TEST";
-                    } else if (!isRaceActive && !p.isPermanentlyBlocked) {
+                    
+                    // 0. Pre-Race Test Mode (Cuando no hay carrera activa)
+                    if (!isRaceActive && !isCountdown && crossed) {
+                         document.getElementById(p.msgId).textContent = "TEST OK";
+                    } else if (!isRaceActive) {
                          document.getElementById(p.msgId).textContent = "";
                     }
 
+                    // 1. False Start
                     if (isCountdown && !raceAborted) {
-                         if (validTrigger && !p.isBlocked) {
+                         if (crossed && !p.isBlocked) {
                              handleFalseStart(p);
                              p.isBlocked = true;
                          }
                     }
+                    // 2. Normal Race
                     else if (isRaceActive && isDetectionReady && !p.finished) {
-                        if (validTrigger && !p.isBlocked) {
-                            if (inDeadTime) return; 
+                        if (crossed && !p.isBlocked) {
                             p.isBlocked = true;
+                            // KEY CHANGE: Check if first crossing
                             if (!p.hasCrossedStart) {
+                                // First Crossing Logic - IGNORE TIME, JUST START CLOCK
                                 p.hasCrossedStart = true;
-                                p.lapStartTime = now; 
-                                p.lastRecordTime = now; 
+                                p.lapStartTime = Date.now(); // Reset Lap Timer
+                                p.lastRecordTime = Date.now(); // IMPORTANT: Set debounce time now to prevent immediate double lap
                                 synth.triggerAttackRelease(p.soundTone, "0.1");
                                 document.getElementById(p.msgId).textContent = "GO!";
+                                // No recordLap called here
                             } else {
+                                // Subsequent Crossings Logic
                                 document.getElementById(p.msgId).textContent = "OK";
                                 recordLap(p);
                             }
                         } else if (!crossed && p.isBlocked) {
                             p.isBlocked = false;
+                            // Clear momentary message after leaving sensor
                             if(isRaceActive) setTimeout(() => document.getElementById(p.msgId).textContent = "", 500);
                         }
                     }
-                    if (!crossed && p.isBlocked && !isCountdown) p.isBlocked = false;
+                    
+                    // General Debounce Reset
+                    if (!crossed && p.isBlocked && !isCountdown) {
+                        p.isBlocked = false;
+                    }
                 }
             });
-            
             requestAnimationFrame(processVideo);
         }
         
-        // --- CORE ALGORITHM: HSL COLOR MATCHING (V6.0) ---
-        function countColorMatches(current, player, ctx) {
-            if (!player.isCalibrated) return 0;
-            
-            const data = current.data;
-            let matches = 0;
-            const tH = player.targetH;
-            const tS = player.targetS;
-            const tL = player.targetL;
-            
-            if (ctx) {
-                var imgData = ctx.createImageData(current.w, current.h);
-                var debugData = imgData.data;
-            }
-
-            // Stride 4 for speed
-            for (let i = 0; i < data.length; i += 16) { 
-                const r = data[i]; const g = data[i+1]; const b = data[i+2];
-                const hsl = rgbToHsl(r, g, b);
-
-                // --- SPECTRAL FILTER ---
-                // 1. Lightness Filter: Ignore White Lights (Headlights) and Black Shadows
-                // Headlights usually have L > 90% and low Saturation
-                if (hsl.l > 90 || hsl.l < 15) continue; 
-
-                // 2. Saturation Filter: Ignore Grey Asphalt
-                // Asphalt is low saturation. Cars are usually high saturation.
-                if (hsl.s < 20) continue;
-
-                // 3. Hue Match: Is it the right color?
-                // Hue is a circle (0-360). Distance wraps around.
-                let hueDist = Math.abs(hsl.h - tH);
-                if (hueDist > 180) hueDist = 360 - hueDist;
-
-                // Match condition: Close Hue AND Decent Saturation match
-                if (hueDist < 30 && Math.abs(hsl.s - tS) < 50) {
-                    matches++;
-                    if (ctx) {
-                        debugData[i] = r; debugData[i+1] = g; debugData[i+2] = b; debugData[i+3] = 255; 
-                    }
-                }
-            }
-            
-            if (ctx) ctx.putImageData(imgData, current.x, current.y);
-
-            // Scale down raw count to make "Sensitivity" slider number make sense (0-50 range)
-            return matches / 5; 
-        }
-        
-        // --- NEW CALIBRATION: CAPTURE TARGET COLOR ---
-        async function calibrateColor(playerIndex) {
+        // --- AUTO CALIBRATION ---
+        async function runAutoCalibration() {
             if (!isProcessing) return;
-            const p = players[playerIndex];
-            
             isCalibrating = true;
             calibOverlay.classList.add('active');
-            calibStepTitle.textContent = "CALIBRANDO COLOR";
-            calibStepDesc.textContent = "Analizando coche...";
             
-            speak("Analizando color.", 1.0, true);
-            await new Promise(r => setTimeout(r, 1000));
+            // 1. Measure Baseline
+            let samples = 0;
+            const p1Stats = { sum: 0, min: 255, max: 0 };
+            const p2Stats = { sum: 0, min: 255, max: 0 };
             
-            const snap = getRoiData(document.getElementById(p.roiId));
-            if (snap) {
-                // Calculate Average HSL of the CENTER of the ROI
-                const data = snap.data;
-                let sumH=0, sumS=0, sumL=0, count=0;
+            const framesToRead = 60; // Approx 1-2 seconds
+            
+            const readFrame = () => {
+                const b1 = getRoiBrightness(document.getElementById('roi-p1'));
+                const b2 = getRoiBrightness(document.getElementById('roi-p2'));
                 
-                for(let i=0; i<data.length; i+=4) {
-                    const r=data[i]; const g=data[i+1]; const b=data[i+2];
-                    const hsl = rgbToHsl(r,g,b);
-                    // Filter extreme darks/lights to capture the actual body color
-                    if (hsl.l > 20 && hsl.l < 80 && hsl.s > 20) {
-                        sumH += hsl.h; sumS += hsl.s; sumL += hsl.l;
-                        count++;
-                    }
-                }
+                p1Stats.sum += b1; p1Stats.min = Math.min(p1Stats.min, b1); p1Stats.max = Math.max(p1Stats.max, b1);
+                p2Stats.sum += b2; p2Stats.min = Math.min(p2Stats.min, b2); p2Stats.max = Math.max(p2Stats.max, b2);
                 
-                if (count > 0) {
-                    p.targetH = sumH / count;
-                    p.targetS = sumS / count;
-                    p.targetL = sumL / count;
-                    p.isCalibrated = true;
-                    
-                    // Update UI Dot
-                    const dot = document.getElementById(p.dotId);
-                    dot.style.backgroundColor = `hsl(${p.targetH}, ${p.targetS}%, ${p.targetL}%)`;
-                    
-                    speak("Color capturado.", 1.0, true);
+                samples++;
+                if (samples < framesToRead) {
+                    requestAnimationFrame(readFrame);
                 } else {
-                    speak("Fallo. Coche no detectado.", 1.0, true);
+                    finishCalibration(p1Stats, p2Stats);
                 }
-            }
+            };
             
-            calibStepTitle.textContent = "¡LISTO!";
-            calibStepDesc.textContent = `Color guardado.`;
-            polySynth.triggerAttackRelease(["E5", "A5"], "0.3");
+            readFrame();
+        }
+        
+        function finishCalibration(s1, s2) {
+            // Set Base Brightness
+            players[0].baseBrightness = s1.sum / 60;
+            players[1].baseBrightness = s2.sum / 60;
             
-            await new Promise(r => setTimeout(r, 1000));
+            // Calculate Noise Floor (Max deviation from average)
+            const noise1 = Math.max(s1.max - players[0].baseBrightness, players[0].baseBrightness - s1.min);
+            const noise2 = Math.max(s2.max - players[1].baseBrightness, players[1].baseBrightness - s2.min);
+            
+            // Set Sensitivity: Noise * Multiplier (Safety Factor) + Minimum offset
+            // We want it sensitive but above noise.
+            const safeMargin = 15; // Minimum diff required
+            const newSens1 = Math.max(safeMargin, Math.ceil(noise1 * 1.5));
+            const newSens2 = Math.max(safeMargin, Math.ceil(noise2 * 1.5));
+            
+            document.getElementById('p1-threshold').value = newSens1;
+            document.getElementById('p2-threshold').value = newSens2;
+            updateThreshold(1);
+            updateThreshold(2);
+            
             isCalibrating = false;
             calibOverlay.classList.remove('active');
+            
+            if (voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sensores calibrados."));
         }
 
-        // --- STANDARD FUNCTIONS (Race, Timer, etc) ---
         function handleFalseStart(player) {
-            raceAborted = true; isCountdown = false;
+            raceAborted = true;
+            isCountdown = false;
             polySynth.triggerAttackRelease(["C2", "F#2", "C3"], "1");
             const pName = document.getElementById(player.nameId).value;
             falseStartPlayerName.textContent = pName;
             falseStartAlert.classList.add('show');
-            speak("Salida Nula. " + pName + " adelantado.", 1.1, true);
+            if (voiceToggle.checked) {
+                const utter = new SpeechSynthesisUtterance("Salida Nula. Piloto " + pName);
+                utter.rate = 1.1; window.speechSynthesis.speak(utter);
+            }
             resetRaceBtn.disabled = false;
             document.querySelectorAll('.light').forEach(l => l.className = "light");
         }
 
+        // --- RACE LOGIC ---
         function formatTime(ms) {
             if (ms === Infinity || ms <= 0) return "--.---";
             const min = Math.floor(ms/60000);
@@ -1243,21 +1080,17 @@
         }
 
         function startRace() {
-            if (!players[0].isCalibrated || !players[1].isCalibrated) {
-                alert("¡CALIBRA LOS COLORES PRIMERO!");
-                return;
-            }
             configPanel.classList.remove('open');
             startRaceBtn.disabled = true; resetRaceBtn.disabled = true;
             falseStartAlert.classList.remove('show');
             totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
-            const configMinLap = parseFloat(minLapTimeInput.value) * 1000;
             
             players.forEach(p => {
                 p.soundTone = document.getElementById(p.soundId).value;
                 p.laps=0; p.lapHistory=[]; p.bestLap=Infinity; p.totalTime=0; p.lastRecordTime=0; 
-                p.finished=false; p.isBlocked=false; p.hasCrossedStart=false; 
-                p.currentMinLapTime = configMinLap; p.activeFrames = 0; p.isPermanentlyBlocked = false;
+                p.finished=false; p.isBlocked=false; 
+                p.hasCrossedStart=false; // RESET FLAG
+                
                 updatePlayerUI(p);
                 document.getElementById(p.currentLapId).textContent = "ESPERANDO...";
                 document.getElementById(p.avgTimeId).textContent = "--.---";
@@ -1271,22 +1104,22 @@
 
             (async()=>{
                 isCountdown = true; raceAborted = false;
-                speak("Pilotos listos.", 1.0, true);
-                const safeSleep = (ms) => new Promise(r => setTimeout(r, ms));
-                for(let i=0;i<5;i++){ 
-                     if(raceAborted) return; 
-                     if (i < lights.length) {
-                        lights[i].classList.add('red'); 
-                        synth.triggerAttackRelease("C4","0.1");
-                     }
-                     await safeSleep(1000);
-                     if(raceAborted) return; 
+                if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Pilotos a sus puestos."));
+                
+                for(let i=0;i<4;i++){
+                    if(raceAborted) return;
+                    lights[i].classList.add('red'); synth.triggerAttackRelease("C4","0.1");
+                    await new Promise(r=>setTimeout(r,1000));
                 }
-                await safeSleep(Math.random()*1500+500);
+                
+                if(raceAborted) return;
+                await new Promise(r=>setTimeout(r, Math.random()*1500+500));
+                
                 if(raceAborted) return;
                 isCountdown = false;
                 lights.forEach(l=>{l.classList.remove('red'); l.classList.add('green');});
                 polySynth.triggerAttackRelease(["C5","G5"],"0.5");
+                
                 isRaceActive=true; isDetectionReady=true; resetRaceBtn.disabled=false;
                 raceStartTime=Date.now();
                 players.forEach(p=>p.lapStartTime=raceStartTime);
@@ -1300,11 +1133,14 @@
                 const now = Date.now();
                 document.getElementById('race-time').textContent = formatTime(now - raceStartTime);
                 players.forEach(p => {
-                    if(!p.finished && p.hasCrossedStart) {
-                        const elap = now - p.lapStartTime;
-                        const sec = Math.floor(elap/1000);
-                        const ms = String(elap%1000).padStart(3,'0');
-                        document.getElementById(p.currentLapId).textContent = `${sec}.${ms}`;
+                    if(!p.finished) {
+                        // Only show time if race started for player
+                        if (p.hasCrossedStart) {
+                            const elap = now - p.lapStartTime;
+                            const sec = Math.floor(elap/1000);
+                            const ms = String(elap%1000).padStart(3,'0');
+                            document.getElementById(p.currentLapId).textContent = `${sec}.${ms}`;
+                        }
                     }
                 });
                 updateGaps();
@@ -1313,18 +1149,18 @@
 
         function recordLap(p) {
             const now = Date.now();
-            if (now - p.lastRecordTime < p.currentMinLapTime) return; 
+            if (now - p.lastRecordTime < 3000) return; // 3s Debounce to avoid double counting
+            
+            // DOUBLE CHECK: If logic failed and this is somehow first crossing, abort
+            if (!p.hasCrossedStart) {
+                 p.hasCrossedStart = true; p.lapStartTime = now; p.lastRecordTime = now; return;
+            }
+
             p.lastRecordTime = now;
             const lapTime = now - p.lapStartTime;
             p.lapHistory.push(lapTime);
             p.laps++;
             p.lapStartTime = now;
-            
-            if (p.lapHistory.length >= 2) {
-                 const total = p.lapHistory.reduce((a,b)=>a+b,0);
-                 const avg = total / p.lapHistory.length;
-                 p.currentMinLapTime = avg * 0.5;
-            }
             
             let isNewRecord = false;
             if (lapTime < p.bestLap) {
@@ -1336,16 +1172,30 @@
             synth.triggerAttackRelease(p.soundTone, "0.1");
             updatePlayerUI(p);
             
-            const name = document.getElementById(p.nameId).value;
-            if (isNewRecord) {
-                const lapTimeSec = (lapTime/1000).toFixed(2);
-                speak(`Récord ${name}, ${lapTimeSec}`);
-            }
+            if (voiceToggle.checked) {
+                const name = document.getElementById(p.nameId).value;
+                
+                // --- CAMBIO: SOLO HABLA SI ES RÉCORD ---
+                if (isNewRecord) {
+                    const lapTimeSec = (lapTime/1000).toFixed(2);
+                    const msg = new SpeechSynthesisUtterance(`¡Vuelta rápida de ${name}! ${lapTimeSec}`);
+                    msg.rate = 1.3; 
+                    window.speechSynthesis.speak(msg);
+                }
+                // ---------------------------------------
 
-            if(totalLapsTarget !== Infinity) {
-                const remaining = totalLapsTarget - p.laps;
-                if(remaining === 5) speak(`Últimas 5 vueltas, ${name}.`, 1.1, true);
-                if(remaining === 1) speak(`¡Última vuelta, ${name}!`);
+                if(totalLapsTarget !== Infinity) {
+                    const remaining = totalLapsTarget - p.laps;
+                    if(remaining === 5) {
+                        const msg5 = new SpeechSynthesisUtterance(`Atención ${name}, quedan 5 vueltas.`);
+                        msg5.rate = 1.2; window.speechSynthesis.speak(msg5);
+                    }
+                    if(remaining === 1) { // Logic fix: remaining is calculated after incrementing lap
+                         // Actually, if total is 10. Lap 9 just finished. p.laps is 9. remaining is 1. Correct.
+                        const msgLast = new SpeechSynthesisUtterance(`¡Última vuelta para ${name}!`);
+                        msgLast.rate = 1.2; window.speechSynthesis.speak(msgLast);
+                    }
+                }
             }
 
             if(totalLapsTarget!==Infinity && p.laps>=totalLapsTarget) {
@@ -1364,6 +1214,7 @@
             document.getElementById(p.bestLapId).textContent = formatTime(p.bestLap);
             const last = p.lapHistory.length>0 ? p.lapHistory[p.lapHistory.length-1] : 0;
             document.getElementById(p.lastLapId).textContent = formatTime(last);
+            
             if(p.laps>0) {
                 const tot = p.lapHistory.reduce((a,b)=>a+b,0);
                 const avg = tot/p.laps;
@@ -1378,6 +1229,7 @@
              const now = Date.now();
              const t1 = players[0].finished ? players[0].totalTime : (players[0].laps > 0 ? (players[0].lapHistory.reduce((a,b)=>a+b,0) + (now - players[0].lapStartTime)) : 0);
              const t2 = players[1].finished ? players[1].totalTime : (players[1].laps > 0 ? (players[1].lapHistory.reduce((a,b)=>a+b,0) + (now - players[1].lapStartTime)) : 0);
+             
              if (players[0].laps > 0 && players[1].laps > 0) {
                  const diff = t1 - t2;
                  const diffSec = (Math.abs(diff)/1000).toFixed(1);
@@ -1404,9 +1256,7 @@
             else winner = p1.laps > p2.laps ? p1 : p2;
 
             const wName = document.getElementById(winner.nameId).value;
-            const wTime = winner.totalTime;
             document.getElementById('winner-text').textContent = `Ganador: ${wName}`;
-            speak("Victoria de " + wName, 1.0, true);
             
             players.forEach(p => {
                 const n = document.getElementById(p.nameId).value;
@@ -1426,15 +1276,16 @@
                 ul.innerHTML = "";
                 p.lapHistory.forEach((lap, idx) => {
                     const li = document.createElement('li');
-                    li.className = "flex justify-between border-b border-gray-100 last:border-0 py-1 font-arial";
+                    li.className = "flex justify-between border-b border-gray-100 last:border-0 py-1 font-arial"; // Force Arial in list
                     const isBest = (lap === p.bestLap && p.bestLap !== Infinity); 
                     li.innerHTML = `<span>V${idx+1}</span> <span class="${isBest ? 'text-green-700 font-bold' : ''}">${formatTime(lap)}</span>`;
                     ul.appendChild(li);
                 });
             });
-            saveHistory(wName, wTime);
+            saveHistory(wName);
             document.getElementById('resultsModal').classList.remove('hidden');
             setTimeout(()=>document.getElementById('resultsModal').classList.add('open'),10);
+            if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Victoria para " + wName));
         }
 
         function exportToExcel() {
@@ -1461,13 +1312,15 @@
                 p.lapHistory.forEach((lap, index) => {
                     csvContent += `${index + 1},${formatTime(lap)}\n`;
                 });
-                csvContent += "\n";
+                csvContent += "\n"; // Spacer between players
             });
+
+            // 4. Create Download Link
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
             link.setAttribute("download", `krono_race_${Date.now()}.csv`);
-            document.body.appendChild(link);
+            document.body.appendChild(link); // Required for FF
             link.click();
             document.body.removeChild(link);
         }
@@ -1479,11 +1332,17 @@
             const p1d = players[0].lapHistory; const p2d = players[1].lapHistory;
             const maxL = Math.max(p1d.length, p2d.length);
             
+            // Clean
             ctx.clearRect(0,0,w,200);
+
+            // Draw Y-Axis Text
             ctx.fillStyle = '#aaa'; ctx.font = '10px Arial';
             ctx.fillText("TIEMPO (s)", 5, 10);
             
-            if(maxL===0) return;
+            if(maxL===0) {
+                 // Removed text drawing as requested
+                 return;
+            }
 
             const all = [...p1d, ...p2d];
             const maxT = Math.max(...all);
@@ -1495,15 +1354,17 @@
                 const x = pad + i * (gw/maxL) + 10;
                 if(p1d[i]) {
                     const h = (p1d[i]/maxT)*gh;
-                    ctx.fillStyle = '#ffd700'; ctx.shadowColor = '#ffd700'; 
+                    ctx.fillStyle = '#ffd700'; 
+                    ctx.shadowColor = '#ffd700'; // Gold Glow
                     ctx.fillRect(x, 180-h, bw, h);
                 }
                 if(p2d[i]) {
                     const h = (p2d[i]/maxT)*gh;
-                    ctx.fillStyle = '#b87333'; ctx.shadowColor = '#b87333';
+                    ctx.fillStyle = '#b87333'; // Copper color
+                    ctx.shadowColor = '#b87333'; // Copper Glow
                     ctx.fillRect(x+bw, 180-h, bw, h);
                 }
-                ctx.shadowBlur = 0;
+                ctx.shadowBlur = 0; // Reset for text
                 ctx.fillStyle='#aaa'; ctx.font='10px Arial'; ctx.textAlign='center';
                 ctx.fillText(i+1, x+bw, 195);
             }
@@ -1514,17 +1375,12 @@
             setTimeout(()=>recordNotification.classList.remove('show'),2000);
         }
 
-        function saveHistory(winner, winnerTimeMs) {
-            let finalTime = "--.---";
-            if (winnerTimeMs) finalTime = formatTime(winnerTimeMs);
-            else {
-                 const pObj = players.find(p => document.getElementById(p.nameId).value === winner);
-                 if (pObj) finalTime = formatTime(pObj.totalTime);
-            }
+        // --- HISTORIAL ---
+        function saveHistory(winner) {
             const rec = {
                 date: new Date().toLocaleString(),
                 winner: winner,
-                time: finalTime,
+                time: formatTime(players.find(p => document.getElementById(p.nameId).value === winner).totalTime),
                 p1Best: formatTime(players[0].bestLap),
                 p2Best: formatTime(players[1].bestLap)
             };
@@ -1552,6 +1408,7 @@
             m.classList.remove('hidden'); setTimeout(()=>m.classList.add('open'),10);
         }
 
+        // --- INIT EVENTS ---
         document.getElementById('history-btn').onclick = loadHistory;
         document.getElementById('close-history-btn').onclick = () => {
              const m = document.getElementById('historyModal'); m.classList.remove('open');
@@ -1566,34 +1423,23 @@
             document.getElementById('race-time').textContent = "00:00.000";
             isRaceActive=false; clearInterval(raceIntervalId); startRaceBtn.disabled=false;
         };
-        
-        // --- DEBUG MODE TOGGLE ---
-        debugBtn.onclick = () => {
-            isDebugMode = !isDebugMode;
-            document.body.classList.toggle('debug-mode');
-            if (isDebugMode) {
-                debugBtn.classList.add('bg-red-500', 'text-white');
-                debugBtn.classList.remove('bg-white/30');
-            } else {
-                debugBtn.classList.remove('bg-red-500', 'text-white');
-                debugBtn.classList.add('bg-white/30');
-                const dCtx = debugCanvas.getContext('2d');
-                dCtx.clearRect(0, 0, debugCanvas.width, debugCanvas.height);
-            }
-        };
-
-        calibP1Btn.onclick = () => calibrateColor(0);
-        calibP2Btn.onclick = () => calibrateColor(1);
+        calibrateBtn.onclick = runAutoCalibration;
         exportExcelBtn.onclick = exportToExcel;
         
+        // Tutorial
         closeTutorialBtn.onclick = () => {
             tutorialModal.classList.remove('open');
+            // Play a little sound to confirm readiness
             polySynth.triggerAttackRelease(["C5", "E5"], "0.3");
         };
 
         // --- DRAG AND RESIZE LOGIC ---
-        let actRoi = null; let isDrag = false; let isResize = false; let resizeHandle = null; 
-        let startX = 0, startY = 0; let startLeft = 0, startTop = 0, startWidth = 0, startHeight = 0;
+        let actRoi = null;
+        let isDrag = false;
+        let isResize = false;
+        let resizeHandle = null; 
+        let startX = 0, startY = 0;
+        let startLeft = 0, startTop = 0, startWidth = 0, startHeight = 0;
 
         function getEventPos(e) { return e.touches ? e.touches[0] : e; }
 
@@ -1647,43 +1493,24 @@
         document.addEventListener('mouseup', dragEnd);
         document.addEventListener('touchend', dragEnd);
 
-        document.getElementById('p1-threshold').addEventListener('input', (e) => { 
-            players[0].sensitivity = parseInt(e.target.value);
-            document.getElementById('p1-threshold-disp').textContent = e.target.value;
-        });
-        document.getElementById('p2-threshold').addEventListener('input', (e) => { 
-            players[1].sensitivity = parseInt(e.target.value);
-            document.getElementById('p2-threshold-disp').textContent = e.target.value;
-        });
-
+        document.getElementById('p1-threshold').addEventListener('input', ()=>updateThreshold(1));
+        document.getElementById('p2-threshold').addEventListener('input', ()=>updateThreshold(2));
         startRaceBtn.onclick = startRace;
         resetRaceBtn.onclick = () => { 
-            window.speechSynthesis.cancel();
-            raceAborted = true; 
-            isCountdown = false;
-            isRaceActive = false; 
-            clearInterval(raceIntervalId); 
-            document.querySelectorAll('.light').forEach(l => l.className = "light");
-            startRaceBtn.disabled = false; 
-            falseStartAlert.classList.remove('show'); 
+            isRaceActive=false; clearInterval(raceIntervalId); 
+            startRaceBtn.disabled=false; falseStartAlert.classList.remove('show'); 
         };
         centralConfigBtn.onclick = () => configPanel.classList.toggle('open');
         cameraOnBtn.onclick = startWebcam; cameraOffBtn.onclick = stopWebcam;
         document.getElementById('fullscreen-btn').onclick = () => !document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen();
         
-        function previewSound(tone) {
-            if(Tone.context.state !== 'running') {
-                Tone.start().then(() => { synth.triggerAttackRelease(tone, "0.1"); });
-            } else { synth.triggerAttackRelease(tone, "0.1"); }
-        }
-
-        document.getElementById('p1-sound').addEventListener('change', (e) => previewSound(e.target.value));
-        document.getElementById('p2-sound').addEventListener('change', (e) => previewSound(e.target.value));
-
         window.onload = () => {
              updateThreshold(1); updateThreshold(2);
              startWebcam();
-             setTimeout(() => { tutorialModal.classList.add('open'); }, 500);
+             // SHOW TUTORIAL AUTOMATICALLY ON LOAD
+             setTimeout(() => {
+                 tutorialModal.classList.add('open');
+             }, 500);
         };
     </script>
 </body>
