@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.2.0 - Luxury Gold</title>
+    <title>KRONODUAL V.4.6 - Sound Preview</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -122,7 +122,7 @@
         #webcam-feed {
             max-height: 320px; object-fit: cover; width: 100%;
             display: block; transform: scaleX(1);
-            filter: contrast(1.1) grayscale(0.1);
+            /* NO USAR FILTROS AQUÍ PARA NO FALSEAR COLOR */
         }
 
         .movable-rectangle {
@@ -131,6 +131,18 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
             transition: background-color 0.1s ease, border-color 0.1s ease; 
             z-index: 10; box-sizing: border-box; touch-action: none; display: none;
+        }
+        
+        /* ESTADOS ESPECIALES */
+        .movable-rectangle.roi-dead {
+            border-color: #555 !important;
+            background-color: rgba(100, 100, 100, 0.2) !important;
+            box-shadow: none !important; opacity: 0.5;
+        }
+        .movable-rectangle.roi-blocked {
+            border-color: #ff0000 !important;
+            background-color: rgba(255, 0, 0, 0.2) !important;
+            box-shadow: 0 0 20px #ff0000 !important;
         }
         
         /* ROI P1: ORO */
@@ -157,8 +169,19 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         
+        /* BARRAS DE SEÑAL VISUAL */
+        .signal-bar-container {
+            position: absolute; bottom: 2px; left: 2px; right: 2px;
+            height: 6px; background: rgba(0,0,0,0.8); border: 1px solid #555;
+            border-radius: 3px; overflow: hidden; pointer-events: none;
+        }
+        .signal-bar {
+            height: 100%; width: 0%; background: linear-gradient(to right, #00ff00, #ffff00, #ff0000);
+            transition: width 0.05s linear;
+        }
+        
         .detection-val {
-            position: absolute; bottom: 2px; right: 2px;
+            position: absolute; bottom: 10px; right: 2px;
             background-color: rgba(0,0,0,0.7); color: #fff;
             font-size: 10px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3);
             pointer-events: none; font-weight: bold; font-family: Arial, sans-serif;
@@ -172,6 +195,7 @@
             white-space: nowrap; font-family: Arial, sans-serif; z-index: 20;
         }
         .roi-detected .test-msg { display: block; }
+        .roi-blocked .test-msg { display: block; color: #ff0000; text-shadow: 0 0 10px #000; font-size: 14px; }
 
         .resize-handle {
             position: absolute; width: 34px; height: 34px;
@@ -353,7 +377,7 @@
                     <h1 class="text-4xl sm:text-5xl main-title-glow font-black tracking-widest italic mr-2">
                         KRONODUAL
                     </h1>
-                    <span class="text-xl text-yellow-800 font-bold">V.2.0</span>
+                    <span class="text-xl text-yellow-800 font-bold">V.4.6</span>
                 </div>
                 <span class="text-[10px] text-yellow-900 font-serif tracking-[0.3em] uppercase ml-1 font-bold">By Albert Closa</span>
             </div>
@@ -437,13 +461,13 @@
                         </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD IA</label>
+                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD</label>
                                 <span id="p1-threshold-disp" class="text-xs font-black text-amber-700 bg-amber-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
-                                <button class="btn-adjust" onclick="adjT(1, -1)">-</button>
-                                <input type="range" id="p1-threshold" min="5" max="80" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
-                                <button class="btn-adjust" onclick="adjT(1, 1)">+</button>
+                                <button class="btn-adjust" onclick="adjT(1, -5)">-</button>
+                                <input type="range" id="p1-threshold" min="5" max="150" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
+                                <button class="btn-adjust" onclick="adjT(1, 5)">+</button>
                              </div>
                         </div>
                         <div>
@@ -474,13 +498,13 @@
                         </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD IA</label>
+                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD</label>
                                 <span id="p2-threshold-disp" class="text-xs font-black text-orange-700 bg-orange-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
-                                <button class="btn-adjust" onclick="adjT(2, -1)">-</button>
-                                <input type="range" id="p2-threshold" min="5" max="80" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
-                                <button class="btn-adjust" onclick="adjT(2, 1)">+</button>
+                                <button class="btn-adjust" onclick="adjT(2, -5)">-</button>
+                                <input type="range" id="p2-threshold" min="5" max="150" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
+                                <button class="btn-adjust" onclick="adjT(2, 5)">+</button>
                              </div>
                         </div>
                          <div>
@@ -504,6 +528,10 @@
                         <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Longitud Pista (m)</label>
                         <input type="number" id="track-length-input" value="15" min="1" step="0.5" class="gold-input w-full p-1.5 rounded-lg text-xs" />
                     </div>
+                    <div>
+                         <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Punto Muerto Min (s)</label>
+                         <input type="number" id="min-lap-time-input" value="3.0" min="0.5" step="0.5" class="gold-input w-full p-1.5 rounded-lg text-xs" />
+                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Vueltas</label>
                         <select id="lap-limit-select" class="gold-input w-full p-1.5 rounded-lg text-xs">
@@ -530,7 +558,7 @@
                 <h2 class="text-base neon-gold-title">Cámara Twin ROI</h2>
                 <div class="flex space-x-2">
                     <button id="calibrate-btn" class="p-2 px-4 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 text-white hover:from-amber-500 hover:to-amber-700 transition shadow-lg border border-amber-200 text-xs font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
-                        Auto Calibrar
+                        Calibrar Fondo
                     </button>
                     <button id="camera-on-btn" class="p-2 rounded-full bg-gradient-to-b from-green-500 to-green-700 text-white hover:from-green-600 hover:to-green-800 disabled:opacity-50 transition shadow-lg border border-green-300">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
@@ -552,8 +580,8 @@
                 <!-- ALERT DE CALIBRACION -->
                 <div id="calib-overlay" class="calib-overlay">
                     <div class="spinner"></div>
-                    <h3 class="text-2xl font-black text-yellow-300 uppercase tracking-widest drop-shadow-md">Calibrando Sensores</h3>
-                    <p class="text-base mt-2 text-white font-bold bg-black/50 px-4 py-1 rounded-full">Mantén la pista despejada</p>
+                    <h3 id="calib-step-title" class="text-2xl font-black text-yellow-300 uppercase tracking-widest drop-shadow-md">Calibrando Sensores</h3>
+                    <p id="calib-step-desc" class="text-base mt-2 text-white font-bold bg-black/50 px-4 py-1 rounded-full">Mantén la pista despejada</p>
                 </div>
 
                 <!-- ALERT DE SALIDA NULA -->
@@ -567,6 +595,7 @@
                     <div class="roi-label">P1</div>
                     <div id="msg-p1" class="test-msg"></div>
                     <div id="val-p1" class="detection-val">0</div>
+                    <div class="signal-bar-container"><div id="bar-p1" class="signal-bar"></div></div>
                     <div class="resize-handle handle-tl"></div>
                     <div class="resize-handle handle-br"></div>
                 </div>
@@ -575,6 +604,7 @@
                     <div class="roi-label">P2</div>
                     <div id="msg-p2" class="test-msg"></div>
                     <div id="val-p2" class="detection-val">0</div>
+                     <div class="signal-bar-container"><div id="bar-p2" class="signal-bar"></div></div>
                     <div class="resize-handle handle-tl"></div>
                     <div class="resize-handle handle-br"></div>
                 </div>
@@ -652,25 +682,25 @@
         <div class="modal-content p-8 w-full max-w-lg neon-border-box text-center">
             <div class="mb-6 border-b-2 border-amber-300 pb-4">
                 <h3 class="text-3xl font-black text-amber-950 uppercase">Guía Rápida</h3>
-                <p class="text-amber-800 font-bold text-sm">Configuración en 4 pasos</p>
+                <p class="text-amber-800 font-bold text-sm">Configuración en 3 pasos</p>
             </div>
             
             <div class="text-left space-y-4 mb-8">
                 <div class="tut-step">
                     <span class="tut-icon">📱</span>
-                    <strong>1. CÁMARA FIJA:</strong> Enfoca la pista con tu dispositivo (Móvil, PC, Tablet). El ángulo no importa, evita que los sensores se toquen.
+                    <strong>1. CÁMARA FIJA:</strong> Enfoca la pista. Importante: ¡Que no se mueva!
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">🎯</span>
-                    <strong>2. SENSORES:</strong> Arrastra los cuadrados (ORO y COBRE) sobre cada carril donde pasan los coches.
+                    <strong>2. SENSORES:</strong> Arrastra los cuadrados sobre los carriles.
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">✨</span>
-                    <strong>3. CALIBRAR:</strong> Con la pista VACÍA, pulsa "AUTO CALIBRAR". La IA ajustará la luz sola.
+                    <strong>3. CALIBRAR:</strong> Con la pista <b>VACÍA</b>, pulsa "Calibrar Fondo".
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">🏎️</span>
-                    <strong>4. PRUEBA:</strong> Pasa un coche con la mano. Si sale <span class="text-green-600 font-black">"TEST OK"</span>, ¡estás listo!
+                    <strong>4. LISTO:</strong> Detecta <b>COLOR</b> y <b>BRILLO</b>. Ignora sombras.
                 </div>
             </div>
 
@@ -769,9 +799,12 @@
         const centralConfigBtn = document.getElementById('central-config-btn');
         const calibrateBtn = document.getElementById('calibrate-btn');
         const calibOverlay = document.getElementById('calib-overlay');
+        const calibStepTitle = document.getElementById('calib-step-title');
+        const calibStepDesc = document.getElementById('calib-step-desc');
         
         const trackLengthInput = document.getElementById('track-length-input');
         const lapLimitSelect = document.getElementById('lap-limit-select');
+        const minLapTimeInput = document.getElementById('min-lap-time-input'); 
         const voiceToggle = document.getElementById('voice-toggle');
         const recordNotification = document.getElementById('record-notification');
         const cameraOnBtn = document.getElementById('camera-on-btn');
@@ -805,7 +838,7 @@
             {
                 id: 1,
                 nameId: 'p1-name', carId: 'p1-car',
-                roiId: 'roi-p1', valId: 'val-p1', msgId: 'msg-p1',
+                roiId: 'roi-p1', valId: 'val-p1', msgId: 'msg-p1', barId: 'bar-p1',
                 lapCountId: 'p1-lap-count', currentLapId: 'p1-current-lap',
                 bestLapId: 'p1-best-lap', lastLapId: 'p1-last-lap', avgSpeedId: 'p1-avg-speed',
                 avgTimeId: 'p1-avg-time', gapId: 'p1-gap',
@@ -815,17 +848,23 @@
                 // State for game
                 laps: 0, lapHistory: [], bestLap: Infinity, lapStartTime: 0, lastRecordTime: 0,
                 totalTime: 0, isBlocked: false, finished: false,
-                hasCrossedStart: false, // FLAG for first crossing logic
+                hasCrossedStart: false, 
+                currentMinLapTime: 3000,
                 
-                // Smart Detection State
-                sensitivity: 20, // Delta threshold
-                baseBrightness: null,
-                soundTone: "C5"
+                // Smart Detection State (FUSION)
+                sensitivity: 20,
+                baseSat: 0, // Baseline Saturation
+                baseVal: 0, // Baseline Value (Brightness)
+                soundTone: "C5",
+                
+                // WATCHDOG & PULSE LOGIC
+                activeFrames: 0,
+                isPermanentlyBlocked: false
             },
             {
                 id: 2,
                 nameId: 'p2-name', carId: 'p2-car',
-                roiId: 'roi-p2', valId: 'val-p2', msgId: 'msg-p2',
+                roiId: 'roi-p2', valId: 'val-p2', msgId: 'msg-p2', barId: 'bar-p2',
                 lapCountId: 'p2-lap-count', currentLapId: 'p2-current-lap',
                 bestLapId: 'p2-best-lap', lastLapId: 'p2-last-lap', avgSpeedId: 'p2-avg-speed',
                 avgTimeId: 'p2-avg-time', gapId: 'p2-gap',
@@ -835,20 +874,42 @@
                 // State for game
                 laps: 0, lapHistory: [], bestLap: Infinity, lapStartTime: 0, lastRecordTime: 0,
                 totalTime: 0, isBlocked: false, finished: false,
-                hasCrossedStart: false, // FLAG for first crossing logic
+                hasCrossedStart: false,
+                currentMinLapTime: 3000,
                 
-                // Smart Detection State
+                // Smart Detection State (FUSION)
                 sensitivity: 20,
-                baseBrightness: null,
-                soundTone: "G5"
+                baseSat: 0,
+                baseVal: 0,
+                soundTone: "G5",
+                
+                // WATCHDOG & PULSE LOGIC
+                activeFrames: 0,
+                isPermanentlyBlocked: false
             }
         ];
+
+        // --- SPEECH HELPER SMART QUEUE ---
+        function speak(text, rate = 1.0, force = false) {
+            if (!voiceToggle.checked) return;
+            
+            // Solo cancelamos si es un mensaje de alta prioridad (Start, Winner, Error)
+            // De lo contrario, dejamos que se encole (Queue)
+            if (force) {
+                window.speechSynthesis.cancel(); 
+            }
+
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = "es-ES"; // Español
+            msg.rate = rate; // Velocidad ligeramente más lenta para claridad
+            window.speechSynthesis.speak(msg);
+        }
 
         // --- HELPER: ADJUST SENSITIVITY ---
         window.adjT = function(pId, delta) {
             const p = players[pId-1];
             let val = parseInt(document.getElementById(p.thresholdId).value);
-            val = Math.max(5, Math.min(100, val + delta));
+            val = Math.max(5, Math.min(150, val + delta));
             document.getElementById(p.thresholdId).value = val;
             updateThreshold(pId);
         }
@@ -865,7 +926,18 @@
             if (cameraStream) return;
             videoStatus.textContent = 'INICIANDO...';
             try {
-                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).catch(() => navigator.mediaDevices.getUserMedia({ video: true }));
+                // OPTIMIZACIÓN: Forzar resolución baja (640x480) para rendimiento
+                const constraints = { 
+                    video: { 
+                        facingMode: "environment",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        frameRate: { ideal: 30 }
+                    } 
+                };
+                
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints)
+                    .catch(() => navigator.mediaDevices.getUserMedia({ video: true }));
 
                 videoElement.srcObject = cameraStream;
                 videoElement.onloadedmetadata = () => {
@@ -896,163 +968,227 @@
             videoStatus.textContent = 'Cámara apagada.'; videoStatus.className = "text-amber-900 text-center text-sm mt-2";
         }
 
-        // --- FAST DETECTION LOGIC ---
-        function getRoiBrightness(roi) {
+        // --- CORE: FUSION DETECTION LOGIC (SATURATION + LUMA) ---
+        function getRoiStats(roi) {
             const vw = videoElement.videoWidth; const vh = videoElement.videoHeight;
-            if (!vw || !vh) return 0;
+            if (!vw || !vh) return { s: 0, v: 0 };
+            
             const rs = roi.style;
             const x = Math.floor(vw * (parseFloat(rs.left)||0)/100);
             const y = Math.floor(vh * (parseFloat(rs.top)||0)/100);
             const w = Math.ceil(vw * (parseFloat(rs.width)||10)/100);
             const h = Math.ceil(vh * (parseFloat(rs.height)||10)/100);
             
-            // Optimization: Only get the small patch data
             const ctx = canvas.getContext('2d', {willReadFrequently:true});
             ctx.drawImage(videoElement, x, y, w, h, 0, 0, w, h);
             
             try {
                 const d = ctx.getImageData(0,0,w,h).data;
-                let t = 0; 
-                // Sample every 4th pixel for speed, adequate for brightness avg
-                for(let i=0; i<d.length; i+=16) { 
-                    t+=(d[i]+d[i+1]+d[i+2]); // Sum RGB
+                let totSat = 0;
+                let totVal = 0;
+                let count = 0;
+                
+                // Sample every 16th pixel (4x4 stride)
+                for(let i=0; i < d.length; i+=16) { 
+                    const r = d[i]; const g = d[i+1]; const b = d[i+2];
+                    
+                    const max = Math.max(r, g, b);
+                    const min = Math.min(r, g, b);
+                    const delta = max - min;
+                    
+                    // Saturation (0-255 scaled)
+                    const sat = (max === 0) ? 0 : (delta / max) * 255;
+                    
+                    // Value (Brightness)
+                    const val = max;
+                    
+                    totSat += sat;
+                    totVal += val;
+                    count++;
                 }
-                return (t/3) / (d.length/16);
-            } catch(e){return 0;}
+                
+                if (count === 0) return { s: 0, v: 0 };
+                return { s: totSat/count, v: totVal/count };
+                
+            } catch(e){ return { s: 0, v: 0 }; }
         }
 
         function processVideo() {
             if (!isProcessing) return;
             
-            players.forEach(p => {
+            const p1 = players[0];
+            const p2 = players[1];
+            const roi1 = document.getElementById(p1.roiId);
+            const roi2 = document.getElementById(p2.roiId);
+            
+            // 1. Get Current Stats
+            const st1 = getRoiStats(roi1);
+            const st2 = getRoiStats(roi2);
+            
+            // 2. Initialize Base
+            if (p1.baseSat === 0) { p1.baseSat = st1.s; p1.baseVal = st1.v; }
+            if (p2.baseSat === 0) { p2.baseSat = st2.s; p2.baseVal = st2.v; }
+
+            // 3. Calculate "Fusion Score"
+            const satDiff1 = Math.abs(st1.s - p1.baseSat);
+            const satDiff2 = Math.abs(st2.s - p2.baseSat);
+            
+            const valDiff1 = Math.abs(st1.v - p1.baseVal);
+            const valDiff2 = Math.abs(st2.v - p2.baseVal);
+            
+            const score1 = (satDiff1 * 2.0) + (valDiff1 * 0.5); 
+            const score2 = (satDiff2 * 2.0) + (valDiff2 * 0.5);
+            
+            document.getElementById(p1.valId).textContent = score1.toFixed(0);
+            document.getElementById(p2.valId).textContent = score2.toFixed(0);
+            
+            // Visual Bars (Scale 0-150)
+            document.getElementById(p1.barId).style.width = Math.min(100, (score1/150)*100) + '%';
+            document.getElementById(p2.barId).style.width = Math.min(100, (score2/150)*100) + '%';
+
+            let crossed1 = score1 > p1.sensitivity;
+            let crossed2 = score2 > p2.sensitivity;
+
+            const now = Date.now();
+            
+            [p1, p2].forEach((p, idx) => {
                 const roi = document.getElementById(p.roiId);
-                const currentBri = getRoiBrightness(roi);
-                document.getElementById(p.valId).textContent = currentBri.toFixed(0);
+                const crossed = (idx === 0) ? crossed1 : crossed2;
+                const currentStats = (idx === 0) ? st1 : st2;
                 
-                // Initialize baseline if needed
-                if (p.baseBrightness === null) p.baseBrightness = currentBri;
+                // --- PULSE WIDTH FILTER (HAND REJECTION) ---
+                if (crossed && !isCalibrating) {
+                    p.activeFrames++;
+                    if (p.activeFrames > 45) { // 1.5s
+                        p.isPermanentlyBlocked = true;
+                        roi.classList.add('roi-blocked');
+                        document.getElementById(p.msgId).textContent = "BLOQUEADO";
+                    }
+                } else {
+                    p.activeFrames = 0;
+                    p.isPermanentlyBlocked = false;
+                    roi.classList.remove('roi-blocked');
+                    if (!isCalibrating) {
+                         p.baseSat = (p.baseSat * 0.95) + (currentStats.s * 0.05);
+                         p.baseVal = (p.baseVal * 0.95) + (currentStats.v * 0.05);
+                    }
+                }
+                
+                const validTrigger = crossed && !p.isPermanentlyBlocked;
 
-                // Smart Detection Logic (Differential)
-                const diff = Math.abs(currentBri - p.baseBrightness);
-                const crossed = diff > p.sensitivity;
-
-                if (crossed) {
+                // Visual Logic
+                if (validTrigger) {
                     roi.classList.add('roi-detected');
                 } else {
                     roi.classList.remove('roi-detected');
-                    // Slow adaptation to ambient light changes if not crossed
-                    // This prevents the "ghost" of a car from becoming the new background
-                    if (!isCalibrating) {
-                        p.baseBrightness = (p.baseBrightness * 0.95) + (currentBri * 0.05);
-                    }
+                }
+                
+                const inDeadTime = (now - p.lastRecordTime < p.currentMinLapTime) && isRaceActive && p.hasCrossedStart;
+                if (inDeadTime) {
+                    roi.classList.add('roi-dead');
+                } else {
+                    roi.classList.remove('roi-dead');
                 }
 
-                // Logic Dispatch
                 if (!isCalibrating) {
-                    
-                    // 0. Pre-Race Test Mode (Cuando no hay carrera activa)
-                    if (!isRaceActive && !isCountdown && crossed) {
-                         document.getElementById(p.msgId).textContent = "TEST OK";
-                    } else if (!isRaceActive) {
+                    if (!isRaceActive && !isCountdown && validTrigger) {
+                         document.getElementById(p.msgId).textContent = "TEST";
+                    } else if (!isRaceActive && !p.isPermanentlyBlocked) {
                          document.getElementById(p.msgId).textContent = "";
                     }
 
-                    // 1. False Start
                     if (isCountdown && !raceAborted) {
-                         if (crossed && !p.isBlocked) {
+                         if (validTrigger && !p.isBlocked) {
                              handleFalseStart(p);
                              p.isBlocked = true;
                          }
                     }
-                    // 2. Normal Race
                     else if (isRaceActive && isDetectionReady && !p.finished) {
-                        if (crossed && !p.isBlocked) {
+                        if (validTrigger && !p.isBlocked) {
+                            if (inDeadTime) return; 
+                            
                             p.isBlocked = true;
-                            // KEY CHANGE: Check if first crossing
                             if (!p.hasCrossedStart) {
-                                // First Crossing Logic - IGNORE TIME, JUST START CLOCK
                                 p.hasCrossedStart = true;
-                                p.lapStartTime = Date.now(); // Reset Lap Timer
-                                p.lastRecordTime = Date.now(); // IMPORTANT: Set debounce time now to prevent immediate double lap
+                                p.lapStartTime = now; 
+                                p.lastRecordTime = now; 
                                 synth.triggerAttackRelease(p.soundTone, "0.1");
                                 document.getElementById(p.msgId).textContent = "GO!";
-                                // No recordLap called here
                             } else {
-                                // Subsequent Crossings Logic
                                 document.getElementById(p.msgId).textContent = "OK";
                                 recordLap(p);
                             }
                         } else if (!crossed && p.isBlocked) {
                             p.isBlocked = false;
-                            // Clear momentary message after leaving sensor
                             if(isRaceActive) setTimeout(() => document.getElementById(p.msgId).textContent = "", 500);
                         }
                     }
-                    
-                    // General Debounce Reset
-                    if (!crossed && p.isBlocked && !isCountdown) {
-                        p.isBlocked = false;
-                    }
+                    // Reset debounce if clear
+                    if (!crossed && p.isBlocked && !isCountdown) p.isBlocked = false;
                 }
             });
+            
             requestAnimationFrame(processVideo);
         }
         
-        // --- AUTO CALIBRATION ---
+        // --- SIMPLIFIED CALIBRATION (ONE STEP) ---
         async function runAutoCalibration() {
             if (!isProcessing) return;
             isCalibrating = true;
             calibOverlay.classList.add('active');
             
-            // 1. Measure Baseline
-            let samples = 0;
-            const p1Stats = { sum: 0, min: 255, max: 0 };
-            const p2Stats = { sum: 0, min: 255, max: 0 };
+            calibStepTitle.textContent = "CALIBRANDO FONDO";
+            calibStepDesc.textContent = "No muevas nada. Midiendo ruido...";
             
-            const framesToRead = 60; // Approx 1-2 seconds
+            // VOICE: Calibration Start
+            speak("Calibrando fondo.", 1.0, true);
             
-            const readFrame = () => {
-                const b1 = getRoiBrightness(document.getElementById('roi-p1'));
-                const b2 = getRoiBrightness(document.getElementById('roi-p2'));
+            await new Promise(r => setTimeout(r, 1000));
+            
+            let p1MaxNoise = 0, p2MaxNoise = 0;
+            const measureFrames = 60; // 2 seconds
+            
+            const st1 = getRoiStats(document.getElementById('roi-p1'));
+            const st2 = getRoiStats(document.getElementById('roi-p2'));
+            players[0].baseSat = st1.s; players[0].baseVal = st1.v;
+            players[1].baseSat = st2.s; players[1].baseVal = st2.v;
+            
+            for(let i=0; i<measureFrames; i++) {
+                const s1 = getRoiStats(document.getElementById('roi-p1'));
+                const s2 = getRoiStats(document.getElementById('roi-p2'));
                 
-                p1Stats.sum += b1; p1Stats.min = Math.min(p1Stats.min, b1); p1Stats.max = Math.max(p1Stats.max, b1);
-                p2Stats.sum += b2; p2Stats.min = Math.min(p2Stats.min, b2); p2Stats.max = Math.max(p2Stats.max, b2);
+                const score1 = (Math.abs(s1.s - st1.s) * 2.0) + (Math.abs(s1.v - st1.v) * 0.5);
+                const score2 = (Math.abs(s2.s - st2.s) * 2.0) + (Math.abs(s2.v - st2.v) * 0.5);
                 
-                samples++;
-                if (samples < framesToRead) {
-                    requestAnimationFrame(readFrame);
-                } else {
-                    finishCalibration(p1Stats, p2Stats);
-                }
-            };
+                p1MaxNoise = Math.max(p1MaxNoise, score1);
+                p2MaxNoise = Math.max(p2MaxNoise, score2);
+                
+                await new Promise(r => requestAnimationFrame(r));
+            }
             
-            readFrame();
-        }
-        
-        function finishCalibration(s1, s2) {
-            // Set Base Brightness
-            players[0].baseBrightness = s1.sum / 60;
-            players[1].baseBrightness = s2.sum / 60;
+            const minThresh = 25; 
+            let thresh1 = Math.max(minThresh, p1MaxNoise * 3);
+            let thresh2 = Math.max(minThresh, p2MaxNoise * 3);
             
-            // Calculate Noise Floor (Max deviation from average)
-            const noise1 = Math.max(s1.max - players[0].baseBrightness, players[0].baseBrightness - s1.min);
-            const noise2 = Math.max(s2.max - players[1].baseBrightness, players[1].baseBrightness - s2.min);
-            
-            // Set Sensitivity: Noise * Multiplier (Safety Factor) + Minimum offset
-            // We want it sensitive but above noise.
-            const safeMargin = 15; // Minimum diff required
-            const newSens1 = Math.max(safeMargin, Math.ceil(noise1 * 1.5));
-            const newSens2 = Math.max(safeMargin, Math.ceil(noise2 * 1.5));
-            
-            document.getElementById('p1-threshold').value = newSens1;
-            document.getElementById('p2-threshold').value = newSens2;
+            thresh1 = Math.min(150, thresh1);
+            thresh2 = Math.min(150, thresh2);
+
+            document.getElementById('p1-threshold').value = Math.ceil(thresh1);
+            document.getElementById('p2-threshold').value = Math.ceil(thresh2);
             updateThreshold(1);
             updateThreshold(2);
             
+            calibStepTitle.textContent = "¡LISTO!";
+            calibStepDesc.textContent = `Fondo Calibrado.`;
+            polySynth.triggerAttackRelease(["E5", "A5"], "0.3");
+            
+            // VOICE: Calibration Done
+            speak("Listo. A correr.", 1.0, true);
+            
+            await new Promise(r => setTimeout(r, 1500));
+            
             isCalibrating = false;
             calibOverlay.classList.remove('active');
-            
-            if (voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sensores calibrados."));
         }
 
         function handleFalseStart(player) {
@@ -1062,10 +1198,10 @@
             const pName = document.getElementById(player.nameId).value;
             falseStartPlayerName.textContent = pName;
             falseStartAlert.classList.add('show');
-            if (voiceToggle.checked) {
-                const utter = new SpeechSynthesisUtterance("Salida Nula. Piloto " + pName);
-                utter.rate = 1.1; window.speechSynthesis.speak(utter);
-            }
+            
+            // VOICE: False Start (Prioridad Alta)
+            speak("Salida Nula. " + pName + " adelantado.", 1.1, true);
+            
             resetRaceBtn.disabled = false;
             document.querySelectorAll('.light').forEach(l => l.className = "light");
         }
@@ -1085,11 +1221,16 @@
             falseStartAlert.classList.remove('show');
             totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
             
+            const configMinLap = parseFloat(minLapTimeInput.value) * 1000;
+            
             players.forEach(p => {
                 p.soundTone = document.getElementById(p.soundId).value;
                 p.laps=0; p.lapHistory=[]; p.bestLap=Infinity; p.totalTime=0; p.lastRecordTime=0; 
                 p.finished=false; p.isBlocked=false; 
                 p.hasCrossedStart=false; // RESET FLAG
+                p.currentMinLapTime = configMinLap; 
+                p.activeFrames = 0; // Reset watchdog
+                p.isPermanentlyBlocked = false;
                 
                 updatePlayerUI(p);
                 document.getElementById(p.currentLapId).textContent = "ESPERANDO...";
@@ -1104,18 +1245,24 @@
 
             (async()=>{
                 isCountdown = true; raceAborted = false;
-                if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Pilotos a sus puestos."));
+                // VOICE: Ready (Prioridad Alta)
+                speak("Pilotos listos.", 1.0, true);
                 
-                for(let i=0;i<4;i++){
-                    if(raceAborted) return;
-                    lights[i].classList.add('red'); synth.triggerAttackRelease("C4","0.1");
-                    await new Promise(r=>setTimeout(r,1000));
+                const safeSleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+                for(let i=0;i<5;i++){ 
+                     if(raceAborted) return; 
+                     if (i < lights.length) {
+                        lights[i].classList.add('red'); 
+                        synth.triggerAttackRelease("C4","0.1");
+                     }
+                     await safeSleep(1000);
+                     if(raceAborted) return; 
                 }
                 
+                await safeSleep(Math.random()*1500+500);
                 if(raceAborted) return;
-                await new Promise(r=>setTimeout(r, Math.random()*1500+500));
                 
-                if(raceAborted) return;
                 isCountdown = false;
                 lights.forEach(l=>{l.classList.remove('red'); l.classList.add('green');});
                 polySynth.triggerAttackRelease(["C5","G5"],"0.5");
@@ -1134,7 +1281,6 @@
                 document.getElementById('race-time').textContent = formatTime(now - raceStartTime);
                 players.forEach(p => {
                     if(!p.finished) {
-                        // Only show time if race started for player
                         if (p.hasCrossedStart) {
                             const elap = now - p.lapStartTime;
                             const sec = Math.floor(elap/1000);
@@ -1149,18 +1295,19 @@
 
         function recordLap(p) {
             const now = Date.now();
-            if (now - p.lastRecordTime < 3000) return; // 3s Debounce to avoid double counting
-            
-            // DOUBLE CHECK: If logic failed and this is somehow first crossing, abort
-            if (!p.hasCrossedStart) {
-                 p.hasCrossedStart = true; p.lapStartTime = now; p.lastRecordTime = now; return;
-            }
+            if (now - p.lastRecordTime < p.currentMinLapTime) return; 
 
             p.lastRecordTime = now;
             const lapTime = now - p.lapStartTime;
             p.lapHistory.push(lapTime);
             p.laps++;
             p.lapStartTime = now;
+            
+            if (p.lapHistory.length >= 2) {
+                 const total = p.lapHistory.reduce((a,b)=>a+b,0);
+                 const avg = total / p.lapHistory.length;
+                 p.currentMinLapTime = avg * 0.5;
+            }
             
             let isNewRecord = false;
             if (lapTime < p.bestLap) {
@@ -1172,29 +1319,21 @@
             synth.triggerAttackRelease(p.soundTone, "0.1");
             updatePlayerUI(p);
             
-            if (voiceToggle.checked) {
-                const name = document.getElementById(p.nameId).value;
-                
-                // --- CAMBIO: SOLO HABLA SI ES RÉCORD ---
-                if (isNewRecord) {
-                    const lapTimeSec = (lapTime/1000).toFixed(2);
-                    const msg = new SpeechSynthesisUtterance(`¡Vuelta rápida de ${name}! ${lapTimeSec}`);
-                    msg.rate = 1.3; 
-                    window.speechSynthesis.speak(msg);
-                }
-                // ---------------------------------------
+            // VOICE: In-Race Commentary (Versiones cortas)
+            const name = document.getElementById(p.nameId).value;
+            if (isNewRecord) {
+                const lapTimeSec = (lapTime/1000).toFixed(2);
+                speak(`Récord ${name}, ${lapTimeSec}`);
+            }
 
-                if(totalLapsTarget !== Infinity) {
-                    const remaining = totalLapsTarget - p.laps;
-                    if(remaining === 5) {
-                        const msg5 = new SpeechSynthesisUtterance(`Atención ${name}, quedan 5 vueltas.`);
-                        msg5.rate = 1.2; window.speechSynthesis.speak(msg5);
-                    }
-                    if(remaining === 1) { // Logic fix: remaining is calculated after incrementing lap
-                         // Actually, if total is 10. Lap 9 just finished. p.laps is 9. remaining is 1. Correct.
-                        const msgLast = new SpeechSynthesisUtterance(`¡Última vuelta para ${name}!`);
-                        msgLast.rate = 1.2; window.speechSynthesis.speak(msgLast);
-                    }
+            if(totalLapsTarget !== Infinity) {
+                const remaining = totalLapsTarget - p.laps;
+                if(remaining === 5) {
+                    // NEW: Mensaje específico para las últimas 5 vueltas
+                    speak(`Últimas 5 vueltas, ${name}.`, 1.1, true);
+                }
+                if(remaining === 1) { 
+                    speak(`¡Última vuelta, ${name}!`);
                 }
             }
 
@@ -1258,6 +1397,9 @@
             const wName = document.getElementById(winner.nameId).value;
             document.getElementById('winner-text').textContent = `Ganador: ${wName}`;
             
+            // VOICE: Winner (Prioridad Alta)
+            speak("Victoria de " + wName, 1.0, true);
+            
             players.forEach(p => {
                 const n = document.getElementById(p.nameId).value;
                 const totalT = p.finished ? p.totalTime : (p.lapHistory.reduce((a,b)=>a+b,0)); 
@@ -1285,7 +1427,6 @@
             saveHistory(wName);
             document.getElementById('resultsModal').classList.remove('hidden');
             setTimeout(()=>document.getElementById('resultsModal').classList.add('open'),10);
-            if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Victoria para " + wName));
         }
 
         function exportToExcel() {
@@ -1386,7 +1527,7 @@
             };
             let hist = JSON.parse(localStorage.getItem('krono_twin_hist') || '[]');
             hist.unshift(rec);
-            localStorage.setItem('krono_twin_hist', JSON.stringify(hist.slice(0, 50)));
+            localStorage.setItem('krono_twin_hist', JSON.stringify(hist.slice(50)));
         }
 
         function loadHistory() {
@@ -1497,13 +1638,36 @@
         document.getElementById('p2-threshold').addEventListener('input', ()=>updateThreshold(2));
         startRaceBtn.onclick = startRace;
         resetRaceBtn.onclick = () => { 
-            isRaceActive=false; clearInterval(raceIntervalId); 
-            startRaceBtn.disabled=false; falseStartAlert.classList.remove('show'); 
+            // Robust Cancel
+            window.speechSynthesis.cancel();
+            raceAborted = true; 
+            isCountdown = false;
+            isRaceActive = false; 
+            clearInterval(raceIntervalId); 
+            
+            // Clean UI
+            document.querySelectorAll('.light').forEach(l => l.className = "light");
+            startRaceBtn.disabled = false; 
+            falseStartAlert.classList.remove('show'); 
         };
         centralConfigBtn.onclick = () => configPanel.classList.toggle('open');
         cameraOnBtn.onclick = startWebcam; cameraOffBtn.onclick = stopWebcam;
         document.getElementById('fullscreen-btn').onclick = () => !document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen();
         
+        // --- NEW: SOUND PREVIEW LOGIC ---
+        function previewSound(tone) {
+            if(Tone.context.state !== 'running') {
+                Tone.start().then(() => {
+                    synth.triggerAttackRelease(tone, "0.1");
+                });
+            } else {
+                synth.triggerAttackRelease(tone, "0.1");
+            }
+        }
+
+        document.getElementById('p1-sound').addEventListener('change', (e) => previewSound(e.target.value));
+        document.getElementById('p2-sound').addEventListener('change', (e) => previewSound(e.target.value));
+
         window.onload = () => {
              updateThreshold(1); updateThreshold(2);
              startWebcam();
