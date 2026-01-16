@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.4.7 - Fixed History</title>
+    <title>KRONODUAL V.4.9 - Chromatic Core</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -377,7 +377,7 @@
                     <h1 class="text-4xl sm:text-5xl main-title-glow font-black tracking-widest italic mr-2">
                         KRONODUAL
                     </h1>
-                    <span class="text-xl text-yellow-800 font-bold">V.4.7</span>
+                    <span class="text-xl text-yellow-800 font-bold">V.4.9</span>
                 </div>
                 <span class="text-[10px] text-yellow-900 font-serif tracking-[0.3em] uppercase ml-1 font-bold">By Albert Closa</span>
             </div>
@@ -851,13 +851,12 @@
                 hasCrossedStart: false, 
                 currentMinLapTime: 3000,
                 
-                // Smart Detection State (FUSION)
+                // CHROMATIC STATE
                 sensitivity: 20,
-                baseSat: 0, // Baseline Saturation
-                baseVal: 0, // Baseline Value (Brightness)
+                baseR: 0, baseG: 0, baseB: 0,
                 soundTone: "C5",
                 
-                // WATCHDOG & PULSE LOGIC
+                // WATCHDOG
                 activeFrames: 0,
                 isPermanentlyBlocked: false
             },
@@ -877,31 +876,23 @@
                 hasCrossedStart: false,
                 currentMinLapTime: 3000,
                 
-                // Smart Detection State (FUSION)
+                // CHROMATIC STATE
                 sensitivity: 20,
-                baseSat: 0,
-                baseVal: 0,
+                baseR: 0, baseG: 0, baseB: 0,
                 soundTone: "G5",
                 
-                // WATCHDOG & PULSE LOGIC
+                // WATCHDOG
                 activeFrames: 0,
                 isPermanentlyBlocked: false
             }
         ];
 
-        // --- SPEECH HELPER SMART QUEUE ---
+        // --- SPEECH HELPER ---
         function speak(text, rate = 1.0, force = false) {
             if (!voiceToggle.checked) return;
-            
-            // Solo cancelamos si es un mensaje de alta prioridad (Start, Winner, Error)
-            // De lo contrario, dejamos que se encole (Queue)
-            if (force) {
-                window.speechSynthesis.cancel(); 
-            }
-
+            if (force) window.speechSynthesis.cancel();
             const msg = new SpeechSynthesisUtterance(text);
-            msg.lang = "es-ES"; // Español
-            msg.rate = rate; // Velocidad ligeramente más lenta para claridad
+            msg.lang = "es-ES"; msg.rate = rate;
             window.speechSynthesis.speak(msg);
         }
 
@@ -926,7 +917,6 @@
             if (cameraStream) return;
             videoStatus.textContent = 'INICIANDO...';
             try {
-                // OPTIMIZACIÓN: Forzar resolución baja (640x480) para rendimiento
                 const constraints = { 
                     video: { 
                         facingMode: "environment",
@@ -968,49 +958,47 @@
             videoStatus.textContent = 'Cámara apagada.'; videoStatus.className = "text-amber-900 text-center text-sm mt-2";
         }
 
-        // --- CORE: FUSION DETECTION LOGIC (SATURATION + LUMA) ---
+        // --- CORE: CHROMATIC DETECTION (V.4.9) ---
+        // Returns average R, G, B
         function getRoiStats(roi) {
             const vw = videoElement.videoWidth; const vh = videoElement.videoHeight;
-            if (!vw || !vh) return { s: 0, v: 0 };
+            if (!vw || !vh) return { r:0, g:0, b:0, valid:false };
             
-            const rs = roi.style;
-            const x = Math.floor(vw * (parseFloat(rs.left)||0)/100);
-            const y = Math.floor(vh * (parseFloat(rs.top)||0)/100);
-            const w = Math.ceil(vw * (parseFloat(rs.width)||10)/100);
-            const h = Math.ceil(vh * (parseFloat(rs.height)||10)/100);
+            const rect = roi.getBoundingClientRect();
+            const parentRect = videoContainer.getBoundingClientRect();
             
+            const relX = (rect.left - parentRect.left) / parentRect.width;
+            const relY = (rect.top - parentRect.top) / parentRect.height;
+            const relW = rect.width / parentRect.width;
+            const relH = rect.height / parentRect.height;
+            
+            const x = Math.floor(Math.max(0, relX * vw));
+            const y = Math.floor(Math.max(0, relY * vh));
+            const w = Math.ceil(Math.min(vw - x, relW * vw));
+            const h = Math.ceil(Math.min(vh - y, relH * vh));
+            
+            if (w <= 0 || h <= 0) return { r:0, g:0, b:0, valid:false };
+
             const ctx = canvas.getContext('2d', {willReadFrequently:true});
             ctx.drawImage(videoElement, x, y, w, h, 0, 0, w, h);
             
             try {
                 const d = ctx.getImageData(0,0,w,h).data;
-                let totSat = 0;
-                let totVal = 0;
+                let sumR = 0, sumG = 0, sumB = 0;
                 let count = 0;
                 
-                // Sample every 16th pixel (4x4 stride)
+                // STRIDE 4 (Fast)
                 for(let i=0; i < d.length; i+=16) { 
-                    const r = d[i]; const g = d[i+1]; const b = d[i+2];
-                    
-                    const max = Math.max(r, g, b);
-                    const min = Math.min(r, g, b);
-                    const delta = max - min;
-                    
-                    // Saturation (0-255 scaled)
-                    const sat = (max === 0) ? 0 : (delta / max) * 255;
-                    
-                    // Value (Brightness)
-                    const val = max;
-                    
-                    totSat += sat;
-                    totVal += val;
+                    sumR += d[i];
+                    sumG += d[i+1];
+                    sumB += d[i+2];
                     count++;
                 }
                 
-                if (count === 0) return { s: 0, v: 0 };
-                return { s: totSat/count, v: totVal/count };
+                if (count === 0) return { r:0, g:0, b:0, valid:false };
+                return { r: sumR/count, g: sumG/count, b: sumB/count, valid:true };
                 
-            } catch(e){ return { s: 0, v: 0 }; }
+            } catch(e){ return { r:0, g:0, b:0, valid:false }; }
         }
 
         function processVideo() {
@@ -1021,30 +1009,42 @@
             const roi1 = document.getElementById(p1.roiId);
             const roi2 = document.getElementById(p2.roiId);
             
-            // 1. Get Current Stats
-            const st1 = getRoiStats(roi1);
-            const st2 = getRoiStats(roi2);
+            // 1. Get Stats
+            const s1 = getRoiStats(roi1);
+            const s2 = getRoiStats(roi2);
             
-            // 2. Initialize Base
-            if (p1.baseSat === 0) { p1.baseSat = st1.s; p1.baseVal = st1.v; }
-            if (p2.baseSat === 0) { p2.baseSat = st2.s; p2.baseVal = st2.v; }
+            if (!s1.valid || !s2.valid) { requestAnimationFrame(processVideo); return; }
 
-            // 3. Calculate "Fusion Score"
-            const satDiff1 = Math.abs(st1.s - p1.baseSat);
-            const satDiff2 = Math.abs(st2.s - p2.baseSat);
+            // 2. Initialize Base
+            if (p1.baseR === 0) { p1.baseR = s1.r; p1.baseG = s1.g; p1.baseB = s1.b; }
+            if (p2.baseR === 0) { p2.baseR = s2.r; p2.baseG = s2.g; p2.baseB = s2.b; }
+
+            // 3. CHROMATICITY CALCULATION (Normalized RGB)
+            // This is the "Unique System": It ignores brightness (auto-exposure) entirely.
+            // Formula: r = R / (R+G+B). This ratio stays constant even if light goes up/down.
             
-            const valDiff1 = Math.abs(st1.v - p1.baseVal);
-            const valDiff2 = Math.abs(st2.v - p2.baseVal);
+            const sum1 = s1.r + s1.g + s1.b || 1;
+            const sum2 = s2.r + s2.g + s2.b || 1;
             
-            const score1 = (satDiff1 * 2.0) + (valDiff1 * 0.5); 
-            const score2 = (satDiff2 * 2.0) + (valDiff2 * 0.5);
+            const baseSum1 = p1.baseR + p1.baseG + p1.baseB || 1;
+            const baseSum2 = p2.baseR + p2.baseG + p2.baseB || 1;
+
+            const r1 = s1.r / sum1; const g1 = s1.g / sum1;
+            const br1 = p1.baseR / baseSum1; const bg1 = p1.baseG / baseSum1;
+            
+            const r2 = s2.r / sum2; const g2 = s2.g / sum2;
+            const br2 = p2.baseR / baseSum2; const bg2 = p2.baseG / baseSum2;
+
+            // Distance = (diffR + diffG) * Scaler
+            // We multiply by 1000 because normalized diffs are small (0.0 - 1.0)
+            const score1 = (Math.abs(r1 - br1) + Math.abs(g1 - bg1)) * 1500; 
+            const score2 = (Math.abs(r2 - br2) + Math.abs(g2 - bg2)) * 1500;
             
             document.getElementById(p1.valId).textContent = score1.toFixed(0);
             document.getElementById(p2.valId).textContent = score2.toFixed(0);
             
-            // Visual Bars (Scale 0-150)
-            document.getElementById(p1.barId).style.width = Math.min(100, (score1/150)*100) + '%';
-            document.getElementById(p2.barId).style.width = Math.min(100, (score2/150)*100) + '%';
+            document.getElementById(p1.barId).style.width = Math.min(100, (score1/100)*100) + '%';
+            document.getElementById(p2.barId).style.width = Math.min(100, (score2/100)*100) + '%';
 
             let crossed1 = score1 > p1.sensitivity;
             let crossed2 = score2 > p2.sensitivity;
@@ -1054,12 +1054,12 @@
             [p1, p2].forEach((p, idx) => {
                 const roi = document.getElementById(p.roiId);
                 const crossed = (idx === 0) ? crossed1 : crossed2;
-                const currentStats = (idx === 0) ? st1 : st2;
+                const cur = (idx === 0) ? s1 : s2;
                 
-                // --- PULSE WIDTH FILTER (HAND REJECTION) ---
+                // WATCHDOG
                 if (crossed && !isCalibrating) {
                     p.activeFrames++;
-                    if (p.activeFrames > 45) { // 1.5s
+                    if (p.activeFrames > 45) {
                         p.isPermanentlyBlocked = true;
                         roi.classList.add('roi-blocked');
                         document.getElementById(p.msgId).textContent = "BLOQUEADO";
@@ -1068,27 +1068,22 @@
                     p.activeFrames = 0;
                     p.isPermanentlyBlocked = false;
                     roi.classList.remove('roi-blocked');
-                    if (!isCalibrating) {
-                         p.baseSat = (p.baseSat * 0.95) + (currentStats.s * 0.05);
-                         p.baseVal = (p.baseVal * 0.95) + (currentStats.v * 0.05);
+                    // SLOW ADAPTATION (Background Update)
+                    if (!isCalibrating && !crossed) {
+                         p.baseR = (p.baseR * 0.95) + (cur.r * 0.05);
+                         p.baseG = (p.baseG * 0.95) + (cur.g * 0.05);
+                         p.baseB = (p.baseB * 0.95) + (cur.b * 0.05);
                     }
                 }
                 
                 const validTrigger = crossed && !p.isPermanentlyBlocked;
 
-                // Visual Logic
-                if (validTrigger) {
-                    roi.classList.add('roi-detected');
-                } else {
-                    roi.classList.remove('roi-detected');
-                }
+                if (validTrigger) roi.classList.add('roi-detected');
+                else roi.classList.remove('roi-detected');
                 
                 const inDeadTime = (now - p.lastRecordTime < p.currentMinLapTime) && isRaceActive && p.hasCrossedStart;
-                if (inDeadTime) {
-                    roi.classList.add('roi-dead');
-                } else {
-                    roi.classList.remove('roi-dead');
-                }
+                if (inDeadTime) roi.classList.add('roi-dead');
+                else roi.classList.remove('roi-dead');
 
                 if (!isCalibrating) {
                     if (!isRaceActive && !isCountdown && validTrigger) {
@@ -1106,7 +1101,6 @@
                     else if (isRaceActive && isDetectionReady && !p.finished) {
                         if (validTrigger && !p.isBlocked) {
                             if (inDeadTime) return; 
-                            
                             p.isBlocked = true;
                             if (!p.hasCrossedStart) {
                                 p.hasCrossedStart = true;
@@ -1123,7 +1117,6 @@
                             if(isRaceActive) setTimeout(() => document.getElementById(p.msgId).textContent = "", 500);
                         }
                     }
-                    // Reset debounce if clear
                     if (!crossed && p.isBlocked && !isCountdown) p.isBlocked = false;
                 }
             });
@@ -1131,44 +1124,52 @@
             requestAnimationFrame(processVideo);
         }
         
-        // --- SIMPLIFIED CALIBRATION (ONE STEP) ---
         async function runAutoCalibration() {
             if (!isProcessing) return;
             isCalibrating = true;
             calibOverlay.classList.add('active');
+            calibStepTitle.textContent = "CALIBRANDO COLOR";
+            calibStepDesc.textContent = "No muevas nada.";
             
-            calibStepTitle.textContent = "CALIBRANDO FONDO";
-            calibStepDesc.textContent = "No muevas nada. Midiendo ruido...";
-            
-            // VOICE: Calibration Start
-            speak("Calibrando fondo.", 1.0, true);
-            
+            speak("Calibrando.", 1.0, true);
             await new Promise(r => setTimeout(r, 1000));
             
-            let p1MaxNoise = 0, p2MaxNoise = 0;
-            const measureFrames = 60; // 2 seconds
+            let p1Max = 0, p2Max = 0;
+            const measureFrames = 60; 
             
-            const st1 = getRoiStats(document.getElementById('roi-p1'));
-            const st2 = getRoiStats(document.getElementById('roi-p2'));
-            players[0].baseSat = st1.s; players[0].baseVal = st1.v;
-            players[1].baseSat = st2.s; players[1].baseVal = st2.v;
+            // Baseline snapshot
+            let s1 = getRoiStats(document.getElementById('roi-p1'));
+            let s2 = getRoiStats(document.getElementById('roi-p2'));
+            players[0].baseR = s1.r; players[0].baseG = s1.g; players[0].baseB = s1.b;
+            players[1].baseR = s2.r; players[1].baseG = s2.g; players[1].baseB = s2.b;
             
+            // Measure Noise (Chromatic Variance)
             for(let i=0; i<measureFrames; i++) {
-                const s1 = getRoiStats(document.getElementById('roi-p1'));
-                const s2 = getRoiStats(document.getElementById('roi-p2'));
+                s1 = getRoiStats(document.getElementById('roi-p1'));
+                s2 = getRoiStats(document.getElementById('roi-p2'));
                 
-                const score1 = (Math.abs(s1.s - st1.s) * 2.0) + (Math.abs(s1.v - st1.v) * 0.5);
-                const score2 = (Math.abs(s2.s - st2.s) * 2.0) + (Math.abs(s2.v - st2.v) * 0.5);
+                // Chromaticity logic inside calibration loop
+                const sum1 = s1.r+s1.g+s1.b||1; const r1 = s1.r/sum1; const g1 = s1.g/sum1;
+                const bSum1 = players[0].baseR+players[0].baseG+players[0].baseB||1;
+                const br1 = players[0].baseR/bSum1; const bg1 = players[0].baseG/bSum1;
                 
-                p1MaxNoise = Math.max(p1MaxNoise, score1);
-                p2MaxNoise = Math.max(p2MaxNoise, score2);
+                const sum2 = s2.r+s2.g+s2.b||1; const r2 = s2.r/sum2; const g2 = s2.g/sum2;
+                const bSum2 = players[1].baseR+players[1].baseG+players[1].baseB||1;
+                const br2 = players[1].baseR/bSum2; const bg2 = players[1].baseG/bSum2;
+
+                const score1 = (Math.abs(r1-br1) + Math.abs(g1-bg1)) * 1500;
+                const score2 = (Math.abs(r2-br2) + Math.abs(g2-bg2)) * 1500;
+                
+                p1Max = Math.max(p1Max, score1);
+                p2Max = Math.max(p2Max, score2);
                 
                 await new Promise(r => requestAnimationFrame(r));
             }
             
-            const minThresh = 25; 
-            let thresh1 = Math.max(minThresh, p1MaxNoise * 3);
-            let thresh2 = Math.max(minThresh, p2MaxNoise * 3);
+            // Set Thresholds (Noise * 3, Min 20)
+            const minThresh = 20; 
+            let thresh1 = Math.max(minThresh, p1Max * 3);
+            let thresh2 = Math.max(minThresh, p2Max * 3);
             
             thresh1 = Math.min(150, thresh1);
             thresh2 = Math.min(150, thresh2);
@@ -1182,11 +1183,8 @@
             calibStepDesc.textContent = `Fondo Calibrado.`;
             polySynth.triggerAttackRelease(["E5", "A5"], "0.3");
             
-            // VOICE: Calibration Done
-            speak("Listo. A correr.", 1.0, true);
-            
+            speak("Listo.", 1.0, true);
             await new Promise(r => setTimeout(r, 1500));
-            
             isCalibrating = false;
             calibOverlay.classList.remove('active');
         }
@@ -1198,15 +1196,11 @@
             const pName = document.getElementById(player.nameId).value;
             falseStartPlayerName.textContent = pName;
             falseStartAlert.classList.add('show');
-            
-            // VOICE: False Start (Prioridad Alta)
             speak("Salida Nula. " + pName + " adelantado.", 1.1, true);
-            
             resetRaceBtn.disabled = false;
             document.querySelectorAll('.light').forEach(l => l.className = "light");
         }
 
-        // --- RACE LOGIC ---
         function formatTime(ms) {
             if (ms === Infinity || ms <= 0) return "--.---";
             const min = Math.floor(ms/60000);
@@ -1220,18 +1214,13 @@
             startRaceBtn.disabled = true; resetRaceBtn.disabled = true;
             falseStartAlert.classList.remove('show');
             totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
-            
             const configMinLap = parseFloat(minLapTimeInput.value) * 1000;
             
             players.forEach(p => {
                 p.soundTone = document.getElementById(p.soundId).value;
                 p.laps=0; p.lapHistory=[]; p.bestLap=Infinity; p.totalTime=0; p.lastRecordTime=0; 
-                p.finished=false; p.isBlocked=false; 
-                p.hasCrossedStart=false; // RESET FLAG
-                p.currentMinLapTime = configMinLap; 
-                p.activeFrames = 0; // Reset watchdog
-                p.isPermanentlyBlocked = false;
-                
+                p.finished=false; p.isBlocked=false; p.hasCrossedStart=false; 
+                p.currentMinLapTime = configMinLap; p.activeFrames = 0; p.isPermanentlyBlocked = false;
                 updatePlayerUI(p);
                 document.getElementById(p.currentLapId).textContent = "ESPERANDO...";
                 document.getElementById(p.avgTimeId).textContent = "--.---";
@@ -1245,11 +1234,8 @@
 
             (async()=>{
                 isCountdown = true; raceAborted = false;
-                // VOICE: Ready (Prioridad Alta)
                 speak("Pilotos listos.", 1.0, true);
-                
                 const safeSleep = (ms) => new Promise(r => setTimeout(r, ms));
-
                 for(let i=0;i<5;i++){ 
                      if(raceAborted) return; 
                      if (i < lights.length) {
@@ -1259,14 +1245,11 @@
                      await safeSleep(1000);
                      if(raceAborted) return; 
                 }
-                
                 await safeSleep(Math.random()*1500+500);
                 if(raceAborted) return;
-                
                 isCountdown = false;
                 lights.forEach(l=>{l.classList.remove('red'); l.classList.add('green');});
                 polySynth.triggerAttackRelease(["C5","G5"],"0.5");
-                
                 isRaceActive=true; isDetectionReady=true; resetRaceBtn.disabled=false;
                 raceStartTime=Date.now();
                 players.forEach(p=>p.lapStartTime=raceStartTime);
@@ -1280,13 +1263,11 @@
                 const now = Date.now();
                 document.getElementById('race-time').textContent = formatTime(now - raceStartTime);
                 players.forEach(p => {
-                    if(!p.finished) {
-                        if (p.hasCrossedStart) {
-                            const elap = now - p.lapStartTime;
-                            const sec = Math.floor(elap/1000);
-                            const ms = String(elap%1000).padStart(3,'0');
-                            document.getElementById(p.currentLapId).textContent = `${sec}.${ms}`;
-                        }
+                    if(!p.finished && p.hasCrossedStart) {
+                        const elap = now - p.lapStartTime;
+                        const sec = Math.floor(elap/1000);
+                        const ms = String(elap%1000).padStart(3,'0');
+                        document.getElementById(p.currentLapId).textContent = `${sec}.${ms}`;
                     }
                 });
                 updateGaps();
@@ -1296,7 +1277,6 @@
         function recordLap(p) {
             const now = Date.now();
             if (now - p.lastRecordTime < p.currentMinLapTime) return; 
-
             p.lastRecordTime = now;
             const lapTime = now - p.lapStartTime;
             p.lapHistory.push(lapTime);
@@ -1319,7 +1299,6 @@
             synth.triggerAttackRelease(p.soundTone, "0.1");
             updatePlayerUI(p);
             
-            // VOICE: In-Race Commentary (Versiones cortas)
             const name = document.getElementById(p.nameId).value;
             if (isNewRecord) {
                 const lapTimeSec = (lapTime/1000).toFixed(2);
@@ -1328,13 +1307,8 @@
 
             if(totalLapsTarget !== Infinity) {
                 const remaining = totalLapsTarget - p.laps;
-                if(remaining === 5) {
-                    // NEW: Mensaje específico para las últimas 5 vueltas
-                    speak(`Últimas 5 vueltas, ${name}.`, 1.1, true);
-                }
-                if(remaining === 1) { 
-                    speak(`¡Última vuelta, ${name}!`);
-                }
+                if(remaining === 5) speak(`Últimas 5 vueltas, ${name}.`, 1.1, true);
+                if(remaining === 1) speak(`¡Última vuelta, ${name}!`);
             }
 
             if(totalLapsTarget!==Infinity && p.laps>=totalLapsTarget) {
@@ -1353,7 +1327,6 @@
             document.getElementById(p.bestLapId).textContent = formatTime(p.bestLap);
             const last = p.lapHistory.length>0 ? p.lapHistory[p.lapHistory.length-1] : 0;
             document.getElementById(p.lastLapId).textContent = formatTime(last);
-            
             if(p.laps>0) {
                 const tot = p.lapHistory.reduce((a,b)=>a+b,0);
                 const avg = tot/p.laps;
@@ -1368,7 +1341,6 @@
              const now = Date.now();
              const t1 = players[0].finished ? players[0].totalTime : (players[0].laps > 0 ? (players[0].lapHistory.reduce((a,b)=>a+b,0) + (now - players[0].lapStartTime)) : 0);
              const t2 = players[1].finished ? players[1].totalTime : (players[1].laps > 0 ? (players[1].lapHistory.reduce((a,b)=>a+b,0) + (now - players[1].lapStartTime)) : 0);
-             
              if (players[0].laps > 0 && players[1].laps > 0) {
                  const diff = t1 - t2;
                  const diffSec = (Math.abs(diff)/1000).toFixed(1);
@@ -1395,11 +1367,8 @@
             else winner = p1.laps > p2.laps ? p1 : p2;
 
             const wName = document.getElementById(winner.nameId).value;
-            const wTime = winner.totalTime; // Get time directly from object
-            
+            const wTime = winner.totalTime;
             document.getElementById('winner-text').textContent = `Ganador: ${wName}`;
-            
-            // VOICE: Winner (Prioridad Alta)
             speak("Victoria de " + wName, 1.0, true);
             
             players.forEach(p => {
@@ -1420,13 +1389,13 @@
                 ul.innerHTML = "";
                 p.lapHistory.forEach((lap, idx) => {
                     const li = document.createElement('li');
-                    li.className = "flex justify-between border-b border-gray-100 last:border-0 py-1 font-arial"; // Force Arial in list
+                    li.className = "flex justify-between border-b border-gray-100 last:border-0 py-1 font-arial";
                     const isBest = (lap === p.bestLap && p.bestLap !== Infinity); 
                     li.innerHTML = `<span>V${idx+1}</span> <span class="${isBest ? 'text-green-700 font-bold' : ''}">${formatTime(lap)}</span>`;
                     ul.appendChild(li);
                 });
             });
-            saveHistory(wName, wTime); // Pass both name AND time
+            saveHistory(wName, wTime);
             document.getElementById('resultsModal').classList.remove('hidden');
             setTimeout(()=>document.getElementById('resultsModal').classList.add('open'),10);
         }
@@ -1455,15 +1424,13 @@
                 p.lapHistory.forEach((lap, index) => {
                     csvContent += `${index + 1},${formatTime(lap)}\n`;
                 });
-                csvContent += "\n"; // Spacer between players
+                csvContent += "\n";
             });
-
-            // 4. Create Download Link
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
             link.setAttribute("download", `krono_race_${Date.now()}.csv`);
-            document.body.appendChild(link); // Required for FF
+            document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
@@ -1475,17 +1442,11 @@
             const p1d = players[0].lapHistory; const p2d = players[1].lapHistory;
             const maxL = Math.max(p1d.length, p2d.length);
             
-            // Clean
             ctx.clearRect(0,0,w,200);
-
-            // Draw Y-Axis Text
             ctx.fillStyle = '#aaa'; ctx.font = '10px Arial';
             ctx.fillText("TIEMPO (s)", 5, 10);
             
-            if(maxL===0) {
-                 // Removed text drawing as requested
-                 return;
-            }
+            if(maxL===0) return;
 
             const all = [...p1d, ...p2d];
             const maxT = Math.max(...all);
@@ -1497,17 +1458,15 @@
                 const x = pad + i * (gw/maxL) + 10;
                 if(p1d[i]) {
                     const h = (p1d[i]/maxT)*gh;
-                    ctx.fillStyle = '#ffd700'; 
-                    ctx.shadowColor = '#ffd700'; // Gold Glow
+                    ctx.fillStyle = '#ffd700'; ctx.shadowColor = '#ffd700'; 
                     ctx.fillRect(x, 180-h, bw, h);
                 }
                 if(p2d[i]) {
                     const h = (p2d[i]/maxT)*gh;
-                    ctx.fillStyle = '#b87333'; // Copper color
-                    ctx.shadowColor = '#b87333'; // Copper Glow
+                    ctx.fillStyle = '#b87333'; ctx.shadowColor = '#b87333';
                     ctx.fillRect(x+bw, 180-h, bw, h);
                 }
-                ctx.shadowBlur = 0; // Reset for text
+                ctx.shadowBlur = 0;
                 ctx.fillStyle='#aaa'; ctx.font='10px Arial'; ctx.textAlign='center';
                 ctx.fillText(i+1, x+bw, 195);
             }
@@ -1518,18 +1477,13 @@
             setTimeout(()=>recordNotification.classList.remove('show'),2000);
         }
 
-        // --- HISTORIAL FIX ---
         function saveHistory(winner, winnerTimeMs) {
-            // FIX: Use the passed time, or fallback if undefined, to avoid lookup errors
             let finalTime = "--.---";
-            if (winnerTimeMs) {
-                finalTime = formatTime(winnerTimeMs);
-            } else {
-                 // Fallback (old risky method just in case)
+            if (winnerTimeMs) finalTime = formatTime(winnerTimeMs);
+            else {
                  const pObj = players.find(p => document.getElementById(p.nameId).value === winner);
                  if (pObj) finalTime = formatTime(pObj.totalTime);
             }
-
             const rec = {
                 date: new Date().toLocaleString(),
                 winner: winner,
@@ -1537,11 +1491,8 @@
                 p1Best: formatTime(players[0].bestLap),
                 p2Best: formatTime(players[1].bestLap)
             };
-            
             let hist = JSON.parse(localStorage.getItem('krono_twin_hist') || '[]');
             hist.unshift(rec);
-            
-            // FIX: Correct slice usage to KEEP the first 50 items
             localStorage.setItem('krono_twin_hist', JSON.stringify(hist.slice(0, 50)));
         }
 
@@ -1564,7 +1515,6 @@
             m.classList.remove('hidden'); setTimeout(()=>m.classList.add('open'),10);
         }
 
-        // --- INIT EVENTS ---
         document.getElementById('history-btn').onclick = loadHistory;
         document.getElementById('close-history-btn').onclick = () => {
              const m = document.getElementById('historyModal'); m.classList.remove('open');
@@ -1582,20 +1532,14 @@
         calibrateBtn.onclick = runAutoCalibration;
         exportExcelBtn.onclick = exportToExcel;
         
-        // Tutorial
         closeTutorialBtn.onclick = () => {
             tutorialModal.classList.remove('open');
-            // Play a little sound to confirm readiness
             polySynth.triggerAttackRelease(["C5", "E5"], "0.3");
         };
 
         // --- DRAG AND RESIZE LOGIC ---
-        let actRoi = null;
-        let isDrag = false;
-        let isResize = false;
-        let resizeHandle = null; 
-        let startX = 0, startY = 0;
-        let startLeft = 0, startTop = 0, startWidth = 0, startHeight = 0;
+        let actRoi = null; let isDrag = false; let isResize = false; let resizeHandle = null; 
+        let startX = 0, startY = 0; let startLeft = 0, startTop = 0, startWidth = 0, startHeight = 0;
 
         function getEventPos(e) { return e.touches ? e.touches[0] : e; }
 
@@ -1653,14 +1597,11 @@
         document.getElementById('p2-threshold').addEventListener('input', ()=>updateThreshold(2));
         startRaceBtn.onclick = startRace;
         resetRaceBtn.onclick = () => { 
-            // Robust Cancel
             window.speechSynthesis.cancel();
             raceAborted = true; 
             isCountdown = false;
             isRaceActive = false; 
             clearInterval(raceIntervalId); 
-            
-            // Clean UI
             document.querySelectorAll('.light').forEach(l => l.className = "light");
             startRaceBtn.disabled = false; 
             falseStartAlert.classList.remove('show'); 
@@ -1669,15 +1610,10 @@
         cameraOnBtn.onclick = startWebcam; cameraOffBtn.onclick = stopWebcam;
         document.getElementById('fullscreen-btn').onclick = () => !document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen();
         
-        // --- NEW: SOUND PREVIEW LOGIC ---
         function previewSound(tone) {
             if(Tone.context.state !== 'running') {
-                Tone.start().then(() => {
-                    synth.triggerAttackRelease(tone, "0.1");
-                });
-            } else {
-                synth.triggerAttackRelease(tone, "0.1");
-            }
+                Tone.start().then(() => { synth.triggerAttackRelease(tone, "0.1"); });
+            } else { synth.triggerAttackRelease(tone, "0.1"); }
         }
 
         document.getElementById('p1-sound').addEventListener('change', (e) => previewSound(e.target.value));
@@ -1686,10 +1622,7 @@
         window.onload = () => {
              updateThreshold(1); updateThreshold(2);
              startWebcam();
-             // SHOW TUTORIAL AUTOMATICALLY ON LOAD
-             setTimeout(() => {
-                 tutorialModal.classList.add('open');
-             }, 500);
+             setTimeout(() => { tutorialModal.classList.add('open'); }, 500);
         };
     </script>
 </body>
