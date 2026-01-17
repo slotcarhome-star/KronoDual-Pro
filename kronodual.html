@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.3.8 - Visual Fix</title>
+    <title>KRONODUAL V.2.0 - Clean Core</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -444,9 +444,9 @@
                     <h1 class="text-3xl sm:text-4xl font-black tracking-widest mr-2 font-arial">
                         <span class="text-neon-gold">KRONO</span><span class="text-neon-bronze">DUAL</span>
                     </h1>
-                    <span class="text-lg text-yellow-800 font-bold">V.3.8</span>
+                    <span class="text-lg text-yellow-800 font-bold">V.2.0</span>
                 </div>
-                <span class="text-[10px] text-neon-bronze tracking-[0.3em] uppercase ml-1 font-bold font-arial">Visual Fix</span>
+                <span class="text-[10px] text-neon-bronze tracking-[0.3em] uppercase ml-1 font-bold font-arial">Clean Core</span>
             </div>
             
             <div class="flex items-center gap-4 mt-2 sm:mt-0">
@@ -499,7 +499,7 @@
             </button>
             <button id="central-config-btn" class="flex-1 race-control-btn disabled:opacity-50 disabled:cursor-not-allowed">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="control-icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1 2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> CONFIG
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="control-icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1 2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> CONFIG
                 </span>
             </button>
             <button id="reset-race-btn" class="flex-1 race-control-btn disabled:opacity-50 disabled:cursor-not-allowed" disabled>
@@ -623,6 +623,14 @@
                          <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
                             <input type="checkbox" name="voice-toggle" id="voice-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-amber-500 appearance-none cursor-pointer" checked/>
                             <label for="voice-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-amber-200 cursor-pointer border border-amber-500"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-4 bg-white/30 p-2 rounded-lg border border-amber-200">
+                         <label for="false-start-toggle" class="text-xs font-bold text-red-900">Detector Salidas Nulas:</label>
+                         <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="false-start-toggle" id="false-start-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-amber-500 appearance-none cursor-pointer" checked/>
+                            <label for="false-start-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-amber-200 cursor-pointer border border-amber-500"></label>
                         </div>
                     </div>
                 </div>
@@ -866,11 +874,11 @@
         const configPanel = document.getElementById('config-panel');
         const centralConfigBtn = document.getElementById('central-config-btn');
         const camToast = document.getElementById('cam-toast');
-        // SHAKE WARNING REMOVED - FULL CLEANUP
         
         const trackLengthInput = document.getElementById('track-length-input');
         const lapLimitSelect = document.getElementById('lap-limit-select');
         const voiceToggle = document.getElementById('voice-toggle');
+        const falseStartToggle = document.getElementById('false-start-toggle'); 
         const recordNotification = document.getElementById('record-notification');
         const cameraOnBtn = document.getElementById('camera-on-btn');
         const cameraOffBtn = document.getElementById('camera-off-btn');
@@ -878,8 +886,8 @@
         const falseStartAlert = document.getElementById('false-start-alert');
         const falseStartPlayerName = document.getElementById('false-start-player');
         const exportExcelBtn = document.getElementById('export-excel-btn');
-        const autoAdjustToggle = document.getElementById('auto-adjust-toggle'); // NEW
-        const minLapTimeInput = document.getElementById('min-lap-time'); // NEW
+        const autoAdjustToggle = document.getElementById('auto-adjust-toggle'); 
+        const minLapTimeInput = document.getElementById('min-lap-time'); 
         
         // Tutorial
         const tutorialModal = document.getElementById('tutorialModal');
@@ -901,9 +909,7 @@
         let raceStartTime = 0;
         let raceIntervalId = null;
         let totalLapsTarget = 10;
-        let isShakePaused = false;
-        let shakeTimeout = null;
-        // let globalMinLapTime = 3000; // REMOVED GLOBAL VAR
+        // ANTI-SHAKE VARIABLES REMOVED
         
         const players = [
             {
@@ -1108,12 +1114,7 @@
             }
         }
 
-        // ANTI-SHAKE: Touch Inhibition
-        document.body.addEventListener('touchstart', () => {
-            isShakePaused = true;
-            if (shakeTimeout) clearTimeout(shakeTimeout);
-            shakeTimeout = setTimeout(() => { isShakePaused = false; }, 500); // 500ms pause after touch
-        }, {passive: true});
+        // TOUCH BLOCK REMOVED FOR FLUID INTERACTION
 
         function processVideo() {
             if (!isProcessing) return;
@@ -1124,15 +1125,6 @@
                     const val = detectMotionInRoi(p);
                     motions.push(val);
                 });
-
-                // ANTI-SHAKE: REMOVED GLOBAL DETECTION LOGIC 
-                // Removed the block that pauses on global shake
-                // Trusting individual ROI logic and background sub
-
-                if (isShakePaused) {
-                    requestAnimationFrame(processVideo);
-                    return; // Skip logic
-                }
 
                 players.forEach((p, idx) => {
                     const roi = document.getElementById(p.roiId);
@@ -1221,8 +1213,11 @@
                  showMessage(p, "✅", 500);
                  return;
             }
-            // Countdown False Start
-            if (isCountdown && !raceAborted) {
+            
+            // Countdown False Start (MODIFIED WITH TOGGLE)
+            const fsEnabled = document.getElementById('false-start-toggle').checked;
+            
+            if (isCountdown && !raceAborted && fsEnabled) {
                  if (!p.isBlocked) {
                      handleFalseStart(p);
                      p.isBlocked = true;
@@ -1304,6 +1299,10 @@
             lights.forEach(l=>l.className="light");
             (async()=>{
                 try {
+                    // --- STABILITY FIX: WAIT 1 SECOND BEFORE STARTING LOGIC ---
+                    // This allows vibrations from touching the "Start" button to settle
+                    await new Promise(r => setTimeout(r, 1000));
+                    
                     isCountdown = true; raceAborted = false;
                     if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Pilotos a sus puestos."));
                     for(let i=0; i<5; i++){
