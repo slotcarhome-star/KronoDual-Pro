@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.2.0 - Clean Core</title>
+    <title>KRONODUAL V.2.0 - Luxury Gold</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -90,37 +90,27 @@
             font-family: Arial, sans-serif;
         }
         
-        /* ESTILO NEON ORO PURO (ARIAL) */
+        /* ESTILO NEON ORO PURO (ARIAL - DIFUMINADO) */
         .main-title-glow {
             font-family: Arial, sans-serif !important;
+            font-style: normal !important; /* NO CURSIVA */
             color: #fff;
             text-shadow: 
-                0 0 5px #ffd700,
-                0 0 15px #ffd700,
-                0 0 30px #ffaa00,
-                0 0 50px #ff8c00;
+                0 0 10px #ffd700,
+                0 0 25px #ffd700,
+                0 0 45px #ffaa00,
+                0 0 70px #ff8c00; /* Difuminado aumentado */
         }
-
-        /* --- NUEVOS ESTILOS: DEGRADADO METALICO HORIZONTAL A NEGRO --- */
-        .text-neon-gold {
+        
+        /* ESTILO NEON BRONCE (AUTOR) */
+        .author-glow {
             font-family: Arial, sans-serif !important;
-            /* Degradado de Oro Puro (#ffd700) a Negro (#000000) horizontal */
-            background: linear-gradient(90deg, #ffd700 30%, #000000 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            /* Un ligero filtro para que resalte sobre el fondo brillante sin perder el negro */
-            filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
-        }
-
-        .text-neon-bronze {
-            font-family: Arial, sans-serif !important;
-            /* Degradado de Bronce (#cd7f32) a Negro (#000000) horizontal */
-            background: linear-gradient(90deg, #cd7f32 30%, #000000 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
+            color: #ffcc99; /* Centro claro bronce */
+            text-shadow: 0 0 8px #cd7f32, 0 0 12px #8b4513; /* Glow Bronce/Cobre */
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            font-weight: bold;
         }
         
         .traffic-light-container.five-lights { display: flex; gap: 10px; }
@@ -141,72 +131,48 @@
             touch-action: none;
         }
         
-        /* MODIFICADO: Altura reducida un 30% ADICIONAL para compactar la vista */
         #webcam-feed {
-            max-height: 28vh; /* Reducido drásticamente para ahorrar espacio vertical */
-            min-height: 250px; /* Altura mínima compacta */
-            object-fit: cover; width: 100%;
-            display: block; transform: scale(1);
+            max-height: 320px; object-fit: cover; width: 100%;
+            display: block; transform: scaleX(1);
             filter: contrast(1.1) grayscale(0.1);
-        }
-        /* Ajuste para pantallas muy pequeñas para que no rompa el diseño */
-        @media (max-height: 800px) {
-            #webcam-feed { min-height: 200px; max-height: 25vh; }
         }
 
         .movable-rectangle {
-            position: absolute; width: 25%; height: 25%; cursor: move;
-            /* CAMBIO: Fondo con trama de "escaneo" */
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(255, 215, 0, 0.1),
-                rgba(255, 215, 0, 0.1) 1px,
-                transparent 1px,
-                transparent 4px
-            );
+            position: absolute; width: 30%; height: 30%; cursor: move;
+            background-color: rgba(255, 215, 0, 0.1); 
             box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
-            transition: background-color 0.05s ease; 
+            transition: background-color 0.1s ease, border-color 0.2s ease, opacity 0.2s ease; 
             z-index: 10; box-sizing: border-box; touch-action: none; display: none;
         }
         
         /* ROI P1: ORO */
-        #roi-p1 { border: 2px solid #ffd700; }
+        #roi-p1 { border: 3px solid #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
         #roi-p1 .roi-label { background: linear-gradient(45deg, #ffd700, #ffb300); color: #3e2723; text-shadow: none; border-color: #fff; }
         #roi-p1.roi-detected {
-            background-color: rgba(255, 215, 0, 0.6) !important;
-            border: 4px solid #fff !important; 
-            box-shadow: 0 0 50px #ffd700, inset 0 0 20px #fff !important;
-        }
-        /* ESTADO BLOQUEADO (DEAD TIME) */
-        #roi-p1.roi-blocked, #roi-p2.roi-blocked {
-            border-color: #555 !important;
-            opacity: 0.5;
-            background: rgba(0,0,0,0.2) !important;
+            background-color: rgba(255, 215, 0, 0.4) !important;
+            border-color: #fff !important; box-shadow: 0 0 50px #ffd700, inset 0 0 20px #fff !important;
         }
 
         /* ROI P2: COBRE BRILLANTE */
-        #roi-p2 { border: 2px solid #ff7f50; }
+        #roi-p2 { border: 3px solid #ff7f50; box-shadow: 0 0 15px rgba(255, 127, 80, 0.6); }
         #roi-p2 .roi-label { background: linear-gradient(45deg, #ff7f50, #ff4500); color: #fff; text-shadow: 1px 1px 0 #000; border-color: #fff; }
         #roi-p2.roi-detected {
-            background-color: rgba(255, 127, 80, 0.6) !important;
-            border: 4px solid #fff !important; 
-            box-shadow: 0 0 50px #ff7f50, inset 0 0 20px #fff !important;
+            background-color: rgba(255, 127, 80, 0.4) !important;
+            border-color: #fff !important; box-shadow: 0 0 50px #ff7f50, inset 0 0 20px #fff !important;
         }
-
-        /* Scan Line Animada dentro del ROI */
-        .scan-line {
-            position: absolute; width: 100%; height: 2px;
-            background: rgba(255,255,255,0.8);
-            box-shadow: 0 0 4px #fff;
-            animation: scanAnim 1s linear infinite;
-            opacity: 0.5;
-            pointer-events: none;
+        
+        /* ESTADO BLOQUEADO (Segundos de Seguridad) */
+        .movable-rectangle.roi-locked {
+            border-color: #777 !important;
+            box-shadow: none !important;
+            opacity: 0.6;
         }
-        @keyframes scanAnim {
-            0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
+        .movable-rectangle.roi-locked .roi-label {
+            background: #555 !important; color: #aaa !important;
+            border-color: #777;
+        }
+        .movable-rectangle.roi-locked .test-msg {
+            color: #ccc; text-shadow: none; font-size: 14px;
         }
 
         .roi-label {
@@ -219,48 +185,36 @@
         
         .detection-val {
             position: absolute; bottom: 2px; right: 2px;
-            background-color: rgba(0,0,0,0.7); color: #00ff00; /* Verde matrix */
+            background-color: rgba(0,0,0,0.7); color: #fff;
             font-size: 10px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3);
-            pointer-events: none; font-weight: bold; font-family: monospace;
+            pointer-events: none; font-weight: bold; font-family: Arial, sans-serif;
         }
         
-        /* MODIFICADO: MENSAJE DE TEST DESACOPLADO */
+        /* MENSAJE DE TEST EN ROI */
         .test-msg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             color: #00ff00; font-weight: 900; font-size: 20px; text-transform: uppercase;
-            text-shadow: 0 0 10px #000, 0 0 20px #00ff00; pointer-events: none; 
-            /* Se elimina display:none para usar opacidad */
-            opacity: 0; transition: opacity 0.1s;
+            text-shadow: 0 0 10px #000, 0 0 20px #00ff00; pointer-events: none; display: none;
             white-space: nowrap; font-family: Arial, sans-serif; z-index: 20;
-            display: block;
         }
-        .test-msg.show { opacity: 1; }
+        .roi-detected .test-msg { display: block; }
+        .roi-locked .test-msg { display: block; content: 'WAIT...'; }
 
-        /* MODIFICADO: Tiradores rectangulares con diseño técnico "Grip" */
+        /* NUEVOS MANEJADORES DE ESQUINA (MINIMALISTAS) */
         .resize-handle {
-            position: absolute; width: 24px; height: 24px;
-            /* Degradado metálico vertical */
-            background: linear-gradient(to bottom, #fff8e1 0%, #ffd700 50%, #b8860b 100%);
-            border: 1px solid #fff; 
-            border-radius: 4px; /* Bordes ligeramente redondeados, no redondos */
-            z-index: 20; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            position: absolute; width: 14px; height: 14px;
+            background-color: #ffd700;
+            border: 2px solid #fff;
+            z-index: 20; 
+            box-shadow: 0 0 6px rgba(0,0,0,0.8);
             touch-action: none; 
-            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.1s ease;
         }
-        
-        /* Líneas de agarre (Grip lines) dentro del rectángulo */
-        .resize-handle::after {
-            content: ''; 
-            width: 12px; height: 2px; 
-            background: #3e2723; /* Color oscuro para las líneas */
-            /* Sombra para crear el efecto de múltiples líneas (hamburguesa) */
-            box-shadow: 0 4px 0 #3e2723, 0 -4px 0 #3e2723;
-            border-radius: 0;
-        }
+        .resize-handle:hover { transform: scale(1.2); }
+        .resize-handle:active { background-color: #fff; }
 
-        /* Ajustamos ligeramente la posición para que el centro del cuadrado coincida con la esquina */
-        .handle-tl { top: -12px; left: -12px; cursor: nwse-resize; } 
-        .handle-br { bottom: -12px; right: -12px; cursor: nwse-resize; } 
+        .handle-tl { top: -7px; left: -7px; cursor: nwse-resize; border-radius: 2px; } 
+        .handle-br { bottom: -7px; right: -7px; cursor: nwse-resize; border-radius: 2px; } 
         
         .timer-value {
             font-size: 1.1rem; line-height: 1.5rem; 
@@ -284,15 +238,9 @@
         }
         .telemetry-data { font-size: 0.75rem; font-weight: 900; color: #2b2005; font-family: Arial, sans-serif; line-height: 1;}
 
-        /* DEBUG TEXT SMALLER */
-        .debug-text {
-            font-size: 0.6rem; color: #555; font-weight: bold; text-align: center; margin-top: 2px;
-            font-family: monospace;
-        }
-
         .bg-p1-soft { background-color: #fff9c4; border-left: 4px solid #ffd700; } 
         .bg-p2-soft { background-color: #ffccbc; border-left: 4px solid #ff7043; } 
-        
+
         #config-panel {
             transition: all 0.3s ease-in-out; max-height: 0; overflow: hidden; opacity: 0;
             transform: translateY(-10px);
@@ -418,17 +366,6 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* CAM TOAST */
-        #cam-toast {
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-            background-color: rgba(0,0,0,0.7); color: #ffd700;
-            padding: 8px 16px; border-radius: 20px;
-            font-size: 12px; font-weight: bold; text-transform: uppercase;
-            border: 1px solid #ffd700; pointer-events: none; opacity: 0;
-            transition: opacity 0.3s; z-index: 80; white-space: nowrap; font-family: Arial, sans-serif;
-        }
-        #cam-toast.show { opacity: 1; }
-        
         /* TUTORIAL MODAL */
         .tut-step { background: rgba(255,255,255,0.9); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #b8860b; color: #333; text-align: left; }
         .tut-icon { font-size: 2rem; margin-right: 10px; vertical-align: middle; }
@@ -441,12 +378,12 @@
         <div class="gold-panel flex flex-col sm:flex-row justify-between items-center w-full py-4 px-6 mt-4 mb-6 header-flex">
             <div class="flex flex-col items-start mb-2 sm:mb-0">
                 <div class="flex items-baseline">
-                    <h1 class="text-3xl sm:text-4xl font-black tracking-widest mr-2 font-arial">
-                        <span class="text-neon-gold">KRONO</span><span class="text-neon-bronze">DUAL</span>
+                    <h1 class="text-4xl sm:text-5xl main-title-glow font-black tracking-widest mr-2">
+                        KRONODUAL
                     </h1>
-                    <span class="text-lg text-yellow-800 font-bold">V.2.0</span>
+                    <span class="text-xl text-yellow-800 font-bold">V.2.0</span>
                 </div>
-                <span class="text-[10px] text-neon-bronze tracking-[0.3em] uppercase ml-1 font-bold font-arial">Clean Core</span>
+                <span class="ml-1 author-glow">By Albert Closa</span>
             </div>
             
             <div class="flex items-center gap-4 mt-2 sm:mt-0">
@@ -479,13 +416,11 @@
                     <p class="text-xs font-bold text-amber-800 tracking-widest mb-1">JUGADOR 1 (ORO)</p>
                     <p id="p1-lap-count" class="timer-value text-amber-900">V: 0 / 10</p>
                     <p id="p1-current-lap" class="text-2xl font-arial font-bold text-amber-700 mt-1 drop-shadow-sm">--.---</p>
-                    <div id="p1-debug" class="debug-text">--</div> <!-- DEBUG INFO -->
                 </div>
                 <div class="text-center px-2">
                     <p class="text-xs font-bold text-orange-800 tracking-widest mb-1">JUGADOR 2 (COBRE)</p>
                     <p id="p2-lap-count" class="timer-value text-amber-900">V: 0 / 10</p>
                     <p id="p2-current-lap" class="text-2xl font-arial font-bold text-orange-700 mt-1 drop-shadow-sm">--.---</p>
-                    <div id="p2-debug" class="debug-text">--</div> <!-- DEBUG INFO -->
                 </div>
             </div>
         </div>
@@ -499,7 +434,7 @@
             </button>
             <button id="central-config-btn" class="flex-1 race-control-btn disabled:opacity-50 disabled:cursor-not-allowed">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="control-icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1 2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> CONFIG
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="control-icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1 2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> CONFIG
                 </span>
             </button>
             <button id="reset-race-btn" class="flex-1 race-control-btn disabled:opacity-50 disabled:cursor-not-allowed" disabled>
@@ -530,7 +465,7 @@
                         </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD MOVIMIENTO</label>
+                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD IA</label>
                                 <span id="p1-threshold-disp" class="text-xs font-black text-amber-700 bg-amber-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
@@ -538,7 +473,6 @@
                                 <input type="range" id="p1-threshold" min="5" max="80" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-600">
                                 <button class="btn-adjust" onclick="adjT(1, 1)">+</button>
                              </div>
-                             <p class="text-[9px] text-amber-800 mt-1 font-bold">Bajo = Detecta cualquier sombra. Alto = Solo coches grandes.</p>
                         </div>
                         <div>
                              <label class="block text-[10px] font-bold text-amber-900 mb-1">Sonido P1</label>
@@ -568,7 +502,7 @@
                         </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD MOVIMIENTO</label>
+                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD IA</label>
                                 <span id="p2-threshold-disp" class="text-xs font-black text-orange-700 bg-orange-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
@@ -576,7 +510,6 @@
                                 <input type="range" id="p2-threshold" min="5" max="80" value="20" class="flex-1 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-orange-600">
                                 <button class="btn-adjust" onclick="adjT(2, 1)">+</button>
                              </div>
-                             <p class="text-[9px] text-amber-800 mt-1 font-bold">Bajo = Detecta cualquier sombra. Alto = Solo coches grandes.</p>
                         </div>
                          <div>
                              <label class="block text-[10px] font-bold text-amber-900 mb-1">Sonido P2</label>
@@ -608,16 +541,6 @@
                             <option value="Infinity">Infinito</option>
                         </select>
                     </div>
-                    <!-- NEW: Minimum Lap Time Input (Initial value for learning) -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Tiempo Mínimo Inicial (s)</label>
-                        <input type="number" id="min-lap-time" value="3.0" min="0.5" step="0.1" class="gold-input w-full p-1.5 rounded-lg text-xs border-2 border-red-400 bg-red-50 text-red-900" title="Tiempo durante el cual se ignora cualquier movimiento tras cruzar meta" />
-                        <div class="flex items-center mt-1">
-                            <input type="checkbox" id="auto-adjust-toggle" checked class="mr-1 h-3 w-3 accent-red-600">
-                            <label for="auto-adjust-toggle" class="text-[9px] text-red-800 font-bold cursor-pointer">Aprendizaje Individual</label>
-                        </div>
-                    </div>
-
                     <div class="flex items-center justify-between pt-4 bg-white/30 p-2 rounded-lg border border-amber-200">
                          <label for="voice-toggle" class="text-xs font-bold text-amber-900">Comentarios Voz:</label>
                          <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
@@ -625,14 +548,22 @@
                             <label for="voice-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-amber-200 cursor-pointer border border-amber-500"></label>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center justify-between pt-4 bg-white/30 p-2 rounded-lg border border-amber-200">
-                         <label for="false-start-toggle" class="text-xs font-bold text-red-900">Detector Salidas Nulas:</label>
-                         <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                            <input type="checkbox" name="false-start-toggle" id="false-start-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-amber-500 appearance-none cursor-pointer" checked/>
-                            <label for="false-start-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-amber-200 cursor-pointer border border-amber-500"></label>
-                        </div>
+                </div>
+                 <!-- NUEVA SECCION: SEGURIDAD -->
+                 <div class="mt-4 flex flex-col sm:flex-row gap-4 items-center justify-center p-3 bg-red-50/50 rounded-lg border border-red-200">
+                    <label class="text-xs font-black text-amber-900 uppercase tracking-widest flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Tiempo de Seguridad (IA):
+                    </label>
+                    <div class="flex gap-2">
+                        <select id="safety-time-select" class="gold-input p-1.5 rounded-lg text-xs font-bold text-center">
+                            <option value="1000">1 Segundo (Pista corta)</option>
+                            <option value="3000" selected>3 Segundos (Estándar)</option>
+                            <option value="5000">5 Segundos (Pista media)</option>
+                            <option value="10000">10 Segundos (Pista larga)</option>
+                        </select>
                     </div>
+                    <p class="text-[9px] text-amber-800 italic max-w-xs text-center">Evita dobles conteos. El sistema ignora detecciones durante este tiempo tras cruzar la meta.</p>
                 </div>
             </div>
         </div>
@@ -640,8 +571,11 @@
         <!-- VIDEO BOX -->
         <div id="video-feed-box" class="gold-panel px-4 py-3 w-full mb-6 relative">
             <div class="flex justify-between items-center border-b-2 border-amber-800/20 pb-3 mb-3">
-                <h2 class="text-base neon-gold-title">Sensor Movimiento Dual</h2>
+                <h2 class="text-base neon-gold-title">Cámara Twin ROI</h2>
                 <div class="flex space-x-2">
+                    <button id="calibrate-btn" class="p-2 px-4 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 text-white hover:from-amber-500 hover:to-amber-700 transition shadow-lg border border-amber-200 text-xs font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
+                        Auto Calibrar
+                    </button>
                     <button id="camera-on-btn" class="p-2 rounded-full bg-gradient-to-b from-green-500 to-green-700 text-white hover:from-green-600 hover:to-green-800 disabled:opacity-50 transition shadow-lg border border-green-300">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
                     </button>
@@ -658,8 +592,14 @@
             <!-- OVERLAYS SOBRE EL VIDEO -->
             <div id="video-container" class="rounded-xl border-4 border-yellow-400/50">
                 <video id="webcam-feed" class="w-full shadow-inner" autoplay playsinline></video>
-                <div id="cam-toast"></div>
                 
+                <!-- ALERT DE CALIBRACION -->
+                <div id="calib-overlay" class="calib-overlay">
+                    <div class="spinner"></div>
+                    <h3 class="text-2xl font-black text-yellow-300 uppercase tracking-widest drop-shadow-md">Calibrando Sensores</h3>
+                    <p class="text-base mt-2 text-white font-bold bg-black/50 px-4 py-1 rounded-full">Mantén la pista despejada</p>
+                </div>
+
                 <!-- ALERT DE SALIDA NULA -->
                 <div id="false-start-alert">
                     <h2 class="text-5xl font-black uppercase tracking-widest mb-4 text-white drop-shadow-md">¡SALIDA NULA!</h2>
@@ -668,7 +608,6 @@
 
                 <!-- ROI PLAYER 1 (AZUL) -->
                 <div id="roi-p1" class="movable-rectangle" style="top: 25%; left: 10%;">
-                    <div class="scan-line"></div>
                     <div class="roi-label">P1</div>
                     <div id="msg-p1" class="test-msg"></div>
                     <div id="val-p1" class="detection-val">0</div>
@@ -677,7 +616,6 @@
                 </div>
                 <!-- ROI PLAYER 2 (ROJO) -->
                 <div id="roi-p2" class="movable-rectangle" style="top: 25%; left: 60%;">
-                    <div class="scan-line"></div>
                     <div class="roi-label">P2</div>
                     <div id="msg-p2" class="test-msg"></div>
                     <div id="val-p2" class="detection-val">0</div>
@@ -758,30 +696,30 @@
         <div class="modal-content p-8 w-full max-w-lg neon-border-box text-center">
             <div class="mb-6 border-b-2 border-amber-300 pb-4">
                 <h3 class="text-3xl font-black text-amber-950 uppercase">Guía Rápida</h3>
-                <p class="text-amber-800 font-bold text-sm">Nuevo Motor de Detección</p>
+                <p class="text-amber-800 font-bold text-sm">Configuración en 4 pasos</p>
             </div>
             
             <div class="text-left space-y-4 mb-8">
                 <div class="tut-step">
-                    <span class="tut-icon">✨</span>
-                    <strong>NUEVO MOTOR:</strong> Ahora detectamos <span class="text-red-600 font-black">COLOR</span>, no brillo. ¡Más preciso!
+                    <span class="tut-icon">📱</span>
+                    <strong>1. CÁMARA FIJA:</strong> Enfoca la pista con tu dispositivo (Móvil, PC, Tablet). El ángulo no importa, evita que los sensores se toquen.
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">🎯</span>
-                    <strong>1. SENSORES:</strong> Coloca los ROIs (sensores) sobre la pista.
+                    <strong>2. SENSORES:</strong> Arrastra los cuadrados (ORO y COBRE) sobre cada carril donde pasan los coches.
                 </div>
                 <div class="tut-step">
-                    <span class="tut-icon">⚡</span>
-                    <strong>2. SENSIBILIDAD:</strong> Ajusta en CONFIG si no detecta el coche (subir) o si detecta fantasmas (bajar).
+                    <span class="tut-icon">✨</span>
+                    <strong>3. CALIBRAR:</strong> Con la pista VACÍA, pulsa "AUTO CALIBRAR". La IA ajustará la luz sola.
                 </div>
                 <div class="tut-step">
-                     <span class="tut-icon">🧠</span>
-                     <strong>3. AUTO-LEARNING:</strong> Aprendizaje 100% independiente para cada carril.
+                    <span class="tut-icon">🏎️</span>
+                    <strong>4. PRUEBA:</strong> Pasa un coche con la mano. Si sale <span class="text-green-600 font-black">"TEST OK"</span>, ¡estás listo!
                 </div>
             </div>
 
             <button id="close-tutorial-btn" class="w-full bg-gradient-to-r from-amber-600 to-amber-800 text-white font-bold py-4 rounded-xl hover:from-amber-500 hover:to-amber-700 transition shadow-xl border border-amber-400/50 text-lg tracking-widest uppercase">
-                ¡A CORRER!
+                ¡ENTENDIDO, A CORRER!
             </button>
         </div>
     </div>
@@ -873,12 +811,13 @@
         const resetRaceBtn = document.getElementById('reset-race-btn');
         const configPanel = document.getElementById('config-panel');
         const centralConfigBtn = document.getElementById('central-config-btn');
-        const camToast = document.getElementById('cam-toast');
+        const calibrateBtn = document.getElementById('calibrate-btn');
+        const calibOverlay = document.getElementById('calib-overlay');
         
         const trackLengthInput = document.getElementById('track-length-input');
         const lapLimitSelect = document.getElementById('lap-limit-select');
+        const safetyTimeSelect = document.getElementById('safety-time-select');
         const voiceToggle = document.getElementById('voice-toggle');
-        const falseStartToggle = document.getElementById('false-start-toggle'); 
         const recordNotification = document.getElementById('record-notification');
         const cameraOnBtn = document.getElementById('camera-on-btn');
         const cameraOffBtn = document.getElementById('camera-off-btn');
@@ -886,8 +825,6 @@
         const falseStartAlert = document.getElementById('false-start-alert');
         const falseStartPlayerName = document.getElementById('false-start-player');
         const exportExcelBtn = document.getElementById('export-excel-btn');
-        const autoAdjustToggle = document.getElementById('auto-adjust-toggle'); 
-        const minLapTimeInput = document.getElementById('min-lap-time'); 
         
         // Tutorial
         const tutorialModal = document.getElementById('tutorialModal');
@@ -899,17 +836,16 @@
 
         // Estado
         let cameraStream = null;
-        let videoTrack = null;
-        
         let isProcessing = false;
         let isRaceActive = false;
         let isDetectionReady = false;
         let isCountdown = false;
         let raceAborted = false;
+        let isCalibrating = false;
         let raceStartTime = 0;
         let raceIntervalId = null;
         let totalLapsTarget = 10;
-        // ANTI-SHAKE VARIABLES REMOVED
+        let blindTimeMs = 3000; // Valor por defecto
         
         const players = [
             {
@@ -918,18 +854,19 @@
                 roiId: 'roi-p1', valId: 'val-p1', msgId: 'msg-p1',
                 lapCountId: 'p1-lap-count', currentLapId: 'p1-current-lap',
                 bestLapId: 'p1-best-lap', lastLapId: 'p1-last-lap', avgSpeedId: 'p1-avg-speed',
-                avgTimeId: 'p1-avg-time', gapId: 'p1-gap', debugId: 'p1-debug',
+                avgTimeId: 'p1-avg-time', gapId: 'p1-gap',
                 thresholdId: 'p1-threshold', thresholdDispId: 'p1-threshold-disp',
                 soundId: 'p1-sound',
+                
+                // State for game
                 laps: 0, lapHistory: [], bestLap: Infinity, lapStartTime: 0, lastRecordTime: 0,
                 totalTime: 0, isBlocked: false, finished: false,
-                isCrossing: false, 
-                crossingStartTime: 0, 
-                hasCrossedStart: false, 
-                sensitivity: 20, 
-                bgData: null, // Background model
-                soundTone: "C5",
-                safeDeadTime: 3000 // Individual Dead Time
+                hasCrossedStart: false, // FLAG for first crossing logic
+                
+                // Smart Detection State
+                sensitivity: 20, // Delta threshold
+                baseBrightness: null,
+                soundTone: "C5"
             },
             {
                 id: 2,
@@ -937,21 +874,23 @@
                 roiId: 'roi-p2', valId: 'val-p2', msgId: 'msg-p2',
                 lapCountId: 'p2-lap-count', currentLapId: 'p2-current-lap',
                 bestLapId: 'p2-best-lap', lastLapId: 'p2-last-lap', avgSpeedId: 'p2-avg-speed',
-                avgTimeId: 'p2-avg-time', gapId: 'p2-gap', debugId: 'p2-debug',
+                avgTimeId: 'p2-avg-time', gapId: 'p2-gap',
                 thresholdId: 'p2-threshold', thresholdDispId: 'p2-threshold-disp',
                 soundId: 'p2-sound',
+                
+                // State for game
                 laps: 0, lapHistory: [], bestLap: Infinity, lapStartTime: 0, lastRecordTime: 0,
                 totalTime: 0, isBlocked: false, finished: false,
-                isCrossing: false, 
-                crossingStartTime: 0, 
-                hasCrossedStart: false,
-                sensitivity: 20, 
-                bgData: null, // Background model
-                soundTone: "G5",
-                safeDeadTime: 3000 // Individual Dead Time
+                hasCrossedStart: false, // FLAG for first crossing logic
+                
+                // Smart Detection State
+                sensitivity: 20,
+                baseBrightness: null,
+                soundTone: "G5"
             }
         ];
 
+        // --- HELPER: ADJUST SENSITIVITY ---
         window.adjT = function(pId, delta) {
             const p = players[pId-1];
             let val = parseInt(document.getElementById(p.thresholdId).value);
@@ -966,284 +905,227 @@
             p.sensitivity = parseInt(val);
             document.getElementById(p.thresholdDispId).textContent = val;
         }
-        
-        // --- AUTO-LEARNING LOGIC (INDEPENDENT) ---
-        function updateAutoLearn(p) {
-             if (!autoAdjustToggle.checked) return;
-             if (p.bestLap === Infinity) return;
-             
-             // Calculate 70% of PERSONAL best lap
-             const newDeadTime = p.bestLap * 0.7;
-             // Enforce a hard minimum of 500ms
-             p.safeDeadTime = Math.max(500, newDeadTime);
-             
-             // Visual feedback in debug
-             const dbg = document.getElementById(p.debugId);
-             if(dbg) {
-                 dbg.textContent = `DT: ${(p.safeDeadTime/1000).toFixed(2)}s`;
-                 dbg.style.color = "#555";
-             }
-        }
 
-        // --- MSG HELPER ---
-        function showMessage(p, text, duration = 1000) {
-            const el = document.getElementById(p.msgId);
-            el.textContent = text;
-            el.classList.add('show');
-            if (p.msgTimeout) clearTimeout(p.msgTimeout);
-            p.msgTimeout = setTimeout(() => {
-                el.classList.remove('show');
-            }, duration);
-        }
-        
-        // --- CAMERA LOGIC SIMPLIFIED (CLEAN) ---
+        // --- CAMERA ---
         async function startWebcam() {
-            if (cameraStream) stopWebcam();
-            
+            if (cameraStream) return;
             videoStatus.textContent = 'INICIANDO...';
             try {
-                // Configuración para cámara TRASERA (Environment)
-                let constraints = {
-                     video: { 
-                        facingMode: "environment", // Prioridad: Cámara trasera
-                        width: { ideal: 640 }, 
-                        height: { ideal: 480 }
-                    } 
-                };
-
-                cameraStream = await navigator.mediaDevices.getUserMedia(constraints)
-                    .catch(err => {
-                        console.warn("Error con environment, reintentando basico:", err);
-                        return navigator.mediaDevices.getUserMedia({ video: true }); // Fallback a lo que sea
-                    });
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).catch(() => navigator.mediaDevices.getUserMedia({ video: true }));
 
                 videoElement.srcObject = cameraStream;
                 videoElement.onloadedmetadata = () => {
                     videoElement.play();
                     canvas.width = videoElement.videoWidth;
                     canvas.height = videoElement.videoHeight;
-                    videoTrack = cameraStream.getVideoTracks()[0];
-
                     isProcessing = true;
-                    // Reset BG models
-                    players.forEach(p => p.bgData = null);
                     processVideo();
                     document.querySelectorAll('.movable-rectangle').forEach(el => el.style.display = 'block');
                     videoStatus.textContent = 'CÁMARA ACTIVA - SISTEMA LISTO';
                     videoStatus.className = "text-center text-sm mt-2 text-green-600 font-bold uppercase";
                     cameraOnBtn.disabled = true;
                     cameraOffBtn.disabled = false;
+                    calibrateBtn.disabled = false;
                 };
             } catch (err) {
                 videoStatus.textContent = 'Error: ' + err.name;
                 videoStatus.className = "text-center text-sm mt-2 text-red-600";
-                console.error("Camera Error:", err);
-                alert("No se pudo acceder a la cámara. Por favor, verifica los permisos.");
             }
         }
-        
+
         function stopWebcam() {
             if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
             cameraStream = null; isProcessing = false; videoElement.srcObject = null;
             document.querySelectorAll('.movable-rectangle').forEach(el => el.style.display = 'none');
             cameraOnBtn.disabled = false; cameraOffBtn.disabled = true;
+            calibrateBtn.disabled = true;
             videoStatus.textContent = 'Cámara apagada.'; videoStatus.className = "text-amber-900 text-center text-sm mt-2";
         }
 
-        // --- ADAPTIVE BACKGROUND SUBTRACTION ENGINE (JS Port of OpenCV Logic) ---
-        function detectMotionInRoi(player) {
-            const roi = document.getElementById(player.roiId);
-            const vw = videoElement.videoWidth; 
-            const vh = videoElement.videoHeight;
+        // --- FAST DETECTION LOGIC ---
+        function getRoiBrightness(roi) {
+            const vw = videoElement.videoWidth; const vh = videoElement.videoHeight;
             if (!vw || !vh) return 0;
-            
             const rs = roi.style;
             const x = Math.floor(vw * (parseFloat(rs.left)||0)/100);
             const y = Math.floor(vh * (parseFloat(rs.top)||0)/100);
             const w = Math.ceil(vw * (parseFloat(rs.width)||10)/100);
             const h = Math.ceil(vh * (parseFloat(rs.height)||10)/100);
             
+            // Optimization: Only get the small patch data
             const ctx = canvas.getContext('2d', {willReadFrequently:true});
             ctx.drawImage(videoElement, x, y, w, h, 0, 0, w, h);
             
             try {
-                const imgData = ctx.getImageData(0,0,w,h);
-                const data = imgData.data; // Current Frame (Uint8)
-                const len = data.length;
-
-                // Init Background Model if needed
-                if (!player.bgData || player.bgData.length !== len) {
-                    player.bgData = new Float32Array(len);
-                    // Copy initial frame as background
-                    for(let i=0; i<len; i++) player.bgData[i] = data[i];
-                    return 0; 
+                const d = ctx.getImageData(0,0,w,h).data;
+                let t = 0; 
+                // Sample every 4th pixel for speed, adequate for brightness avg
+                for(let i=0; i<d.length; i+=16) { 
+                    t+=(d[i]+d[i+1]+d[i+2]); // Sum RGB
                 }
-
-                let motionMetric = 0;
-                // High precision step (check every pixel block)
-                const step = 4; // Check every pixel (R,G,B,A)
-
-                // ALPHA: Learning rate (0.05 = learns fast, 0.01 = learns slow)
-                // Lower alpha = resists momentary shadows better
-                const alpha = 0.05; 
-                const diffThreshold = 30; // Min change per channel to count as motion
-
-                for(let i=0; i<len; i+=4) { 
-                    // Calculate absolute difference per channel (Simple background subtraction)
-                    const rDiff = Math.abs(data[i] - player.bgData[i]);
-                    const gDiff = Math.abs(data[i+1] - player.bgData[i+1]);
-                    const bDiff = Math.abs(data[i+2] - player.bgData[i+2]);
-                    
-                    // If total difference is high enough, mark as motion
-                    if ((rDiff + gDiff + bDiff) > diffThreshold) {
-                        motionMetric++;
-                    }
-
-                    // ADAPTIVE LEARNING: Update background towards current frame
-                    // This is the Running Average method
-                    player.bgData[i] = (1 - alpha) * player.bgData[i] + alpha * data[i];
-                    player.bgData[i+1] = (1 - alpha) * player.bgData[i+1] + alpha * data[i+1];
-                    player.bgData[i+2] = (1 - alpha) * player.bgData[i+2] + alpha * data[i+2];
-                }
-                
-                const totalPixels = len / 4;
-                // Normalize result to 0-100 scale approximately
-                return (motionMetric / totalPixels) * 1000; 
-            } catch(e){
-                return 0;
-            }
+                return (t/3) / (d.length/16);
+            } catch(e){return 0;}
         }
-
-        // TOUCH BLOCK REMOVED FOR FLUID INTERACTION
 
         function processVideo() {
             if (!isProcessing) return;
             
-            try {
-                let motions = [];
-                players.forEach(p => {
-                    const val = detectMotionInRoi(p);
-                    motions.push(val);
-                });
+            const now = Date.now();
 
-                players.forEach((p, idx) => {
-                    const roi = document.getElementById(p.roiId);
-                    
-                    // INDEPENDENT DEAD TIME CHECK
-                    if (isRaceActive && (Date.now() - p.lastRecordTime < p.safeDeadTime)) {
-                        roi.classList.add('roi-blocked'); 
-                        roi.classList.remove('roi-detected');
-                        document.getElementById(p.valId).textContent = "ESPERA";
-                        // Don't process motion if blocked
-                        return; 
-                    } else {
-                         roi.classList.remove('roi-blocked');
+            players.forEach(p => {
+                const roi = document.getElementById(p.roiId);
+                const currentBri = getRoiBrightness(roi);
+                document.getElementById(p.valId).textContent = currentBri.toFixed(0);
+                
+                // Initialize baseline if needed
+                if (p.baseBrightness === null) p.baseBrightness = currentBri;
+
+                // Smart Detection Logic (Differential)
+                const diff = Math.abs(currentBri - p.baseBrightness);
+                const crossed = diff > p.sensitivity;
+
+                if (crossed) {
+                    roi.classList.add('roi-detected');
+                } else {
+                    roi.classList.remove('roi-detected');
+                    // Slow adaptation to ambient light changes if not crossed
+                    // This prevents the "ghost" of a car from becoming the new background
+                    if (!isCalibrating) {
+                        p.baseBrightness = (p.baseBrightness * 0.95) + (currentBri * 0.05);
                     }
-                    
-                    const motionVal = motions[idx];
-                    document.getElementById(p.valId).textContent = Math.floor(motionVal);
+                }
 
-                    const triggerThreshold = p.sensitivity; 
-                    const offThreshold = p.sensitivity * 0.5;
-
-                    let currentlyCrossed = false;
+                // Logic Dispatch
+                if (!isCalibrating) {
                     
-                    if (motionVal > triggerThreshold) {
-                        currentlyCrossed = true;
-                    } else if (p.isCrossing && motionVal > offThreshold) {
-                        currentlyCrossed = true;
-                    } else {
-                        currentlyCrossed = false;
+                    // 0. Pre-Race Test Mode (Cuando no hay carrera activa)
+                    if (!isRaceActive && !isCountdown && crossed) {
+                         document.getElementById(p.msgId).textContent = "TEST OK";
+                    } else if (!isRaceActive) {
+                         document.getElementById(p.msgId).textContent = "";
                     }
 
-                    // --- SMART DURATION LOGIC ---
-                    if (currentlyCrossed) {
-                        roi.classList.add('roi-detected');
-                        if (!p.isCrossing) {
-                            // Rising Edge
-                            p.isCrossing = true;
-                            p.crossingStartTime = Date.now();
-                            if (!isRaceActive && !isCountdown) {
-                                 showMessage(p, "TEST...", 500);
-                            }
+                    // 1. False Start
+                    if (isCountdown && !raceAborted) {
+                         if (crossed && !p.isBlocked) {
+                             handleFalseStart(p);
+                             p.isBlocked = true;
+                         }
+                    }
+                    // 2. Normal Race
+                    else if (isRaceActive && isDetectionReady && !p.finished) {
+                        
+                        // --- LÓGICA DE TIEMPO CIEGO ---
+                        // Si estamos en el periodo de "cálculo IA", ignoramos todo
+                        // Usamos la variable dinámica blindTimeMs
+                        if (now - p.lastRecordTime < blindTimeMs) {
+                             // Do nothing, just wait.
+                             // La UI ya muestra el bloqueo (roi-locked)
+                             return;
                         }
-                    } else {
-                        roi.classList.remove('roi-detected');
-                        if (p.isCrossing) {
-                            // Falling Edge
-                            p.isCrossing = false;
-                            const duration = Date.now() - p.crossingStartTime;
-                            
-                            // Filters
-                            const minDuration = 15; // 15ms (approx 1 frame)
-                            const maxDuration = 2500; // 2.5s
 
-                            let debugMsg = `${duration}ms`;
-                            
-                            if (duration > minDuration && duration < maxDuration) {
-                                 debugMsg += " (OK)";
-                                 handleValidEvent(p, p.crossingStartTime);
-                            } else if (duration >= maxDuration) {
-                                 debugMsg += " (Lento)";
-                                 showMessage(p, "🐢", 500);
+                        if (crossed && !p.isBlocked) {
+                            p.isBlocked = true;
+                            // KEY CHANGE: Check if first crossing
+                            if (!p.hasCrossedStart) {
+                                // First Crossing Logic - IGNORE TIME, JUST START CLOCK
+                                p.hasCrossedStart = true;
+                                p.lapStartTime = Date.now(); // Reset Lap Timer
+                                p.lastRecordTime = Date.now(); // IMPORTANT: Set debounce time now
+                                activateBlindTime(p); // LOCK
+                                synth.triggerAttackRelease(p.soundTone, "0.1");
+                                document.getElementById(p.msgId).textContent = "GO!";
                             } else {
-                                 debugMsg += " (Ruido)";
-                                 showMessage(p, "⚡", 500);
+                                // Subsequent Crossings Logic
+                                document.getElementById(p.msgId).textContent = "OK";
+                                recordLap(p);
                             }
-                            
-                            // Debug text update only if NOT blocked (blocked handled above)
-                             const dbgEl = document.getElementById(p.debugId);
-                             if(dbgEl) {
-                                 dbgEl.textContent = debugMsg;
-                                 dbgEl.style.color = (duration > minDuration && duration < maxDuration) ? "green" : "red";
-                             }
+                        } else if (!crossed && p.isBlocked) {
+                            p.isBlocked = false;
+                            // Clear momentary message after leaving sensor
+                            if(isRaceActive) setTimeout(() => document.getElementById(p.msgId).textContent = "", 500);
                         }
                     }
-                });
-            } catch (e) {
-                console.warn("Detection glitch ignored:", e);
-            }
+                    
+                    // General Debounce Reset
+                    if (!crossed && p.isBlocked && !isCountdown) {
+                        p.isBlocked = false;
+                    }
+                }
+            });
             requestAnimationFrame(processVideo);
         }
+        
+        // --- VISUAL LOCK HELPER ---
+        function activateBlindTime(p) {
+            const roiEl = document.getElementById(p.roiId);
+            roiEl.classList.add('roi-locked');
+            // Usamos blindTimeMs dinámico
+            setTimeout(() => {
+                roiEl.classList.remove('roi-locked');
+            }, blindTimeMs);
+        }
 
-        // ... [Rest of the logic (handleValidEvent, startRace, etc.) remains identical] ...
-        function handleValidEvent(p, eventTime) {
-            // Test Mode
-            if (!isRaceActive && !isCountdown) {
-                 showMessage(p, "✅", 500);
-                 return;
-            }
+        // --- AUTO CALIBRATION ---
+        async function runAutoCalibration() {
+            if (!isProcessing) return;
+            isCalibrating = true;
+            calibOverlay.classList.add('active');
             
-            // Countdown False Start (MODIFIED WITH TOGGLE)
-            const fsEnabled = document.getElementById('false-start-toggle').checked;
+            // 1. Measure Baseline
+            let samples = 0;
+            const p1Stats = { sum: 0, min: 255, max: 0 };
+            const p2Stats = { sum: 0, min: 255, max: 0 };
             
-            if (isCountdown && !raceAborted && fsEnabled) {
-                 if (!p.isBlocked) {
-                     handleFalseStart(p);
-                     p.isBlocked = true;
-                 }
-                 return;
-            }
-            // Race Mode
-            if (isRaceActive && isDetectionReady && !p.finished) {
-                // Double check safety
-                if (Date.now() - p.lastRecordTime < p.safeDeadTime) return; 
-
-                if (!p.hasCrossedStart) {
-                    p.hasCrossedStart = true;
-                    p.lapStartTime = eventTime; 
-                    p.lastRecordTime = Date.now();
-                    try { synth.triggerAttackRelease(p.soundTone || "C5", "0.1"); } catch(e){}
-                    showMessage(p, "GO!", 2000); // Show GO for 2 seconds
+            const framesToRead = 60; // Approx 1-2 seconds
+            
+            const readFrame = () => {
+                const b1 = getRoiBrightness(document.getElementById('roi-p1'));
+                const b2 = getRoiBrightness(document.getElementById('roi-p2'));
+                
+                p1Stats.sum += b1; p1Stats.min = Math.min(p1Stats.min, b1); p1Stats.max = Math.max(p1Stats.max, b1);
+                p2Stats.sum += b2; p2Stats.min = Math.min(p2Stats.min, b2); p2Stats.max = Math.max(p2Stats.max, b2);
+                
+                samples++;
+                if (samples < framesToRead) {
+                    requestAnimationFrame(readFrame);
                 } else {
-                    showMessage(p, "LAP", 1000);
-                    recordLap(p, eventTime); 
+                    finishCalibration(p1Stats, p2Stats);
                 }
-            }
+            };
+            
+            readFrame();
+        }
+        
+        function finishCalibration(s1, s2) {
+            // Set Base Brightness
+            players[0].baseBrightness = s1.sum / 60;
+            players[1].baseBrightness = s2.sum / 60;
+            
+            // Calculate Noise Floor (Max deviation from average)
+            const noise1 = Math.max(s1.max - players[0].baseBrightness, players[0].baseBrightness - s1.min);
+            const noise2 = Math.max(s2.max - players[1].baseBrightness, players[1].baseBrightness - s2.min);
+            
+            // Set Sensitivity: Noise * Multiplier (Safety Factor) + Minimum offset
+            // We want it sensitive but above noise.
+            const safeMargin = 15; // Minimum diff required
+            const newSens1 = Math.max(safeMargin, Math.ceil(noise1 * 1.5));
+            const newSens2 = Math.max(safeMargin, Math.ceil(noise2 * 1.5));
+            
+            document.getElementById('p1-threshold').value = newSens1;
+            document.getElementById('p2-threshold').value = newSens2;
+            updateThreshold(1);
+            updateThreshold(2);
+            
+            isCalibrating = false;
+            calibOverlay.classList.remove('active');
+            
+            if (voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sensores calibrados."));
         }
 
         function handleFalseStart(player) {
-            raceAborted = true; isCountdown = false;
+            raceAborted = true;
+            isCountdown = false;
             polySynth.triggerAttackRelease(["C2", "F#2", "C3"], "1");
             const pName = document.getElementById(player.nameId).value;
             falseStartPlayerName.textContent = pName;
@@ -1256,6 +1138,7 @@
             document.querySelectorAll('.light').forEach(l => l.className = "light");
         }
 
+        // --- RACE LOGIC ---
         function formatTime(ms) {
             if (ms === Infinity || ms <= 0) return "--.---";
             const min = Math.floor(ms/60000);
@@ -1265,69 +1148,56 @@
         }
 
         function startRace() {
-            if (Tone.context.state !== 'running') {
-                Tone.start().catch(e => console.log("Audio start warning:", e));
-            }
             configPanel.classList.remove('open');
             startRaceBtn.disabled = true; resetRaceBtn.disabled = true;
             falseStartAlert.classList.remove('show');
-            totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
-            // Initial Dead Time from Input
-            const initDeadTime = parseFloat(minLapTimeInput.value) * 1000;
             
+            totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
+            // LEER EL TIEMPO DE SEGURIDAD
+            blindTimeMs = parseInt(safetyTimeSelect.value);
+
             players.forEach(p => {
-                const sElem = document.getElementById(p.soundId);
-                p.soundTone = sElem ? sElem.value : "C5"; 
+                p.soundTone = document.getElementById(p.soundId).value;
                 p.laps=0; p.lapHistory=[]; p.bestLap=Infinity; p.totalTime=0; p.lastRecordTime=0; 
-                p.finished=false; p.isBlocked=false; p.hasCrossedStart=false;
-                p.isCrossing=false; 
-                p.prevData = null; p.bgData = null;
-                p.safeDeadTime = initDeadTime; // Reset to user input
+                p.finished=false; p.isBlocked=false; 
+                p.hasCrossedStart=false; // RESET FLAG
+                
                 updatePlayerUI(p);
                 document.getElementById(p.currentLapId).textContent = "ESPERANDO...";
                 document.getElementById(p.avgTimeId).textContent = "--.---";
                 document.getElementById(p.gapId).textContent = "--";
-                const dbgEl = document.getElementById(p.debugId); 
-                if(dbgEl) {
-                    dbgEl.textContent = `DT: ${(initDeadTime/1000).toFixed(1)}s`;
-                    dbgEl.style.color = "#555";
-                }
+                
+                // Clear any leftover lock visual
+                document.getElementById(p.roiId).classList.remove('roi-locked');
             });
             document.getElementById('race-time').textContent = "00:00.000";
             drawGraph();
+
             const lights = [1,2,3,4,5].map(i=>document.getElementById('light-'+i));
             lights.forEach(l=>l.className="light");
+
             (async()=>{
-                try {
-                    // --- STABILITY FIX: WAIT 1 SECOND BEFORE STARTING LOGIC ---
-                    // This allows vibrations from touching the "Start" button to settle
-                    await new Promise(r => setTimeout(r, 1000));
-                    
-                    isCountdown = true; raceAborted = false;
-                    if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Pilotos a sus puestos."));
-                    for(let i=0; i<5; i++){
-                        if(raceAborted) return;
-                        lights[i].classList.add('red'); 
-                        try { synth.triggerAttackRelease("C4","0.1"); } catch(e){}
-                        await new Promise(r=>setTimeout(r,1000));
-                    }
+                isCountdown = true; raceAborted = false;
+                if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Pilotos a sus puestos."));
+                
+                for(let i=0;i<4;i++){
                     if(raceAborted) return;
-                    await new Promise(r=>setTimeout(r, Math.random()*1500+500));
-                    if(raceAborted) return;
-                    isCountdown = false;
-                    lights.forEach(l=>{ l.classList.remove('red'); l.classList.add('green'); });
-                    try { polySynth.triggerAttackRelease(["C5","G5"],"0.5"); } catch(e){}
-                    isRaceActive=true; isDetectionReady=true; resetRaceBtn.disabled=false;
-                    raceStartTime=Date.now();
-                    players.forEach(p=>p.lapStartTime=raceStartTime);
-                    startTimers();
-                } catch (error) {
-                    console.error("Error crítico en secuencia de salida:", error);
-                    isCountdown = false; isRaceActive = false;
-                    startRaceBtn.disabled = false; resetRaceBtn.disabled = true;
-                    lights.forEach(l=>l.className="light");
-                    alert("Hubo un error al iniciar la secuencia. Por favor, inténtalo de nuevo.");
+                    lights[i].classList.add('red'); synth.triggerAttackRelease("C4","0.1");
+                    await new Promise(r=>setTimeout(r,1000));
                 }
+                
+                if(raceAborted) return;
+                await new Promise(r=>setTimeout(r, Math.random()*1500+500));
+                
+                if(raceAborted) return;
+                isCountdown = false;
+                lights.forEach(l=>{l.classList.remove('red'); l.classList.add('green');});
+                polySynth.triggerAttackRelease(["C5","G5"],"0.5");
+                
+                isRaceActive=true; isDetectionReady=true; resetRaceBtn.disabled=false;
+                raceStartTime=Date.now();
+                players.forEach(p=>p.lapStartTime=raceStartTime);
+                startTimers();
             })();
         }
 
@@ -1337,59 +1207,76 @@
                 const now = Date.now();
                 document.getElementById('race-time').textContent = formatTime(now - raceStartTime);
                 players.forEach(p => {
-                    if(!p.finished && p.hasCrossedStart) {
-                        const elap = now - p.lapStartTime;
-                        const sec = Math.floor(elap/1000);
-                        const ms = String(elap%1000).padStart(3,'0');
-                        document.getElementById(p.currentLapId).textContent = `${sec}.${ms}`;
+                    if(!p.finished) {
+                        // Only show time if race started for player
+                        if (p.hasCrossedStart) {
+                            const elap = now - p.lapStartTime;
+                            const sec = Math.floor(elap/1000);
+                            const ms = String(elap%1000).padStart(3,'0');
+                            document.getElementById(p.currentLapId).textContent = `${sec}.${ms}`;
+                        }
                     }
                 });
                 updateGaps();
             }, 40);
         }
 
-        function recordLap(p, preciseTime) {
+        function recordLap(p) {
             const now = Date.now();
+            if (now - p.lastRecordTime < blindTimeMs) return; 
+            
+            // DOUBLE CHECK: If logic failed and this is somehow first crossing, abort
+            if (!p.hasCrossedStart) {
+                 p.hasCrossedStart = true; p.lapStartTime = now; p.lastRecordTime = now; activateBlindTime(p); return;
+            }
+
             p.lastRecordTime = now;
-            const lapEndTime = preciseTime || now;
-            const lapTime = lapEndTime - p.lapStartTime;
+            activateBlindTime(p); // LOCK SENSORS
+
+            const lapTime = now - p.lapStartTime;
             p.lapHistory.push(lapTime);
             p.laps++;
-            p.lapStartTime = lapEndTime; 
+            p.lapStartTime = now;
+            
             let isNewRecord = false;
             if (lapTime < p.bestLap) {
                 p.bestLap = lapTime;
-                showMessage(p, "RÉCORD!", 1500); // Show record message
                 showNotification(`RÉCORD P${p.id}!`);
                 isNewRecord = true;
-                updateAutoLearn(p); // Update specific player learning
-            } else if (p.laps === 1) {
-                updateAutoLearn(p); // Learn from first lap too
             }
 
-            try { synth.triggerAttackRelease(p.soundTone || "C5", "0.1"); } catch(e){}
+            synth.triggerAttackRelease(p.soundTone, "0.1");
             updatePlayerUI(p);
+            
             if (voiceToggle.checked) {
                 const name = document.getElementById(p.nameId).value;
+                
+                // --- CAMBIO: SOLO HABLA SI ES RÉCORD ---
                 if (isNewRecord) {
                     const lapTimeSec = (lapTime/1000).toFixed(2);
                     const msg = new SpeechSynthesisUtterance(`¡Vuelta rápida de ${name}! ${lapTimeSec}`);
-                    msg.rate = 1.3; window.speechSynthesis.speak(msg);
+                    msg.rate = 1.3; 
+                    window.speechSynthesis.speak(msg);
                 }
+                // ---------------------------------------
+
                 if(totalLapsTarget !== Infinity) {
                     const remaining = totalLapsTarget - p.laps;
                     if(remaining === 5) {
                         const msg5 = new SpeechSynthesisUtterance(`Atención ${name}, quedan 5 vueltas.`);
                         msg5.rate = 1.2; window.speechSynthesis.speak(msg5);
                     }
-                    if(remaining === 1) {
+                    if(remaining === 1) { // Logic fix: remaining is calculated after incrementing lap
+                         // Actually, if total is 10. Lap 9 just finished. p.laps is 9. remaining is 1. Correct.
                         const msgLast = new SpeechSynthesisUtterance(`¡Última vuelta para ${name}!`);
                         msgLast.rate = 1.2; window.speechSynthesis.speak(msgLast);
                     }
                 }
             }
+
             if(totalLapsTarget!==Infinity && p.laps>=totalLapsTarget) {
-                p.finished = true; p.totalTime = lapEndTime - raceStartTime;
+                p.finished = true;
+                p.totalTime = now - raceStartTime;
                 document.getElementById(p.lapCountId).textContent = "FIN";
                 document.getElementById(p.currentLapId).textContent = "META";
                 polySynth.triggerAttackRelease(["E6"], "0.2");
@@ -1403,6 +1290,7 @@
             document.getElementById(p.bestLapId).textContent = formatTime(p.bestLap);
             const last = p.lapHistory.length>0 ? p.lapHistory[p.lapHistory.length-1] : 0;
             document.getElementById(p.lastLapId).textContent = formatTime(last);
+            
             if(p.laps>0) {
                 const tot = p.lapHistory.reduce((a,b)=>a+b,0);
                 const avg = tot/p.laps;
@@ -1417,6 +1305,7 @@
              const now = Date.now();
              const t1 = players[0].finished ? players[0].totalTime : (players[0].laps > 0 ? (players[0].lapHistory.reduce((a,b)=>a+b,0) + (now - players[0].lapStartTime)) : 0);
              const t2 = players[1].finished ? players[1].totalTime : (players[1].laps > 0 ? (players[1].lapHistory.reduce((a,b)=>a+b,0) + (now - players[1].lapStartTime)) : 0);
+             
              if (players[0].laps > 0 && players[1].laps > 0) {
                  const diff = t1 - t2;
                  const diffSec = (Math.abs(diff)/1000).toFixed(1);
@@ -1441,8 +1330,10 @@
             if (p1.finished && p2.finished) winner = p1.totalTime < p2.totalTime ? p1 : p2;
             else if (p1.finished) winner = p1; else if (p2.finished) winner = p2;
             else winner = p1.laps > p2.laps ? p1 : p2;
+
             const wName = document.getElementById(winner.nameId).value;
             document.getElementById('winner-text').textContent = `Ganador: ${wName}`;
+            
             players.forEach(p => {
                 const n = document.getElementById(p.nameId).value;
                 const totalT = p.finished ? p.totalTime : (p.lapHistory.reduce((a,b)=>a+b,0)); 
@@ -1450,16 +1341,18 @@
                 const avgT = lapCount > 0 ? totalT / lapCount : 0;
                 const trackLen = parseFloat(trackLengthInput.value);
                 const avgSpd = avgT > 0 ? (trackLen / (avgT/1000)) * 3.6 : 0;
+
                 document.getElementById(`modal-p${p.id}-name`).textContent = n + (p===winner?" 👑":"");
                 document.getElementById(`modal-p${p.id}-total`).textContent = formatTime(totalT);
                 document.getElementById(`modal-p${p.id}-best`).textContent = formatTime(p.bestLap);
                 document.getElementById(`modal-p${p.id}-avg`).textContent = formatTime(avgT);
                 document.getElementById(`modal-p${p.id}-speed`).textContent = avgSpd.toFixed(1) + " km/h";
+
                 const ul = document.getElementById(`modal-p${p.id}-laps`);
                 ul.innerHTML = "";
                 p.lapHistory.forEach((lap, idx) => {
                     const li = document.createElement('li');
-                    li.className = "flex justify-between border-b border-gray-100 last:border-0 py-1 font-arial"; 
+                    li.className = "flex justify-between border-b border-gray-100 last:border-0 py-1 font-arial"; // Force Arial in list
                     const isBest = (lap === p.bestLap && p.bestLap !== Infinity); 
                     li.innerHTML = `<span>V${idx+1}</span> <span class="${isBest ? 'text-green-700 font-bold' : ''}">${formatTime(lap)}</span>`;
                     ul.appendChild(li);
@@ -1474,24 +1367,38 @@
         function exportToExcel() {
             const date = new Date().toLocaleString();
             const winnerText = document.getElementById('winner-text').textContent;
-            let csvContent = "data:text/csv;charset=utf-8,KRONODUAL V.2.1 - REPORTE DE CARRERA\n\n";
-            csvContent += `Fecha:,${date}\n${winnerText}\n\n`;
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "KRONODUAL V.2.0 - REPORTE DE CARRERA\n\n";
+            csvContent += `Fecha:,${date}\n`;
+            csvContent += `${winnerText}\n\n`;
             players.forEach(p => {
                 const name = document.getElementById(p.nameId).value;
                 const car = document.getElementById(p.carId).value;
                 const totalTime = document.getElementById(`modal-p${p.id}-total`).textContent;
                 const bestLap = document.getElementById(`modal-p${p.id}-best`).textContent;
                 const avgSpeed = document.getElementById(`modal-p${p.id}-speed`).textContent;
+                
                 csvContent += `PILOTO ${p.id} (${p.id===1?'ORO':'COBRE'}),${name.toUpperCase()}\n`;
-                csvContent += `Coche:,${car}\nTiempo Total:,${totalTime}\nMejor Vuelta:,${bestLap}\nVelocidad Media:,${avgSpeed}\nVUELTA,TIEMPO\n`;
-                p.lapHistory.forEach((lap, index) => { csvContent += `${index + 1},${formatTime(lap)}\n`; });
-                csvContent += "\n"; 
+                csvContent += `Coche:,${car}\n`;
+                csvContent += `Tiempo Total:,${totalTime}\n`;
+                csvContent += `Mejor Vuelta:,${bestLap}\n`;
+                csvContent += `Velocidad Media:,${avgSpeed}\n`;
+                csvContent += "VUELTA,TIEMPO\n";
+                
+                p.lapHistory.forEach((lap, index) => {
+                    csvContent += `${index + 1},${formatTime(lap)}\n`;
+                });
+                csvContent += "\n"; // Spacer between players
             });
+
+            // 4. Create Download Link
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
             link.setAttribute("download", `krono_race_${Date.now()}.csv`);
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            document.body.appendChild(link); // Required for FF
+            link.click();
+            document.body.removeChild(link);
         }
 
         function drawGraph() {
@@ -1500,25 +1407,42 @@
             ctx.canvas.width = w; ctx.canvas.height = 200;
             const p1d = players[0].lapHistory; const p2d = players[1].lapHistory;
             const maxL = Math.max(p1d.length, p2d.length);
+            
+            // Clean
             ctx.clearRect(0,0,w,200);
-            ctx.fillStyle = '#aaa'; ctx.font = '10px Arial'; ctx.fillText("TIEMPO (s)", 5, 10);
-            if(maxL===0) return;
+
+            // Draw Y-Axis Text
+            ctx.fillStyle = '#aaa'; ctx.font = '10px Arial';
+            ctx.fillText("TIEMPO (s)", 5, 10);
+            
+            if(maxL===0) {
+                 // Removed text drawing as requested
+                 return;
+            }
+
             const all = [...p1d, ...p2d];
             const maxT = Math.max(...all);
             const pad = 30; const gh = 160; const gw = w - pad*2;
             const bw = (gw / maxL) * 0.4;
+            
             ctx.shadowBlur = 10;
             for(let i=0; i<maxL; i++) {
                 const x = pad + i * (gw/maxL) + 10;
                 if(p1d[i]) {
                     const h = (p1d[i]/maxT)*gh;
-                    ctx.fillStyle = '#ffd700'; ctx.shadowColor = '#ffd700'; ctx.fillRect(x, 180-h, bw, h);
+                    ctx.fillStyle = '#ffd700'; 
+                    ctx.shadowColor = '#ffd700'; // Gold Glow
+                    ctx.fillRect(x, 180-h, bw, h);
                 }
                 if(p2d[i]) {
                     const h = (p2d[i]/maxT)*gh;
-                    ctx.fillStyle = '#b87333'; ctx.shadowColor = '#b87333'; ctx.fillRect(x+bw, 180-h, bw, h);
+                    ctx.fillStyle = '#b87333'; // Copper color
+                    ctx.shadowColor = '#b87333'; // Copper Glow
+                    ctx.fillRect(x+bw, 180-h, bw, h);
                 }
-                ctx.shadowBlur = 0; ctx.fillStyle='#aaa'; ctx.font='10px Arial'; ctx.textAlign='center'; ctx.fillText(i+1, x+bw, 195);
+                ctx.shadowBlur = 0; // Reset for text
+                ctx.fillStyle='#aaa'; ctx.font='10px Arial'; ctx.textAlign='center';
+                ctx.fillText(i+1, x+bw, 195);
             }
         }
         
@@ -1527,6 +1451,7 @@
             setTimeout(()=>recordNotification.classList.remove('show'),2000);
         }
 
+        // --- HISTORIAL ---
         function saveHistory(winner) {
             const rec = {
                 date: new Date().toLocaleString(),
@@ -1544,8 +1469,9 @@
             const hist = JSON.parse(localStorage.getItem('krono_twin_hist') || '[]');
             const tbody = document.getElementById('full-history-body');
             tbody.innerHTML = '';
-            if (hist.length === 0) document.getElementById('no-history-msg').classList.remove('hidden');
-            else {
+            if (hist.length === 0) {
+                document.getElementById('no-history-msg').classList.remove('hidden');
+            } else {
                 document.getElementById('no-history-msg').classList.add('hidden');
                 hist.forEach(r => {
                     const tr = document.createElement('tr');
@@ -1558,22 +1484,41 @@
             m.classList.remove('hidden'); setTimeout(()=>m.classList.add('open'),10);
         }
 
+        // --- INIT EVENTS ---
         document.getElementById('history-btn').onclick = loadHistory;
-        document.getElementById('close-history-btn').onclick = () => { const m = document.getElementById('historyModal'); m.classList.remove('open'); setTimeout(()=>m.classList.add('hidden'),300); };
-        document.getElementById('clear-history-btn').onclick = () => { localStorage.removeItem('krono_twin_hist'); loadHistory(); };
+        document.getElementById('close-history-btn').onclick = () => {
+             const m = document.getElementById('historyModal'); m.classList.remove('open');
+             setTimeout(()=>m.classList.add('hidden'),300);
+        };
+        document.getElementById('clear-history-btn').onclick = () => {
+            localStorage.removeItem('krono_twin_hist'); loadHistory();
+        };
         document.getElementById('modal-restart-btn').onclick = () => {
             document.getElementById('resultsModal').classList.remove('open');
             setTimeout(()=>document.getElementById('resultsModal').classList.add('hidden'),300);
             document.getElementById('race-time').textContent = "00:00.000";
             isRaceActive=false; clearInterval(raceIntervalId); startRaceBtn.disabled=false;
         };
-        // calibrateBtn removed as Motion Engine self-calibrates frame by frame
+        calibrateBtn.onclick = runAutoCalibration;
         exportExcelBtn.onclick = exportToExcel;
-        closeTutorialBtn.onclick = () => { tutorialModal.classList.remove('open'); polySynth.triggerAttackRelease(["C5", "E5"], "0.3"); };
+        
+        // Tutorial
+        closeTutorialBtn.onclick = () => {
+            tutorialModal.classList.remove('open');
+            // Play a little sound to confirm readiness
+            polySynth.triggerAttackRelease(["C5", "E5"], "0.3");
+        };
 
-        let actRoi = null; let isDrag = false; let isResize = false; let resizeHandle = null; 
-        let startX = 0, startY = 0; let startLeft = 0, startTop = 0, startWidth = 0, startHeight = 0;
+        // --- DRAG AND RESIZE LOGIC ---
+        let actRoi = null;
+        let isDrag = false;
+        let isResize = false;
+        let resizeHandle = null; 
+        let startX = 0, startY = 0;
+        let startLeft = 0, startTop = 0, startWidth = 0, startHeight = 0;
+
         function getEventPos(e) { return e.touches ? e.touches[0] : e; }
+
         function dragStart(e) {
             const handle = e.target.closest('.resize-handle');
             const roi = e.target.closest('.movable-rectangle');
@@ -1584,9 +1529,13 @@
             startLeft = roi.offsetLeft; startTop = roi.offsetTop;
             startWidth = roi.offsetWidth; startHeight = roi.offsetHeight;
             actRoi = roi;
-            if (handle) { isResize = true; resizeHandle = handle.classList.contains('handle-tl') ? 'tl' : 'br'; e.stopPropagation(); } 
-            else { isDrag = true; }
+            if (handle) {
+                isResize = true;
+                resizeHandle = handle.classList.contains('handle-tl') ? 'tl' : 'br';
+                e.stopPropagation();
+            } else { isDrag = true; }
         }
+
         function dragMove(e) {
             if (!isDrag && !isResize) return;
             e.preventDefault();
@@ -1610,7 +1559,9 @@
                 }
             }
         }
+
         function dragEnd() { isDrag = false; isResize = false; actRoi = null; }
+
         videoContainer.addEventListener('mousedown', dragStart);
         videoContainer.addEventListener('touchstart', dragStart, {passive: false});
         document.addEventListener('mousemove', dragMove);
@@ -1620,24 +1571,22 @@
 
         document.getElementById('p1-threshold').addEventListener('input', ()=>updateThreshold(1));
         document.getElementById('p2-threshold').addEventListener('input', ()=>updateThreshold(2));
-        document.getElementById('p1-sound').addEventListener('change', async (e) => { if (Tone.context.state !== 'running') await Tone.start(); synth.triggerAttackRelease(e.target.value, "0.2"); });
-        document.getElementById('p2-sound').addEventListener('change', async (e) => { if (Tone.context.state !== 'running') await Tone.start(); synth.triggerAttackRelease(e.target.value, "0.2"); });
-        
-        // switchCamBtn.onclick = cycleCamera; REMOVIDO
-
         startRaceBtn.onclick = startRace;
-        resetRaceBtn.onclick = () => { isRaceActive=false; clearInterval(raceIntervalId); startRaceBtn.disabled=false; falseStartAlert.classList.remove('show'); };
+        resetRaceBtn.onclick = () => { 
+            isRaceActive=false; clearInterval(raceIntervalId); 
+            startRaceBtn.disabled=false; falseStartAlert.classList.remove('show'); 
+        };
         centralConfigBtn.onclick = () => configPanel.classList.toggle('open');
         cameraOnBtn.onclick = startWebcam; cameraOffBtn.onclick = stopWebcam;
         document.getElementById('fullscreen-btn').onclick = () => !document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen();
         
-        // INIT
-        window.onload = async () => {
+        window.onload = () => {
              updateThreshold(1); updateThreshold(2);
-             // NO INTENTAR OBTENER DISPOSITIVOS
-             // await getConnectedDevices(); REMOVIDO
              startWebcam();
-             setTimeout(() => { tutorialModal.classList.add('open'); }, 500);
+             // SHOW TUTORIAL AUTOMATICALLY ON LOAD
+             setTimeout(() => {
+                 tutorialModal.classList.add('open');
+             }, 500);
         };
     </script>
 </body>
