@@ -38,7 +38,7 @@
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                setLogLevel('Debug'); 
+                // setLogLevel('Debug'); // Comentado para producción
                 if (initialAuthToken) {
                     await signInWithCustomToken(auth, initialAuthToken);
                 } else {
@@ -1180,7 +1180,7 @@
                 isCountdown = true; raceAborted = false;
                 if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Pilotos a sus puestos."));
                 
-                for(let i=0;i<4;i++){
+                for(let i=0;i<5;i++){
                     if(raceAborted) return;
                     lights[i].classList.add('red'); synth.triggerAttackRelease("C4","0.1");
                     await new Promise(r=>setTimeout(r,1000));
@@ -1571,6 +1571,15 @@
 
         document.getElementById('p1-threshold').addEventListener('input', ()=>updateThreshold(1));
         document.getElementById('p2-threshold').addEventListener('input', ()=>updateThreshold(2));
+
+        // SONIDO PREVIEW
+        document.getElementById('p1-sound').addEventListener('change', (e) => {
+            synth.triggerAttackRelease(e.target.value, "0.2");
+        });
+        document.getElementById('p2-sound').addEventListener('change', (e) => {
+            synth.triggerAttackRelease(e.target.value, "0.2");
+        });
+
         startRaceBtn.onclick = startRace;
         resetRaceBtn.onclick = () => { 
             isRaceActive=false; clearInterval(raceIntervalId); 
