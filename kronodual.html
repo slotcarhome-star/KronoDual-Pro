@@ -1580,6 +1580,14 @@
             synth.triggerAttackRelease(e.target.value, "0.2");
         });
 
+        // ACTUALIZACIÓN EN TIEMPO REAL DE VUELTAS
+        lapLimitSelect.addEventListener('change', () => {
+             totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
+             players.forEach(p => {
+                 document.getElementById(p.lapCountId).textContent = `V: ${p.laps} / ${totalLapsTarget===Infinity?'∞':totalLapsTarget}`;
+             });
+        });
+
         startRaceBtn.onclick = startRace;
         resetRaceBtn.onclick = () => { 
             isRaceActive=false; clearInterval(raceIntervalId); 
@@ -1591,6 +1599,10 @@
         
         window.onload = () => {
              updateThreshold(1); updateThreshold(2);
+             // Sync initial laps based on select value
+             totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
+             players.forEach(p => updatePlayerUI(p));
+
              startWebcam();
              // SHOW TUTORIAL AUTOMATICALLY ON LOAD
              setTimeout(() => {
