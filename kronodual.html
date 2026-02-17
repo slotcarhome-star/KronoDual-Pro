@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRONODUAL V.2.0 - Luxury Gold</title>
+    <title>KRONODUAL V.3.0 - Luxury Gold</title>
     
     <!-- METADATOS PWA Y PERMISOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -102,15 +102,15 @@
                 0 0 70px #ff8c00; /* Difuminado aumentado */
         }
         
-        /* ESTILO NEON BRONCE (AUTOR) */
+        /* ESTILO NEON NEGRO (AUTOR) */
         .author-glow {
             font-family: Arial, sans-serif !important;
-            color: #ffcc99; /* Centro claro bronce */
-            text-shadow: 0 0 8px #cd7f32, 0 0 12px #8b4513; /* Glow Bronce/Cobre */
+            color: #000000; /* Negro intenso */
+            text-shadow: 0 0 2px rgba(255,255,255,0.4), 0 0 5px rgba(0,0,0,0.3); /* Sutil brillo para legibilidad */
             font-size: 9px;
             letter-spacing: 0.3em;
             text-transform: uppercase;
-            font-weight: bold;
+            font-weight: 900;
         }
         
         .traffic-light-container.five-lights { display: flex; gap: 10px; }
@@ -289,6 +289,28 @@
         #reset-race-btn.race-control-btn { border-color: #ff7f50; color: #ff7f50; text-shadow: 0 0 5px #ff7f50; box-shadow: 0 0 10px rgba(255, 127, 80, 0.3); }
         #reset-race-btn.race-control-btn:hover:not(:disabled) { box-shadow: 0 0 25px #ff7f50; background: rgba(255,127,80,0.1); border-color: #fff; color: #fff; }
 
+        /* Neon Específico para PAUSE (COBRE / BRONCE) - BLACK EDITION */
+        #pause-race-btn {
+            background-color: #000000; /* Fondo Negro */
+            border: 2px solid #b87333; /* Borde Cobre */
+            color: #b87333; 
+            box-shadow: 0 0 15px rgba(184, 115, 51, 0.5), inset 0 0 10px rgba(184, 115, 51, 0.2); /* Glow Inicial */
+            text-shadow: 0 0 5px rgba(184, 115, 51, 0.8);
+            transition: all 0.2s ease;
+            font-weight: 900;
+        }
+        #pause-race-btn:hover:not(:disabled) {
+            background-color: #1a0f00;
+            box-shadow: 0 0 30px #ff7f50, inset 0 0 15px #ff7f50; /* Super Neon Glow */
+            color: #fff;
+            border-color: #ff7f50;
+            text-shadow: 0 0 15px #ff7f50;
+            transform: scale(1.05);
+        }
+        #pause-race-btn:disabled {
+            opacity: 0.4; cursor: not-allowed; border-color: #444; color: #555; text-shadow: none; box-shadow: none; background: #111;
+        }
+
         .control-icon { width: 18px; height: 18px; margin-right: 8px; display: inline-block; vertical-align: middle; filter: drop-shadow(0 0 2px currentColor); }
         .race-control-btn span { display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 100%;}
 
@@ -381,15 +403,17 @@
                     <h1 class="text-4xl sm:text-5xl main-title-glow font-black tracking-widest mr-2">
                         KRONODUAL
                     </h1>
-                    <span class="text-xl text-yellow-800 font-bold">V.2.0</span>
+                    <span class="text-xl text-yellow-800 font-bold">V.3.0</span>
                 </div>
                 <span class="ml-1 author-glow">By Albert Closa</span>
             </div>
             
             <div class="flex items-center gap-4 mt-2 sm:mt-0">
+                 <!-- Botón Tutorial Manual ELIMINADO -->
+
                  <button id="history-btn" class="flex items-center text-amber-900 hover:text-black transition-colors px-3 py-1 rounded-full bg-white/30 border border-amber-500/30 hover:bg-white/60 shadow-sm group" title="Ver Historial">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history mr-2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/><path d="M12 7v5l4 2"/></svg>
-                    <span class="text-[10px] font-bold uppercase tracking-wider">Historial</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider" data-lang-key="history_btn">Historial</span>
                 </button>
                 <button id="fullscreen-btn" class="text-amber-900 hover:text-black p-2 rounded-full bg-white/30 hover:bg-white/60 transition shadow-sm border border-amber-500/30">
                      <svg id="fs-icon-enter" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-maximize"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
@@ -408,17 +432,17 @@
         <!-- PANEL DE TIEMPO DIVIDIDO -->
         <div class="gold-panel w-full p-3 mb-6">
             <div class="text-center border-b-2 border-amber-800/20 pb-3 mb-3">
-                <p class="text-xs text-amber-900 font-bold tracking-[0.3em] uppercase">Tiempo Global</p>
+                <p class="text-xs text-amber-900 font-bold tracking-[0.3em] uppercase" data-lang-key="global_time">Tiempo Global</p>
                 <p id="race-time" class="text-5xl font-arial font-black text-transparent bg-clip-text bg-gradient-to-b from-black to-amber-900 drop-shadow-sm mt-1">00:00.000</p>
             </div>
-            <div class="grid grid-cols-2 gap-0 divide-x-2 divide-amber-800/20">
+            <div id="top-stats-grid" class="grid grid-cols-2 gap-0 divide-x-2 divide-amber-800/20">
                 <div class="text-center px-2">
-                    <p class="text-xs font-bold text-amber-800 tracking-widest mb-1">JUGADOR 1 (ORO)</p>
+                    <p class="text-xs font-bold text-amber-800 tracking-widest mb-1" data-lang-key="player_1">JUGADOR 1 (ORO)</p>
                     <p id="p1-lap-count" class="timer-value text-amber-900">V: 0 / 10</p>
                     <p id="p1-current-lap" class="text-2xl font-arial font-bold text-amber-700 mt-1 drop-shadow-sm">--.---</p>
                 </div>
-                <div class="text-center px-2">
-                    <p class="text-xs font-bold text-orange-800 tracking-widest mb-1">JUGADOR 2 (COBRE)</p>
+                <div id="p2-top-stats" class="text-center px-2">
+                    <p class="text-xs font-bold text-orange-800 tracking-widest mb-1" data-lang-key="player_2">JUGADOR 2 (COBRE)</p>
                     <p id="p2-lap-count" class="timer-value text-amber-900">V: 0 / 10</p>
                     <p id="p2-current-lap" class="text-2xl font-arial font-bold text-orange-700 mt-1 drop-shadow-sm">--.---</p>
                 </div>
@@ -429,17 +453,17 @@
         <div class="w-full flex space-x-3 mb-4">
             <button id="start-race-btn" class="flex-1 race-control-btn disabled:opacity-50 disabled:cursor-not-allowed">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="control-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg> INICIAR
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="control-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg> <span data-lang-key="start_race">INICIAR</span>
                 </span>
             </button>
             <button id="central-config-btn" class="flex-1 race-control-btn disabled:opacity-50 disabled:cursor-not-allowed">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="control-icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1 2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> CONFIG
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="control-icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1 2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span data-lang-key="config">CONFIG</span>
                 </span>
             </button>
             <button id="reset-race-btn" class="flex-1 race-control-btn disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="control-icon"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg> REINICIAR
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="control-icon"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg> <span data-lang-key="reset_race">REINICIAR</span>
                 </span>
             </button>
         </div>
@@ -447,25 +471,44 @@
         <!-- CONFIG PANEL (MOVED DOWN) -->
         <div id="config-panel" class="gold-panel w-full mb-4">
             <h2 class="text-sm neon-gold-title mb-3 border-b-2 border-amber-700/20 pb-2 flex items-center justify-start">
-                <span class="mr-2">⚙️</span> Configuración
+                <span class="mr-2">⚙️</span> <span data-lang-key="config_title">Configuración</span>
             </h2>
+
+            <!-- SELECTOR DE IDIOMA -->
+            <div class="mb-4">
+                 <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase" data-lang-key="language_label">Idioma / Language</label>
+                 <select id="language-select" class="gold-input w-full p-2 rounded-lg text-sm font-bold text-center">
+                    <option value="es" selected>🇪🇸 Español</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="fr">🇫🇷 Français</option>
+                 </select>
+            </div>
+
+            <!-- SELECTOR DE MODO DE JUEGO -->
+            <div class="mb-4">
+                 <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase" data-lang-key="game_mode_label">Modo de Juego</label>
+                 <select id="game-mode-select" class="gold-input w-full p-2 rounded-lg text-sm font-bold text-center">
+                    <option value="2" selected data-lang-key="mode_2p">🏁 2 JUGADORES (Duelo)</option>
+                    <option value="1" data-lang-key="mode_1p">⏱️ 1 JUGADOR (Contrarreloj)</option>
+                 </select>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- COLUMNA JUGADOR 1 -->
                 <div class="p-3 bg-yellow-100/30 rounded-xl border border-yellow-400 shadow-inner">
-                    <h3 class="text-xs font-black text-amber-900 uppercase mb-2 border-b border-amber-300 pb-1 tracking-wider">JUGADOR 1 (ORO)</h3>
+                    <h3 class="text-xs font-black text-amber-900 uppercase mb-2 border-b border-amber-300 pb-1 tracking-wider" data-lang-key="player_1">JUGADOR 1 (ORO)</h3>
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-[10px] font-bold text-amber-900 mb-1">Nombre</label>
+                            <label class="block text-[10px] font-bold text-amber-900 mb-1" data-lang-key="name_label">Nombre</label>
                             <input type="text" id="p1-name" value="Piloto 1" class="gold-input w-full p-1.5 rounded-lg border-l-8 border-yellow-500 text-xs" />
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-amber-900 mb-1">Coche</label>
+                            <label class="block text-[10px] font-bold text-amber-900 mb-1" data-lang-key="car_label">Coche</label>
                             <input type="text" id="p1-car" value="Porsche 911" class="gold-input w-full p-1.5 rounded-lg text-xs" />
                         </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD IA</label>
+                                <label class="text-[10px] font-bold text-amber-900" data-lang-key="sensitivity_label">SENSIBILIDAD IA</label>
                                 <span id="p1-threshold-disp" class="text-xs font-black text-amber-700 bg-amber-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
@@ -475,7 +518,7 @@
                              </div>
                         </div>
                         <div>
-                             <label class="block text-[10px] font-bold text-amber-900 mb-1">Sonido P1</label>
+                             <label class="block text-[10px] font-bold text-amber-900 mb-1" data-lang-key="sound_p1">Sonido P1</label>
                              <select id="p1-sound" class="gold-input w-full p-1.5 rounded-lg text-xs">
                                 <option value="C4">Grave (C4)</option>
                                 <option value="E4">Medio (E4)</option>
@@ -489,20 +532,20 @@
                 </div>
 
                 <!-- COLUMNA JUGADOR 2 -->
-                <div class="p-3 bg-orange-100/30 rounded-xl border border-orange-400 shadow-inner">
-                    <h3 class="text-xs font-black text-orange-900 uppercase mb-2 border-b border-orange-300 pb-1 tracking-wider">JUGADOR 2 (COBRE)</h3>
+                <div id="p2-config-block" class="p-3 bg-orange-100/30 rounded-xl border border-orange-400 shadow-inner">
+                    <h3 class="text-xs font-black text-orange-900 uppercase mb-2 border-b border-orange-300 pb-1 tracking-wider" data-lang-key="player_2">JUGADOR 2 (COBRE)</h3>
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-[10px] font-bold text-amber-900 mb-1">Nombre</label>
+                            <label class="block text-[10px] font-bold text-amber-900 mb-1" data-lang-key="name_label">Nombre</label>
                             <input type="text" id="p2-name" value="Piloto 2" class="gold-input w-full p-1.5 rounded-lg border-l-8 border-orange-500 text-xs" />
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-amber-900 mb-1">Coche</label>
+                            <label class="block text-[10px] font-bold text-amber-900 mb-1" data-lang-key="car_label">Coche</label>
                             <input type="text" id="p2-car" value="Audi R8" class="gold-input w-full p-1.5 rounded-lg text-xs" />
                         </div>
                         <div class="bg-white/60 p-2 rounded-lg border border-amber-200 shadow-sm">
                              <div class="flex justify-between items-center mb-1">
-                                <label class="text-[10px] font-bold text-amber-900">SENSIBILIDAD IA</label>
+                                <label class="text-[10px] font-bold text-amber-900" data-lang-key="sensitivity_label">SENSIBILIDAD IA</label>
                                 <span id="p2-threshold-disp" class="text-xs font-black text-orange-700 bg-orange-100 px-2 rounded">20</span>
                              </div>
                              <div class="flex items-center space-x-2">
@@ -512,7 +555,7 @@
                              </div>
                         </div>
                          <div>
-                             <label class="block text-[10px] font-bold text-amber-900 mb-1">Sonido P2</label>
+                             <label class="block text-[10px] font-bold text-amber-900 mb-1" data-lang-key="sound_p2">Sonido P2</label>
                              <select id="p2-sound" class="gold-input w-full p-1.5 rounded-lg text-xs">
                                 <option value="C4">Grave (C4)</option>
                                 <option value="E4">Medio (E4)</option>
@@ -529,20 +572,47 @@
             <div class="mt-4 pt-3 border-t-2 border-amber-700/20">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                      <div>
-                        <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Longitud Pista (m)</label>
+                        <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase" data-lang-key="track_length_label">Longitud Pista (m)</label>
                         <input type="number" id="track-length-input" value="15" min="1" step="0.5" class="gold-input w-full p-1.5 rounded-lg text-xs" />
                     </div>
+                    
+                    <!-- NUEVO SELECTOR TIPO DE CARRERA -->
                     <div>
-                        <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase">Vueltas</label>
-                        <select id="lap-limit-select" class="gold-input w-full p-1.5 rounded-lg text-xs">
-                            <option value="5">5 Vueltas</option>
-                            <option value="10" selected>10 Vueltas</option>
-                            <option value="25">25 Vueltas</option>
-                            <option value="Infinity">Infinito</option>
-                        </select>
+                        <label class="block text-[10px] font-bold text-amber-800 mb-1 uppercase" data-lang-key="race_condition_label">Tipo de Carrera</label>
+                        <div class="flex gap-2">
+                            <select id="race-condition-select" class="gold-input w-1/2 p-1.5 rounded-lg text-xs">
+                                <option value="laps" selected data-lang-key="condition_laps">Vueltas</option>
+                                <option value="time" data-lang-key="condition_time">Tiempo</option>
+                            </select>
+                            
+                            <!-- SELECTOR VUELTAS (VISIBLE POR DEFECTO) -->
+                            <select id="lap-limit-select" class="gold-input w-1/2 p-1.5 rounded-lg text-xs">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="25">25</option>
+                                <option value="Infinity">∞</option>
+                            </select>
+                            
+                            <!-- SELECTOR TIEMPO (OCULTO POR DEFECTO) -->
+                            <select id="time-limit-select" class="gold-input w-1/2 p-1.5 rounded-lg text-xs hidden">
+                                <option value="5">5 min</option>
+                                <option value="10">10 min</option>
+                                <option value="15">15 min</option>
+                                <option value="20">20 min</option>
+                                <option value="25">25 min</option>
+                                <option value="30">30 min</option>
+                                <option value="35">35 min</option>
+                                <option value="40">40 min</option>
+                                <option value="45">45 min</option>
+                                <option value="50">50 min</option>
+                                <option value="55">55 min</option>
+                                <option value="60">60 min</option>
+                            </select>
+                        </div>
                     </div>
+
                     <div class="flex items-center justify-between pt-4 bg-white/30 p-2 rounded-lg border border-amber-200">
-                         <label for="voice-toggle" class="text-xs font-bold text-amber-900">Comentarios Voz:</label>
+                         <label for="voice-toggle" class="text-xs font-bold text-amber-900" data-lang-key="voice_comments">Comentarios Voz:</label>
                          <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
                             <input type="checkbox" name="voice-toggle" id="voice-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-amber-500 appearance-none cursor-pointer" checked/>
                             <label for="voice-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-amber-200 cursor-pointer border border-amber-500"></label>
@@ -553,17 +623,17 @@
                  <div class="mt-4 flex flex-col sm:flex-row gap-4 items-center justify-center p-3 bg-red-50/50 rounded-lg border border-red-200">
                     <label class="text-xs font-black text-amber-900 uppercase tracking-widest flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        Tiempo de Seguridad (IA):
+                        <span data-lang-key="safety_time_label">Tiempo de Seguridad (IA):</span>
                     </label>
                     <div class="flex gap-2">
                         <select id="safety-time-select" class="gold-input p-1.5 rounded-lg text-xs font-bold text-center">
-                            <option value="1000">1 Segundo (Pista corta)</option>
-                            <option value="3000" selected>3 Segundos (Estándar)</option>
-                            <option value="5000">5 Segundos (Pista media)</option>
-                            <option value="10000">10 Segundos (Pista larga)</option>
+                            <option value="1000">1s</option>
+                            <option value="3000" selected>3s</option>
+                            <option value="5000">5s</option>
+                            <option value="10000">10s</option>
                         </select>
                     </div>
-                    <p class="text-[9px] text-amber-800 italic max-w-xs text-center">Evita dobles conteos. El sistema ignora detecciones durante este tiempo tras cruzar la meta.</p>
+                    <p class="text-[9px] text-amber-800 italic max-w-xs text-center" data-lang-key="safety_time_desc">Evita dobles conteos. El sistema ignora detecciones durante este tiempo tras cruzar la meta.</p>
                 </div>
             </div>
         </div>
@@ -571,9 +641,9 @@
         <!-- VIDEO BOX -->
         <div id="video-feed-box" class="gold-panel px-4 py-3 w-full mb-6 relative">
             <div class="flex justify-between items-center border-b-2 border-amber-800/20 pb-3 mb-3">
-                <h2 class="text-base neon-gold-title">Cámara Twin ROI</h2>
+                <h2 class="text-base neon-gold-title" data-lang-key="camera_title">Cámara Twin ROI</h2>
                 <div class="flex space-x-2">
-                    <button id="calibrate-btn" class="p-2 px-4 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 text-white hover:from-amber-500 hover:to-amber-700 transition shadow-lg border border-amber-200 text-xs font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled>
+                    <button id="calibrate-btn" class="p-2 px-4 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 text-white hover:from-amber-500 hover:to-amber-700 transition shadow-lg border border-amber-200 text-xs font-bold uppercase disabled:opacity-50 tracking-wider disabled:grayscale" disabled data-lang-key="btn_calibrate">
                         Auto Calibrar
                     </button>
                     <button id="camera-on-btn" class="p-2 rounded-full bg-gradient-to-b from-green-500 to-green-700 text-white hover:from-green-600 hover:to-green-800 disabled:opacity-50 transition shadow-lg border border-green-300">
@@ -596,13 +666,24 @@
                 <!-- ALERT DE CALIBRACION -->
                 <div id="calib-overlay" class="calib-overlay">
                     <div class="spinner"></div>
-                    <h3 class="text-2xl font-black text-yellow-300 uppercase tracking-widest drop-shadow-md">Calibrando Sensores</h3>
-                    <p class="text-base mt-2 text-white font-bold bg-black/50 px-4 py-1 rounded-full">Mantén la pista despejada</p>
+                    <h3 class="text-2xl font-black text-yellow-300 uppercase tracking-widest drop-shadow-md" data-lang-key="calibrating_title">Calibrando Sensores</h3>
+                    <p class="text-base mt-2 text-white font-bold bg-black/50 px-4 py-1 rounded-full" data-lang-key="calibrating_desc">Mantén la pista despejada</p>
+                </div>
+
+                <!-- ALERT BANDERA AMARILLA -->
+                <div id="yellow-flag-overlay" class="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-yellow-900/40 z-50 hidden backdrop-blur-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="#ffd700" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse drop-shadow-lg"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+                    <h2 class="text-5xl font-black text-yellow-400 uppercase tracking-widest drop-shadow-md mt-2" style="-webkit-text-stroke: 2px black;" data-lang-key="flag_yellow">BANDERA AMARILLA</h2>
+                    <div class="mt-4 flex gap-2">
+                        <div class="w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
+                        <div class="w-4 h-4 bg-yellow-400 rounded-full animate-ping delay-75"></div>
+                        <div class="w-4 h-4 bg-yellow-400 rounded-full animate-ping delay-150"></div>
+                    </div>
                 </div>
 
                 <!-- ALERT DE SALIDA NULA -->
                 <div id="false-start-alert">
-                    <h2 class="text-5xl font-black uppercase tracking-widest mb-4 text-white drop-shadow-md">¡SALIDA NULA!</h2>
+                    <h2 class="text-5xl font-black uppercase tracking-widest mb-4 text-white drop-shadow-md" data-lang-key="false_start">¡SALIDA NULA!</h2>
                     <p id="false-start-player" class="text-3xl font-bold text-yellow-300 bg-black/40 inline-block px-6 py-2 rounded-lg"></p>
                 </div>
 
@@ -625,31 +706,40 @@
             </div>
             
             <canvas id="video-canvas" class="hidden"></canvas>
-            <div id="video-status" class="text-center text-xs mt-3 text-amber-900 font-bold tracking-widest uppercase">Inicia la cámara para configurar carriles</div>
+            <div id="video-status" class="text-center text-xs mt-3 text-amber-900 font-bold tracking-widest uppercase" data-lang-key="video_status_init">Inicia la cámara para configurar carriles</div>
         </div>
 
         <!-- TELEMETRIA TWIN -->
         <div class="gold-panel w-full p-4 mb-6">
-            <h2 class="text-sm neon-gold-title mb-3 border-b-2 border-amber-800/20 pb-2 flex items-center justify-start text-yellow-600">
-                TELEMETRÍA EN VIVO
-            </h2>
-            <div class="telemetry-grid-twin">
+            <div class="flex justify-between items-center mb-3 border-b-2 border-amber-800/20 pb-2">
+                <h2 class="text-sm neon-gold-title flex items-center justify-start text-yellow-600 m-0" data-lang-key="telemetry_title">
+                    TELEMETRÍA EN VIVO
+                </h2>
+                <!-- BOTON PAUSA INTEGRADO EN EL PANEL DE TELEMETRIA -->
+                <button id="pause-race-btn" class="px-4 py-2 rounded-full text-[10px] uppercase tracking-widest flex items-center gap-2" disabled>
+                     <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" class="control-icon m-0" style="width:12px; height:12px;" stroke="none"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                     <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" class="control-icon m-0 hidden" style="width:12px; height:12px;" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                     <span id="pause-text" data-lang-key="pause">PAUSAR</span>
+                </button>
+            </div>
+            
+            <div id="telemetry-grid" class="telemetry-grid-twin">
                 <!-- COLUMNA P1 -->
                 <div class="telemetry-col">
                     <div class="telemetry-item bg-p1-soft">
-                        <p class="telemetry-label text-amber-800">MEJOR VUELTA</p>
+                        <p class="telemetry-label text-amber-800" data-lang-key="best_lap">MEJOR VUELTA</p>
                         <p id="p1-best-lap" class="telemetry-data font-arial text-lg">--.---</p>
                     </div>
                     <div class="telemetry-item">
-                        <p class="telemetry-label">ÚLTIMA</p>
+                        <p class="telemetry-label" data-lang-key="last_lap">ÚLTIMA</p>
                         <p id="p1-last-lap" class="telemetry-data font-arial">--.---</p>
                     </div>
                     <div class="telemetry-item">
-                        <p class="telemetry-label">MEDIA</p>
+                        <p class="telemetry-label" data-lang-key="avg_time">MEDIA</p>
                         <p id="p1-avg-time" class="telemetry-data font-arial">--.---</p>
                     </div>
                     <div class="telemetry-item">
-                        <p class="telemetry-label">VELOCIDAD</p>
+                        <p class="telemetry-label" data-lang-key="speed">VELOCIDAD</p>
                         <p id="p1-avg-speed" class="telemetry-data font-arial">--.- Km/h</p>
                     </div>
                     <div class="telemetry-item">
@@ -659,21 +749,21 @@
                 </div>
 
                 <!-- COLUMNA P2 -->
-                <div class="telemetry-col">
+                <div id="p2-telemetry-col" class="telemetry-col">
                     <div class="telemetry-item bg-p2-soft">
-                        <p class="telemetry-label text-orange-800">MEJOR VUELTA</p>
+                        <p class="telemetry-label text-orange-800" data-lang-key="best_lap">MEJOR VUELTA</p>
                         <p id="p2-best-lap" class="telemetry-data font-arial text-lg">--.---</p>
                     </div>
                     <div class="telemetry-item">
-                        <p class="telemetry-label">ÚLTIMA</p>
+                        <p class="telemetry-label" data-lang-key="last_lap">ÚLTIMA</p>
                         <p id="p2-last-lap" class="telemetry-data font-arial">--.---</p>
                     </div>
                     <div class="telemetry-item">
-                        <p class="telemetry-label">MEDIA</p>
+                        <p class="telemetry-label" data-lang-key="avg_time">MEDIA</p>
                         <p id="p2-avg-time" class="telemetry-data font-arial">--.---</p>
                     </div>
                     <div class="telemetry-item">
-                        <p class="telemetry-label">VELOCIDAD</p>
+                        <p class="telemetry-label" data-lang-key="speed">VELOCIDAD</p>
                         <p id="p2-avg-speed" class="telemetry-data font-arial">--.- Km/h</p>
                     </div>
                     <div class="telemetry-item">
@@ -686,7 +776,7 @@
 
         <!-- GRAFICA -->
         <div class="gold-panel w-full p-4 mb-4">
-            <h2 class="text-xs neon-gold-title mb-3 border-b border-yellow-900/50 pb-2 uppercase tracking-widest text-left text-yellow-600">Tiempos de Carrera</h2>
+            <h2 class="text-xs neon-gold-title mb-3 border-b border-yellow-900/50 pb-2 uppercase tracking-widest text-left text-yellow-600" data-lang-key="graph_title">Tiempos de Carrera</h2>
             <canvas id="lap-graph-canvas"></canvas>
         </div>
     </div>
@@ -695,30 +785,30 @@
     <div id="tutorialModal" class="modal-overlay">
         <div class="modal-content p-8 w-full max-w-lg neon-border-box text-center">
             <div class="mb-6 border-b-2 border-amber-300 pb-4">
-                <h3 class="text-3xl font-black text-amber-950 uppercase">Guía Rápida</h3>
-                <p class="text-amber-800 font-bold text-sm">Configuración en 4 pasos</p>
+                <h3 class="text-3xl font-black text-amber-950 uppercase" data-lang-key="tut_title">Guía Rápida</h3>
+                <p class="text-amber-800 font-bold text-sm" data-lang-key="tut_subtitle">Configuración en 4 pasos</p>
             </div>
             
             <div class="text-left space-y-4 mb-8">
                 <div class="tut-step">
                     <span class="tut-icon">📱</span>
-                    <strong>1. CÁMARA FIJA:</strong> Enfoca la pista con tu dispositivo (Móvil, PC, Tablet). El ángulo no importa, evita que los sensores se toquen.
+                    <strong data-lang-key="tut_step1_title">1. CÁMARA FIJA:</strong> <span data-lang-key="tut_step1_desc">Enfoca la pista con tu dispositivo. El ángulo no importa, evita que los sensores se toquen.</span>
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">🎯</span>
-                    <strong>2. SENSORES:</strong> Arrastra los cuadrados (ORO y COBRE) sobre cada carril donde pasan los coches.
+                    <strong data-lang-key="tut_step2_title">2. SENSORES:</strong> <span data-lang-key="tut_step2_desc">Arrastra los cuadrados sobre cada carril.</span>
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">✨</span>
-                    <strong>3. CALIBRAR:</strong> Con la pista VACÍA, pulsa "AUTO CALIBRAR". La IA ajustará la luz sola.
+                    <strong data-lang-key="tut_step3_title">3. CALIBRAR:</strong> <span data-lang-key="tut_step3_desc">Con la pista VACÍA, pulsa AUTO CALIBRAR.</span>
                 </div>
                 <div class="tut-step">
                     <span class="tut-icon">🏎️</span>
-                    <strong>4. PRUEBA:</strong> Pasa un coche con la mano. Si sale <span class="text-green-600 font-black">"TEST OK"</span>, ¡estás listo!
+                    <strong data-lang-key="tut_step4_title">4. PRUEBA:</strong> <span data-lang-key="tut_step4_desc">Pasa un coche con la mano. Si sale "TEST OK", ¡estás listo!</span>
                 </div>
             </div>
 
-            <button id="close-tutorial-btn" class="w-full bg-gradient-to-r from-amber-600 to-amber-800 text-white font-bold py-4 rounded-xl hover:from-amber-500 hover:to-amber-700 transition shadow-xl border border-amber-400/50 text-lg tracking-widest uppercase">
+            <button id="close-tutorial-btn" class="w-full bg-gradient-to-r from-amber-600 to-amber-800 text-white font-bold py-4 rounded-xl hover:from-amber-500 hover:to-amber-700 transition shadow-xl border border-amber-400/50 text-lg tracking-widest uppercase" data-lang-key="tut_btn">
                 ¡ENTENDIDO, A CORRER!
             </button>
         </div>
@@ -728,18 +818,18 @@
     <div id="historyModal" class="modal-overlay hidden">
         <div class="modal-content p-6 w-full max-w-2xl">
             <div class="flex justify-between items-center border-b-2 border-amber-800/30 pb-3 mb-4">
-                <h3 class="text-2xl font-black text-amber-900 uppercase tracking-wide">Historial de Carreras</h3>
+                <h3 class="text-2xl font-black text-amber-900 uppercase tracking-wide" data-lang-key="history_title">Historial de Carreras</h3>
                 <button id="close-history-btn" class="text-amber-800 hover:text-black font-bold text-xl px-2">X</button>
             </div>
             <div class="overflow-y-auto max-h-96">
                 <table class="w-full text-left text-sm">
-                    <thead><tr><th class="p-3">FECHA</th><th class="p-3">GANADOR</th><th class="p-3">TIEMPO</th><th class="p-3">P1 BEST</th><th class="p-3">P2 BEST</th></tr></thead>
+                    <thead><tr><th class="p-3" data-lang-key="col_date">FECHA</th><th class="p-3" data-lang-key="col_winner">GANADOR</th><th class="p-3" data-lang-key="col_time">TIEMPO</th><th class="p-3">P1 BEST</th><th class="p-3">P2 BEST</th></tr></thead>
                     <tbody id="full-history-body" class="text-amber-950 font-medium"></tbody>
                 </table>
-                <p id="no-history-msg" class="text-center text-amber-800 mt-6 font-bold hidden">No hay registros guardados.</p>
+                <p id="no-history-msg" class="text-center text-amber-800 mt-6 font-bold hidden" data-lang-key="no_history">No hay registros guardados.</p>
             </div>
             <div class="mt-6 flex justify-end">
-                <button id="clear-history-btn" class="text-xs bg-red-100 text-red-800 border border-red-300 px-4 py-2 rounded-lg hover:bg-red-200 font-bold uppercase tracking-wider transition">Borrar Todo</button>
+                <button id="clear-history-btn" class="text-xs bg-red-100 text-red-800 border border-red-300 px-4 py-2 rounded-lg hover:bg-red-200 font-bold uppercase tracking-wider transition" data-lang-key="clear_history">Borrar Todo</button>
             </div>
         </div>
     </div>
@@ -748,40 +838,40 @@
     <div id="resultsModal" class="modal-overlay hidden">
         <div class="modal-content p-8 w-full max-w-2xl neon-border-box text-center">
              <div class="mb-8">
-                <h3 class="text-4xl font-black text-amber-950 uppercase tracking-widest mb-2" style="text-shadow: 0 2px 0 rgba(255,255,255,0.5)">¡Carrera Finalizada!</h3>
+                <h3 class="text-4xl font-black text-amber-950 uppercase tracking-widest mb-2" style="text-shadow: 0 2px 0 rgba(255,255,255,0.5)" data-lang-key="race_finished">¡Carrera Finalizada!</h3>
                 <div class="inline-block bg-white/50 px-6 py-2 rounded-full border border-amber-300 shadow-sm mt-2">
                     <p id="winner-text" class="text-2xl font-bold text-green-800">Ganador: ...</p>
                 </div>
             </div>
             
-            <!-- GRID DE DETALLES -->
-            <div class="grid grid-cols-2 gap-6 mb-8 text-left">
+            <!-- GRID DE DETALLES - AÑADIDO ID Y IDs A LAS TARJETAS -->
+            <div id="results-grid" class="grid grid-cols-2 gap-6 mb-8 text-left">
                 <!-- P1 Summary -->
-                <div class="bg-yellow-100/50 p-4 rounded-xl border border-yellow-400 shadow-inner">
+                <div id="p1-summary-card" class="bg-yellow-100/50 p-4 rounded-xl border border-yellow-400 shadow-inner">
                     <h4 class="text-xl text-amber-900 font-black mb-3 text-center border-b-2 border-amber-300 pb-2" id="modal-p1-name">P1</h4>
                     <div class="space-y-2 text-sm text-amber-900">
-                        <div class="flex justify-between"><span>Total:</span> <span id="modal-p1-total" class="font-bold font-arial">--</span></div>
-                        <div class="flex justify-between"><span>Mejor:</span> <span id="modal-p1-best" class="font-bold text-green-700 font-arial">--</span></div>
-                        <div class="flex justify-between"><span>Media:</span> <span id="modal-p1-avg" class="font-bold font-arial">--</span></div>
-                        <div class="flex justify-between"><span>Vel. Med:</span> <span id="modal-p1-speed" class="font-bold font-arial">--</span></div>
+                        <div class="flex justify-between"><span data-lang-key="total">Total:</span> <span id="modal-p1-total" class="font-bold font-arial">--</span></div>
+                        <div class="flex justify-between"><span data-lang-key="best">Mejor:</span> <span id="modal-p1-best" class="font-bold text-green-700 font-arial">--</span></div>
+                        <div class="flex justify-between"><span data-lang-key="avg">Media:</span> <span id="modal-p1-avg" class="font-bold font-arial">--</span></div>
+                        <div class="flex justify-between"><span data-lang-key="speed_avg">Vel. Med:</span> <span id="modal-p1-speed" class="font-bold font-arial">--</span></div>
                     </div>
                     <div class="mt-4">
-                        <p class="text-xs font-bold text-amber-800 mb-1 uppercase tracking-wide">Vueltas:</p>
+                        <p class="text-xs font-bold text-amber-800 mb-1 uppercase tracking-wide" data-lang-key="laps_label">Vueltas:</p>
                         <ul id="modal-p1-laps" class="text-xs font-arial h-40 overflow-y-auto bg-white/80 p-2 rounded-lg border border-amber-200 shadow-inner text-amber-900"></ul>
                     </div>
                 </div>
 
                 <!-- P2 Summary -->
-                <div class="bg-orange-100/50 p-4 rounded-xl border border-orange-400 shadow-inner">
+                <div id="p2-summary-card" class="bg-orange-100/50 p-4 rounded-xl border border-orange-400 shadow-inner">
                     <h4 class="text-xl text-orange-900 font-black mb-3 text-center border-b-2 border-orange-300 pb-2" id="modal-p2-name">P2</h4>
                     <div class="space-y-2 text-sm text-orange-900">
-                        <div class="flex justify-between"><span>Total:</span> <span id="modal-p2-total" class="font-bold font-arial">--</span></div>
-                        <div class="flex justify-between"><span>Mejor:</span> <span id="modal-p2-best" class="font-bold text-green-700 font-arial">--</span></div>
-                         <div class="flex justify-between"><span>Media:</span> <span id="modal-p2-avg" class="font-bold font-arial">--</span></div>
-                         <div class="flex justify-between"><span>Vel. Med:</span> <span id="modal-p2-speed" class="font-bold font-arial">--</span></div>
+                        <div class="flex justify-between"><span data-lang-key="total">Total:</span> <span id="modal-p2-total" class="font-bold font-arial">--</span></div>
+                        <div class="flex justify-between"><span data-lang-key="best">Mejor:</span> <span id="modal-p2-best" class="font-bold text-green-700 font-arial">--</span></div>
+                         <div class="flex justify-between"><span data-lang-key="avg">Media:</span> <span id="modal-p2-avg" class="font-bold font-arial">--</span></div>
+                         <div class="flex justify-between"><span data-lang-key="speed_avg">Vel. Med:</span> <span id="modal-p2-speed" class="font-bold font-arial">--</span></div>
                     </div>
                     <div class="mt-4">
-                        <p class="text-xs font-bold text-orange-800 mb-1 uppercase tracking-wide">Vueltas:</p>
+                        <p class="text-xs font-bold text-orange-800 mb-1 uppercase tracking-wide" data-lang-key="laps_label">Vueltas:</p>
                         <ul id="modal-p2-laps" class="text-xs font-arial h-40 overflow-y-auto bg-white/80 p-2 rounded-lg border border-orange-200 shadow-inner text-orange-900"></ul>
                     </div>
                 </div>
@@ -790,10 +880,10 @@
             <!-- BOTONES ACCIÓN MODAL -->
             <button id="export-excel-btn" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-900 text-white font-bold py-3 rounded-xl hover:from-emerald-500 hover:to-emerald-800 transition shadow-xl border border-emerald-400/50 text-base tracking-widest uppercase mb-4 flex items-center justify-center gap-2 font-arial">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                EXPORTAR DATOS (CSV)
+                <span data-lang-key="export_btn">EXPORTAR DATOS (CSV)</span>
             </button>
 
-            <button id="modal-restart-btn" class="w-full bg-gradient-to-r from-gray-800 to-black text-white font-bold py-4 rounded-xl hover:from-gray-700 hover:to-gray-900 transition shadow-xl border border-amber-500/50 text-lg tracking-widest uppercase font-arial">VOLVER A EMPEZAR</button>
+            <button id="modal-restart-btn" class="w-full bg-gradient-to-r from-gray-800 to-black text-white font-bold py-4 rounded-xl hover:from-gray-700 hover:to-gray-900 transition shadow-xl border border-amber-500/50 text-lg tracking-widest uppercase font-arial" data-lang-key="restart_btn">VOLVER A EMPEZAR</button>
         </div>
     </div>
     
@@ -801,6 +891,166 @@
     <div id="record-notification">¡NUEVO RÉCORD!</div>
 
     <script>
+        // --- TRANSLATIONS ---
+        const translations = {
+            es: {
+                start_race: "INICIAR", config: "CONFIG", reset_race: "REINICIAR",
+                pause: "PAUSAR", resume: "REANUDAR",
+                history_btn: "Historial",
+                global_time: "TIEMPO GLOBAL",
+                player_1: "JUGADOR 1 (ORO)", player_2: "JUGADOR 2 (COBRE)",
+                config_title: "Configuración",
+                language_label: "Idioma / Language",
+                game_mode_label: "Modo de Juego",
+                mode_2p: "🏁 2 JUGADORES (Duelo)", mode_1p: "⏱️ 1 JUGADOR (Contrarreloj)",
+                name_label: "Nombre", car_label: "Coche", sensitivity_label: "SENSIBILIDAD IA",
+                sound_p1: "Sonido P1", sound_p2: "Sonido P2",
+                track_length_label: "Longitud Pista (m)", laps_label: "Vueltas",
+                race_condition_label: "Tipo de Carrera",
+                condition_laps: "Vueltas", condition_time: "Tiempo (Resistencia)",
+                voice_comments: "Comentarios Voz:",
+                safety_time_label: "Tiempo de Seguridad (IA):",
+                safety_time_desc: "Evita dobles conteos. El sistema ignora detecciones durante este tiempo tras cruzar la meta.",
+                camera_title: "Cámara Twin ROI",
+                btn_calibrate: "AUTO CALIBRAR",
+                video_status_init: "Inicia la cámara para configurar carriles",
+                video_status_ready: "CÁMARA ACTIVA - SISTEMA LISTO",
+                video_status_off: "Cámara apagada.",
+                calibrating_title: "Calibrando Sensores", calibrating_desc: "Mantén la pista despejada",
+                false_start: "¡SALIDA NULA!",
+                flag_yellow: "BANDERA AMARILLA",
+                telemetry_title: "TELEMETRÍA EN VIVO",
+                best_lap: "MEJOR VUELTA", last_lap: "ÚLTIMA", avg_time: "MEDIA", speed: "VELOCIDAD",
+                graph_title: "Tiempos de Carrera",
+                tut_title: "Guía Rápida", tut_subtitle: "Configuración en 4 pasos",
+                tut_step1_title: "1. CÁMARA FIJA:", tut_step1_desc: "Enfoca la pista con tu dispositivo.",
+                tut_step2_title: "2. SENSORES:", tut_step2_desc: "Arrastra los cuadrados sobre cada carril.",
+                tut_step3_title: "3. CALIBRAR:", tut_step3_desc: "Con la pista VACÍA, pulsa AUTO CALIBRAR.",
+                tut_step4_title: "4. PRUEBA:", tut_step4_desc: "Pasa un coche con la mano. Si sale TEST OK, listo.",
+                tut_btn: "¡ENTENDIDO, A CORRER!",
+                history_title: "Historial de Carreras",
+                col_date: "FECHA", col_winner: "GANADOR", col_time: "TIEMPO",
+                no_history: "No hay registros guardados.", clear_history: "Borrar Todo",
+                race_finished: "¡Carrera Finalizada!",
+                winner: "Ganador:", completed: "¡Completado!",
+                total: "Total:", best: "Mejor:", avg: "Media:", speed_avg: "Vel. Med:",
+                export_btn: "EXPORTAR DATOS (CSV)", restart_btn: "VOLVER A EMPEZAR",
+                // Voice messages
+                voice_ready: "Pilotos a sus puestos.",
+                voice_false_start: "Salida Nula.",
+                voice_record: "¡Vuelta rápida de ",
+                voice_5_left: "quedan 5 vueltas.",
+                voice_last_lap: "¡Última vuelta!",
+                voice_winner: "Victoria para ",
+                voice_completed: "Carrera completada",
+                voice_calibrated: "Sensores calibrados."
+            },
+            en: {
+                start_race: "START", config: "CONFIG", reset_race: "RESET",
+                pause: "PAUSE", resume: "RESUME",
+                history_btn: "History",
+                global_time: "GLOBAL TIME",
+                player_1: "PLAYER 1 (GOLD)", player_2: "PLAYER 2 (COPPER)",
+                config_title: "Configuration",
+                language_label: "Language",
+                game_mode_label: "Game Mode",
+                mode_2p: "🏁 2 PLAYERS (Duel)", mode_1p: "⏱️ 1 PLAYER (Time Trial)",
+                name_label: "Name", car_label: "Car", sensitivity_label: "AI SENSITIVITY",
+                sound_p1: "P1 Sound", sound_p2: "P2 Sound",
+                track_length_label: "Track Length (m)", laps_label: "Laps",
+                race_condition_label: "Race Type",
+                condition_laps: "Laps", condition_time: "Time (Endurance)",
+                voice_comments: "Voice Commentary:",
+                safety_time_label: "Safety Time (AI):",
+                safety_time_desc: "Prevents double counting. System ignores detections for this time after crossing line.",
+                camera_title: "Twin ROI Camera",
+                btn_calibrate: "AUTO CALIBRATE",
+                video_status_init: "Start camera to setup lanes",
+                video_status_ready: "CAMERA ACTIVE - SYSTEM READY",
+                video_status_off: "Camera off.",
+                calibrating_title: "Calibrating Sensors", calibrating_desc: "Keep track clear",
+                false_start: "FALSE START!",
+                flag_yellow: "YELLOW FLAG",
+                telemetry_title: "LIVE TELEMETRY",
+                best_lap: "BEST LAP", last_lap: "LAST", avg_time: "AVG", speed: "SPEED",
+                graph_title: "Race Times",
+                tut_title: "Quick Guide", tut_subtitle: "Setup in 4 steps",
+                tut_step1_title: "1. FIXED CAMERA:", tut_step1_desc: "Focus track with your device.",
+                tut_step2_title: "2. SENSORS:", tut_step2_desc: "Drag squares over each lane.",
+                tut_step3_title: "3. CALIBRATE:", tut_step3_desc: "With EMPTY track, click AUTO CALIBRATE.",
+                tut_step4_title: "4. TEST:", tut_step4_desc: "Pass car by hand. If TEST OK appears, ready.",
+                tut_btn: "GOT IT, LET'S RACE!",
+                history_title: "Race History",
+                col_date: "DATE", col_winner: "WINNER", col_time: "TIME",
+                no_history: "No records saved.", clear_history: "Clear All",
+                race_finished: "Race Finished!",
+                winner: "Winner:", completed: "Completed!",
+                total: "Total:", best: "Best:", avg: "Avg:", speed_avg: "Avg Spd:",
+                export_btn: "EXPORT DATA (CSV)", restart_btn: "RESTART RACE",
+                // Voice
+                voice_ready: "Drivers ready.",
+                voice_false_start: "False start.",
+                voice_record: "Fastest lap for ",
+                voice_5_left: "5 laps to go.",
+                voice_last_lap: "Final lap!",
+                voice_winner: "Victory for ",
+                voice_completed: "Race completed",
+                voice_calibrated: "Sensors calibrated."
+            },
+            fr: {
+                start_race: "DÉMARRER", config: "CONFIG", reset_race: "RÉINIT.",
+                pause: "PAUSE", resume: "REPRENDRE",
+                history_btn: "Historique",
+                global_time: "TEMPS GLOBAL",
+                player_1: "JOUEUR 1 (OR)", player_2: "JOUEUR 2 (CUIVRE)",
+                config_title: "Configuration",
+                language_label: "Langue",
+                game_mode_label: "Mode de Jeu",
+                mode_2p: "🏁 2 JOUEURS (Duel)", mode_1p: "⏱️ 1 JOUEUR (Chrono)",
+                name_label: "Nom", car_label: "Voiture", sensitivity_label: "SENSIBILITÉ IA",
+                sound_p1: "Son P1", sound_p2: "Son P2",
+                track_length_label: "Longueur Piste (m)", laps_label: "Tours",
+                race_condition_label: "Type de Course",
+                condition_laps: "Tours", condition_time: "Temps (Endurance)",
+                voice_comments: "Commentaires Vocaux:",
+                safety_time_label: "Temps Sécurité (IA):",
+                safety_time_desc: "Évite le double comptage. Le système ignore les détections pendant ce temps.",
+                camera_title: "Caméra Twin ROI",
+                btn_calibrate: "AUTO CALIBRAGE",
+                video_status_init: "Démarrer caméra pour configurer",
+                video_status_ready: "CAMÉRA ACTIVE - SYSTÈME PRÊT",
+                video_status_off: "Caméra éteinte.",
+                calibrating_title: "Calibrage Capteurs", calibrating_desc: "Gardez la piste vide",
+                false_start: "FAUX DÉPART!",
+                flag_yellow: "DRAPEAU JAUNE",
+                telemetry_title: "TÉLÉMÉTRIE EN DIRECT",
+                best_lap: "MEILLEUR TOUR", last_lap: "DERNIER", avg_time: "MOYENNE", speed: "VITESSE",
+                graph_title: "Temps de Course",
+                tut_title: "Guide Rapide", tut_subtitle: "Config en 4 étapes",
+                tut_step1_title: "1. CAMÉRA FIXE:", tut_step1_desc: "Visez la piste avec votre appareil.",
+                tut_step2_title: "2. CAPTEURS:", tut_step2_desc: "Glissez les carrés sur chaque voie.",
+                tut_step3_title: "3. CALIBRER:", tut_step3_desc: "Piste VIDE, cliquez AUTO CALIBRAGE.",
+                tut_step4_title: "4. TEST:", tut_step4_desc: "Passez une voiture à la main. Si TEST OK, prêt.",
+                tut_btn: "C'EST PARTI !",
+                history_title: "Historique Courses",
+                col_date: "DATE", col_winner: "VAINQUEUR", col_time: "TEMPS",
+                no_history: "Aucun enregistrement.", clear_history: "Tout Effacer",
+                race_finished: "Course Terminée!",
+                winner: "Vainqueur:", completed: "Terminé!",
+                total: "Total:", best: "Meilleur:", avg: "Moy:", speed_avg: "Vit. Moy:",
+                export_btn: "EXPORTER (CSV)", restart_btn: "RECOMMENCER",
+                // Voice
+                voice_ready: "Pilotes prêts.",
+                voice_false_start: "Faux départ.",
+                voice_record: "Meilleur tour pour ",
+                voice_5_left: "Il reste 5 tours.",
+                voice_last_lap: "Dernier tour!",
+                voice_winner: "Victoire pour ",
+                voice_completed: "Course terminée",
+                voice_calibrated: "Capteurs calibrés."
+            }
+        };
+
         // --- VARIABLES ---
         const videoElement = document.getElementById('webcam-feed');
         const videoContainer = document.getElementById('video-container');
@@ -813,6 +1063,10 @@
         const centralConfigBtn = document.getElementById('central-config-btn');
         const calibrateBtn = document.getElementById('calibrate-btn');
         const calibOverlay = document.getElementById('calib-overlay');
+        const pauseRaceBtn = document.getElementById('pause-race-btn');
+        const pauseIcon = document.getElementById('pause-icon');
+        const playIcon = document.getElementById('play-icon');
+        const pauseText = document.getElementById('pause-text');
         
         const trackLengthInput = document.getElementById('track-length-input');
         const lapLimitSelect = document.getElementById('lap-limit-select');
@@ -825,6 +1079,12 @@
         const falseStartAlert = document.getElementById('false-start-alert');
         const falseStartPlayerName = document.getElementById('false-start-player');
         const exportExcelBtn = document.getElementById('export-excel-btn');
+        // helpBtn eliminado
+        const gameModeSelect = document.getElementById('game-mode-select'); 
+        const languageSelect = document.getElementById('language-select');
+        const raceConditionSelect = document.getElementById('race-condition-select'); // NEW
+        const timeLimitSelect = document.getElementById('time-limit-select'); // NEW
+        const yellowFlagOverlay = document.getElementById('yellow-flag-overlay'); // NEW
         
         // Tutorial
         const tutorialModal = document.getElementById('tutorialModal');
@@ -845,7 +1105,16 @@
         let raceStartTime = 0;
         let raceIntervalId = null;
         let totalLapsTarget = 10;
-        let blindTimeMs = 3000; // Valor por defecto
+        let blindTimeMs = 3000; 
+        
+        let activePlayers = 2;
+        let currentLang = 'es';
+        let raceMode = 'laps'; // 'laps' or 'time'
+        let raceDurationTarget = 0; // ms
+
+        // PAUSE STATE
+        let isPaused = false;
+        let pauseStartTimestamp = 0;
         
         const players = [
             {
@@ -889,6 +1158,103 @@
                 soundTone: "G5"
             }
         ];
+        
+        // --- TRANSLATION LOGIC ---
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            
+            // Update elements with data-lang-key
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if(t[key]) el.textContent = t[key];
+                // Handle option text manually if needed for selects that are dynamic
+                if (el.tagName === 'OPTION' && t[key]) el.text = t[key];
+            });
+            
+            // Dynamic Updates
+            // Video Status
+            if (isProcessing) {
+                videoStatus.textContent = t.video_status_ready;
+            } else {
+                videoStatus.textContent = t.video_status_init;
+            }
+            
+            // Pause Button
+            pauseText.textContent = isPaused ? t.resume : t.pause;
+            
+            // Save preference
+            localStorage.setItem('krono_lang', lang);
+        }
+        
+        languageSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+
+        function speak(textKey, suffix = "") {
+            if (!voiceToggle.checked) return;
+            const t = translations[currentLang];
+            let msgText = t[textKey] || textKey; // Fallback to key if not found (for dynamic names)
+            msgText += suffix;
+            
+            const utter = new SpeechSynthesisUtterance(msgText);
+            // Set voice language
+            if (currentLang === 'es') utter.lang = 'es-ES';
+            else if (currentLang === 'en') utter.lang = 'en-US';
+            else if (currentLang === 'fr') utter.lang = 'fr-FR';
+            
+            utter.rate = 1.1;
+            window.speechSynthesis.speak(utter);
+        }
+
+        // --- GAME MODE LOGIC ---
+        function setGameMode(mode) {
+            activePlayers = parseInt(mode);
+            
+            const p2Config = document.getElementById('p2-config-block');
+            const p2TopStats = document.getElementById('p2-top-stats');
+            const p2Roi = document.getElementById('roi-p2');
+            const p2Telemetry = document.getElementById('p2-telemetry-col');
+            const topGrid = document.getElementById('top-stats-grid');
+            const telemetryGrid = document.getElementById('telemetry-grid');
+            
+            if (activePlayers === 1) {
+                // Solo Mode
+                p2Config.style.display = 'none';
+                p2TopStats.style.display = 'none';
+                p2Roi.style.display = 'none';
+                p2Telemetry.style.display = 'none';
+                
+                topGrid.classList.remove('grid-cols-2', 'divide-x-2');
+                topGrid.classList.add('grid-cols-1');
+                
+                telemetryGrid.style.gridTemplateColumns = '1fr';
+            } else {
+                // Duel Mode
+                p2Config.style.display = 'block';
+                p2TopStats.style.display = 'block';
+                if (isProcessing) p2Roi.style.display = 'block'; // Only show ROI if cam active
+                p2Telemetry.style.display = 'flex'; // It's flex col normally
+                
+                topGrid.classList.add('grid-cols-2', 'divide-x-2');
+                topGrid.classList.remove('grid-cols-1');
+                
+                telemetryGrid.style.gridTemplateColumns = '1fr 1fr';
+            }
+        }
+        
+        gameModeSelect.addEventListener('change', (e) => {
+            setGameMode(e.target.value);
+        });
+        
+        // --- RACE CONDITION LOGIC ---
+        raceConditionSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'laps') {
+                lapLimitSelect.classList.remove('hidden');
+                timeLimitSelect.classList.add('hidden');
+            } else {
+                lapLimitSelect.classList.add('hidden');
+                timeLimitSelect.classList.remove('hidden');
+            }
+        });
 
         // --- HELPER: ADJUST SENSITIVITY ---
         window.adjT = function(pId, delta) {
@@ -920,8 +1286,15 @@
                     canvas.height = videoElement.videoHeight;
                     isProcessing = true;
                     processVideo();
-                    document.querySelectorAll('.movable-rectangle').forEach(el => el.style.display = 'block');
-                    videoStatus.textContent = 'CÁMARA ACTIVA - SISTEMA LISTO';
+                    
+                    // Show ROIs based on game mode
+                    document.getElementById('roi-p1').style.display = 'block';
+                    if (activePlayers === 2) {
+                        document.getElementById('roi-p2').style.display = 'block';
+                    }
+                    
+                    const t = translations[currentLang];
+                    videoStatus.textContent = t.video_status_ready;
                     videoStatus.className = "text-center text-sm mt-2 text-green-600 font-bold uppercase";
                     cameraOnBtn.disabled = true;
                     cameraOffBtn.disabled = false;
@@ -939,7 +1312,9 @@
             document.querySelectorAll('.movable-rectangle').forEach(el => el.style.display = 'none');
             cameraOnBtn.disabled = false; cameraOffBtn.disabled = true;
             calibrateBtn.disabled = true;
-            videoStatus.textContent = 'Cámara apagada.'; videoStatus.className = "text-amber-900 text-center text-sm mt-2";
+            const t = translations[currentLang];
+            videoStatus.textContent = t.video_status_off; 
+            videoStatus.className = "text-amber-900 text-center text-sm mt-2";
         }
 
         // --- FAST DETECTION LOGIC ---
@@ -973,6 +1348,9 @@
             const now = Date.now();
 
             players.forEach(p => {
+                // SKIP PLAYER 2 IF MODE IS 1
+                if (p.id > activePlayers) return;
+
                 const roi = document.getElementById(p.roiId);
                 const currentBri = getRoiBrightness(roi);
                 document.getElementById(p.valId).textContent = currentBri.toFixed(0);
@@ -999,7 +1377,7 @@
                 if (!isCalibrating) {
                     
                     // 0. Pre-Race Test Mode (Cuando no hay carrera activa)
-                    if (!isRaceActive && !isCountdown && crossed) {
+                    if (!isRaceActive && !isCountdown && crossed && !isPaused) {
                          document.getElementById(p.msgId).textContent = "TEST OK";
                     } else if (!isRaceActive) {
                          document.getElementById(p.msgId).textContent = "";
@@ -1013,7 +1391,7 @@
                          }
                     }
                     // 2. Normal Race
-                    else if (isRaceActive && isDetectionReady && !p.finished) {
+                    else if (isRaceActive && isDetectionReady && !p.finished && !isPaused) {
                         
                         // --- LÓGICA DE TIEMPO CIEGO ---
                         // Si estamos en el periodo de "cálculo IA", ignoramos todo
@@ -1081,10 +1459,12 @@
             
             const readFrame = () => {
                 const b1 = getRoiBrightness(document.getElementById('roi-p1'));
-                const b2 = getRoiBrightness(document.getElementById('roi-p2'));
+                if (activePlayers === 2) {
+                     const b2 = getRoiBrightness(document.getElementById('roi-p2'));
+                     p2Stats.sum += b2; p2Stats.min = Math.min(p2Stats.min, b2); p2Stats.max = Math.max(p2Stats.max, b2);
+                }
                 
                 p1Stats.sum += b1; p1Stats.min = Math.min(p1Stats.min, b1); p1Stats.max = Math.max(p1Stats.max, b1);
-                p2Stats.sum += b2; p2Stats.min = Math.min(p2Stats.min, b2); p2Stats.max = Math.max(p2Stats.max, b2);
                 
                 samples++;
                 if (samples < framesToRead) {
@@ -1100,27 +1480,24 @@
         function finishCalibration(s1, s2) {
             // Set Base Brightness
             players[0].baseBrightness = s1.sum / 60;
-            players[1].baseBrightness = s2.sum / 60;
-            
-            // Calculate Noise Floor (Max deviation from average)
             const noise1 = Math.max(s1.max - players[0].baseBrightness, players[0].baseBrightness - s1.min);
-            const noise2 = Math.max(s2.max - players[1].baseBrightness, players[1].baseBrightness - s2.min);
-            
-            // Set Sensitivity: Noise * Multiplier (Safety Factor) + Minimum offset
-            // We want it sensitive but above noise.
             const safeMargin = 15; // Minimum diff required
             const newSens1 = Math.max(safeMargin, Math.ceil(noise1 * 1.5));
-            const newSens2 = Math.max(safeMargin, Math.ceil(noise2 * 1.5));
-            
             document.getElementById('p1-threshold').value = newSens1;
-            document.getElementById('p2-threshold').value = newSens2;
             updateThreshold(1);
-            updateThreshold(2);
+            
+            if (activePlayers === 2) {
+                players[1].baseBrightness = s2.sum / 60;
+                const noise2 = Math.max(s2.max - players[1].baseBrightness, players[1].baseBrightness - s2.min);
+                const newSens2 = Math.max(safeMargin, Math.ceil(noise2 * 1.5));
+                document.getElementById('p2-threshold').value = newSens2;
+                updateThreshold(2);
+            }
             
             isCalibrating = false;
             calibOverlay.classList.remove('active');
             
-            if (voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sensores calibrados."));
+            speak('voice_calibrated');
         }
 
         function handleFalseStart(player) {
@@ -1130,12 +1507,63 @@
             const pName = document.getElementById(player.nameId).value;
             falseStartPlayerName.textContent = pName;
             falseStartAlert.classList.add('show');
-            if (voiceToggle.checked) {
-                const utter = new SpeechSynthesisUtterance("Salida Nula. Piloto " + pName);
-                utter.rate = 1.1; window.speechSynthesis.speak(utter);
-            }
+            
+            speak('voice_false_start', " " + pName);
+            
             resetRaceBtn.disabled = false;
             document.querySelectorAll('.light').forEach(l => l.className = "light");
+        }
+
+        // --- PAUSE LOGIC ---
+        function togglePause() {
+            if (!isRaceActive && !isPaused) return; // Cannot pause if not racing
+            
+            isPaused = !isPaused;
+            
+            if (isPaused) {
+                // START PAUSE
+                isRaceActive = false; // Stop processing detections
+                clearInterval(raceIntervalId); // Stop UI updates
+                pauseStartTimestamp = Date.now();
+                
+                pauseIcon.classList.add('hidden');
+                playIcon.classList.remove('hidden');
+                
+                const t = translations[currentLang];
+                pauseText.textContent = t.resume;
+                
+                document.getElementById('race-time').classList.add('animate-pulse'); // Visual feedback
+                
+                // Show Yellow Flag
+                yellowFlagOverlay.classList.remove('hidden');
+                
+            } else {
+                // END PAUSE (RESUME)
+                const pauseDuration = Date.now() - pauseStartTimestamp;
+                
+                // SHIFT TIME FORWARD
+                raceStartTime += pauseDuration;
+                players.forEach(p => {
+                    if (p.hasCrossedStart) {
+                        p.lapStartTime += pauseDuration;
+                        p.lastRecordTime += pauseDuration;
+                    }
+                });
+                
+                isRaceActive = true;
+                pauseIcon.classList.remove('hidden');
+                playIcon.classList.add('hidden');
+                
+                const t = translations[currentLang];
+                pauseText.textContent = t.pause;
+                
+                document.getElementById('race-time').classList.remove('animate-pulse');
+                
+                // Hide Yellow Flag
+                yellowFlagOverlay.classList.add('hidden');
+                
+                startTimers(); // Restart interval
+            }
         }
 
         // --- RACE LOGIC ---
@@ -1149,10 +1577,29 @@
 
         function startRace() {
             configPanel.classList.remove('open');
-            startRaceBtn.disabled = true; resetRaceBtn.disabled = true;
+            startRaceBtn.disabled = true; resetRaceBtn.disabled = true; pauseRaceBtn.disabled = true;
             falseStartAlert.classList.remove('show');
+            yellowFlagOverlay.classList.add('hidden'); // Ensure flag is hidden on start
             
-            totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
+            // RESET PAUSE STATE
+            isPaused = false;
+            pauseIcon.classList.remove('hidden');
+            playIcon.classList.add('hidden');
+            
+            const t = translations[currentLang];
+            pauseText.textContent = t.pause;
+            
+            // SETUP MODE
+            raceMode = raceConditionSelect.value;
+            
+            if (raceMode === 'laps') {
+                totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
+            } else {
+                // Time mode logic
+                totalLapsTarget = Infinity; // No lap limit
+                raceDurationTarget = parseInt(timeLimitSelect.value) * 60000; // Minutes to ms
+            }
+            
             // LEER EL TIEMPO DE SEGURIDAD
             blindTimeMs = parseInt(safetyTimeSelect.value);
 
@@ -1170,7 +1617,14 @@
                 // Clear any leftover lock visual
                 document.getElementById(p.roiId).classList.remove('roi-locked');
             });
-            document.getElementById('race-time').textContent = "00:00.000";
+            
+            // Set initial timer text based on mode
+            if (raceMode === 'time') {
+                document.getElementById('race-time').textContent = formatTime(raceDurationTarget);
+            } else {
+                document.getElementById('race-time').textContent = "00:00.000";
+            }
+            
             drawGraph();
 
             const lights = [1,2,3,4,5].map(i=>document.getElementById('light-'+i));
@@ -1178,7 +1632,7 @@
 
             (async()=>{
                 isCountdown = true; raceAborted = false;
-                if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Pilotos a sus puestos."));
+                speak('voice_ready');
                 
                 for(let i=0;i<5;i++){
                     if(raceAborted) return;
@@ -1194,7 +1648,10 @@
                 lights.forEach(l=>{l.classList.remove('red'); l.classList.add('green');});
                 polySynth.triggerAttackRelease(["C5","G5"],"0.5");
                 
-                isRaceActive=true; isDetectionReady=true; resetRaceBtn.disabled=false;
+                isRaceActive=true; isDetectionReady=true; 
+                resetRaceBtn.disabled=false;
+                pauseRaceBtn.disabled=false; // ENABLE PAUSE
+                
                 raceStartTime=Date.now();
                 players.forEach(p=>p.lapStartTime=raceStartTime);
                 startTimers();
@@ -1205,9 +1662,25 @@
             if(raceIntervalId) clearInterval(raceIntervalId);
             raceIntervalId = setInterval(()=>{
                 const now = Date.now();
-                document.getElementById('race-time').textContent = formatTime(now - raceStartTime);
+                
+                // MAIN TIMER LOGIC
+                if (raceMode === 'time') {
+                    // Count down
+                    let remaining = raceDurationTarget - (now - raceStartTime);
+                    if (remaining <= 0) {
+                        remaining = 0;
+                        // Trigger End Race if time expired
+                        if (isRaceActive) endRace();
+                    }
+                    document.getElementById('race-time').textContent = formatTime(remaining);
+                } else {
+                    // Count up
+                    document.getElementById('race-time').textContent = formatTime(now - raceStartTime);
+                }
+
                 players.forEach(p => {
-                    if(!p.finished) {
+                    // Solo actualizar si el jugador está activo
+                    if(p.id <= activePlayers && !p.finished) {
                         // Only show time if race started for player
                         if (p.hasCrossedStart) {
                             const elap = now - p.lapStartTime;
@@ -1217,7 +1690,7 @@
                         }
                     }
                 });
-                updateGaps();
+                if (activePlayers === 2) updateGaps();
             }, 40);
         }
 
@@ -1236,6 +1709,7 @@
             const lapTime = now - p.lapStartTime;
             p.lapHistory.push(lapTime);
             p.laps++;
+            p.totalTime = now - raceStartTime; // Update total run time for tie-breaking
             p.lapStartTime = now;
             
             let isNewRecord = false;
@@ -1248,45 +1722,50 @@
             synth.triggerAttackRelease(p.soundTone, "0.1");
             updatePlayerUI(p);
             
-            if (voiceToggle.checked) {
-                const name = document.getElementById(p.nameId).value;
-                
-                // --- CAMBIO: SOLO HABLA SI ES RÉCORD ---
-                if (isNewRecord) {
-                    const lapTimeSec = (lapTime/1000).toFixed(2);
-                    const msg = new SpeechSynthesisUtterance(`¡Vuelta rápida de ${name}! ${lapTimeSec}`);
-                    msg.rate = 1.3; 
-                    window.speechSynthesis.speak(msg);
-                }
-                // ---------------------------------------
-
-                if(totalLapsTarget !== Infinity) {
-                    const remaining = totalLapsTarget - p.laps;
-                    if(remaining === 5) {
-                        const msg5 = new SpeechSynthesisUtterance(`Atención ${name}, quedan 5 vueltas.`);
-                        msg5.rate = 1.2; window.speechSynthesis.speak(msg5);
-                    }
-                    if(remaining === 1) { // Logic fix: remaining is calculated after incrementing lap
-                         // Actually, if total is 10. Lap 9 just finished. p.laps is 9. remaining is 1. Correct.
-                        const msgLast = new SpeechSynthesisUtterance(`¡Última vuelta para ${name}!`);
-                        msgLast.rate = 1.2; window.speechSynthesis.speak(msgLast);
-                    }
-                }
+            const name = document.getElementById(p.nameId).value;
+            
+            // --- CAMBIO: SOLO HABLA SI ES RÉCORD ---
+            if (isNewRecord) {
+                const lapTimeSec = (lapTime/1000).toFixed(2);
+                speak('voice_record', name + "! " + lapTimeSec);
             }
+            // ---------------------------------------
 
-            if(totalLapsTarget!==Infinity && p.laps>=totalLapsTarget) {
-                p.finished = true;
-                p.totalTime = now - raceStartTime;
-                document.getElementById(p.lapCountId).textContent = "FIN";
-                document.getElementById(p.currentLapId).textContent = "META";
-                polySynth.triggerAttackRelease(["E6"], "0.2");
-                if (players.every(pl=>pl.finished)) endRace();
+            // Only check lap based limits in Laps mode
+            if(raceMode === 'laps' && totalLapsTarget !== Infinity) {
+                const remaining = totalLapsTarget - p.laps;
+                if(remaining === 5) {
+                    speak('voice_5_left', " " + name);
+                }
+                if(remaining === 1) { 
+                    speak('voice_last_lap');
+                }
+                
+                if(p.laps >= totalLapsTarget) {
+                    p.finished = true;
+                    document.getElementById(p.lapCountId).textContent = "FIN";
+                    document.getElementById(p.currentLapId).textContent = "META";
+                    polySynth.triggerAttackRelease(["E6"], "0.2");
+                    
+                    // Check if race ends
+                    if (activePlayers === 1 && players[0].finished) {
+                         endRace();
+                    } else if (activePlayers === 2 && players.every(pl=>pl.finished)) {
+                         endRace();
+                    }
+                }
             }
             drawGraph();
         }
 
         function updatePlayerUI(p) {
-            document.getElementById(p.lapCountId).textContent = `V: ${p.laps} / ${totalLapsTarget===Infinity?'∞':totalLapsTarget}`;
+            // Display depends on mode
+            if (raceMode === 'time') {
+                 document.getElementById(p.lapCountId).textContent = `V: ${p.laps}`;
+            } else {
+                 document.getElementById(p.lapCountId).textContent = `V: ${p.laps} / ${totalLapsTarget===Infinity?'∞':totalLapsTarget}`;
+            }
+            
             document.getElementById(p.bestLapId).textContent = formatTime(p.bestLap);
             const last = p.lapHistory.length>0 ? p.lapHistory[p.lapHistory.length-1] : 0;
             document.getElementById(p.lastLapId).textContent = formatTime(last);
@@ -1309,6 +1788,25 @@
              if (players[0].laps > 0 && players[1].laps > 0) {
                  const diff = t1 - t2;
                  const diffSec = (Math.abs(diff)/1000).toFixed(1);
+                 
+                 // Logic change for Time Mode: Whoever has MORE LAPS is winning
+                 if (raceMode === 'time') {
+                     if (players[0].laps > players[1].laps) {
+                         document.getElementById(players[0].gapId).textContent = "LIDER";
+                         document.getElementById(players[0].gapId).className = "telemetry-data font-arial text-green-700";
+                         document.getElementById(players[1].gapId).textContent = "-" + (players[0].laps - players[1].laps) + " L";
+                         document.getElementById(players[1].gapId).className = "telemetry-data font-arial text-red-700";
+                         return;
+                     } else if (players[1].laps > players[0].laps) {
+                         document.getElementById(players[1].gapId).textContent = "LIDER";
+                         document.getElementById(players[1].gapId).className = "telemetry-data font-arial text-green-700";
+                         document.getElementById(players[0].gapId).textContent = "-" + (players[1].laps - players[0].laps) + " L";
+                         document.getElementById(players[0].gapId).className = "telemetry-data font-arial text-red-700";
+                         return;
+                     }
+                     // If laps equal, fall back to standard time gap logic below
+                 }
+
                  if (diff < 0) {
                      document.getElementById(players[0].gapId).textContent = "LIDER";
                      document.getElementById(players[0].gapId).className = "telemetry-data font-arial text-green-700";
@@ -1325,24 +1823,76 @@
 
         function endRace() {
             isRaceActive = false; clearInterval(raceIntervalId);
+            pauseRaceBtn.disabled = true; // DISABLE PAUSE
+            
             const p1 = players[0]; const p2 = players[1];
             let winner = null;
-            if (p1.finished && p2.finished) winner = p1.totalTime < p2.totalTime ? p1 : p2;
-            else if (p1.finished) winner = p1; else if (p2.finished) winner = p2;
-            else winner = p1.laps > p2.laps ? p1 : p2;
+            
+            if (activePlayers === 1) {
+                winner = p1; // Solo hay un ganador posible
+            } else {
+                if (raceMode === 'laps') {
+                    // Logic for Laps Mode
+                    if (p1.finished && p2.finished) winner = p1.totalTime < p2.totalTime ? p1 : p2;
+                    else if (p1.finished) winner = p1; else if (p2.finished) winner = p2;
+                    else winner = p1.laps > p2.laps ? p1 : p2;
+                } else {
+                    // Logic for Time Mode (Most laps wins)
+                    if (p1.laps !== p2.laps) {
+                        winner = p1.laps > p2.laps ? p1 : p2;
+                    } else {
+                        // Tie breaker: whoever reached that lap count faster (totalTime tracks last crossing)
+                        // Note: totalTime is only set on finish or calc on fly. In recordLap we set p.totalTime.
+                        // However, if neither finished "normally", totalTime might be just the timestamp.
+                        // Let's use the last recorded timestamp from lapHistory if totalTime isn't set?
+                        // Actually in recordLap I added p.totalTime = now - start.
+                        winner = p1.totalTime < p2.totalTime ? p1 : p2;
+                    }
+                }
+            }
+
+            // --- AJUSTE VISUAL DEL MODAL SEGÚN JUGADORES ---
+            const grid = document.getElementById('results-grid');
+            const p2Card = document.getElementById('p2-summary-card');
+
+            if (activePlayers === 1) {
+                // Modo 1 Jugador: Una columna, ocultar P2
+                grid.classList.remove('grid-cols-2');
+                grid.classList.add('grid-cols-1');
+                p2Card.classList.add('hidden');
+            } else {
+                // Modo 2 Jugadores: Dos columnas, mostrar P2
+                grid.classList.remove('grid-cols-1');
+                grid.classList.add('grid-cols-2');
+                p2Card.classList.remove('hidden');
+            }
+            // ------------------------------------------------
 
             const wName = document.getElementById(winner.nameId).value;
-            document.getElementById('winner-text').textContent = `Ganador: ${wName}`;
+            const t = translations[currentLang];
+            document.getElementById('winner-text').textContent = activePlayers===1 ? t.completed : `${t.winner} ${wName}`;
             
+            // Loop solo jugadores activos
             players.forEach(p => {
+                if (p.id > activePlayers) return;
+                
                 const n = document.getElementById(p.nameId).value;
-                const totalT = p.finished ? p.totalTime : (p.lapHistory.reduce((a,b)=>a+b,0)); 
+                
+                // Fix for total time display in Time Mode if they didn't "finish" via lap limit
+                let totalT = p.finished ? p.totalTime : (p.lapHistory.length > 0 ? p.totalTime : 0);
+                
                 const lapCount = p.lapHistory.length;
                 const avgT = lapCount > 0 ? totalT / lapCount : 0;
                 const trackLen = parseFloat(trackLengthInput.value);
                 const avgSpd = avgT > 0 ? (trackLen / (avgT/1000)) * 3.6 : 0;
 
-                document.getElementById(`modal-p${p.id}-name`).textContent = n + (p===winner?" 👑":"");
+                // Si es solo player, mostramos su nombre sin corona
+                const displayName = (activePlayers === 1) ? n : (n + (p===winner?" 👑":""));
+
+                // We need to ensure elements exist in modal too, assume standard IDs
+                const nameEl = document.getElementById(`modal-p${p.id}-name`);
+                if(nameEl) nameEl.textContent = displayName;
+                
                 document.getElementById(`modal-p${p.id}-total`).textContent = formatTime(totalT);
                 document.getElementById(`modal-p${p.id}-best`).textContent = formatTime(p.bestLap);
                 document.getElementById(`modal-p${p.id}-avg`).textContent = formatTime(avgT);
@@ -1358,10 +1908,13 @@
                     ul.appendChild(li);
                 });
             });
+            
             saveHistory(wName);
             document.getElementById('resultsModal').classList.remove('hidden');
             setTimeout(()=>document.getElementById('resultsModal').classList.add('open'),10);
-            if(voiceToggle.checked) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Victoria para " + wName));
+            
+            if (activePlayers === 1) speak('voice_completed');
+            else speak('voice_winner', wName);
         }
 
         function exportToExcel() {
@@ -1371,7 +1924,10 @@
             csvContent += "KRONODUAL V.2.0 - REPORTE DE CARRERA\n\n";
             csvContent += `Fecha:,${date}\n`;
             csvContent += `${winnerText}\n\n`;
+            
             players.forEach(p => {
+                if(p.id > activePlayers) return;
+                
                 const name = document.getElementById(p.nameId).value;
                 const car = document.getElementById(p.carId).value;
                 const totalTime = document.getElementById(`modal-p${p.id}-total`).textContent;
@@ -1420,7 +1976,7 @@
                  return;
             }
 
-            const all = [...p1d, ...p2d];
+            const all = [...p1d, ...(activePlayers===2 ? p2d : [])];
             const maxT = Math.max(...all);
             const pad = 30; const gh = 160; const gw = w - pad*2;
             const bw = (gw / maxL) * 0.4;
@@ -1434,7 +1990,7 @@
                     ctx.shadowColor = '#ffd700'; // Gold Glow
                     ctx.fillRect(x, 180-h, bw, h);
                 }
-                if(p2d[i]) {
+                if(activePlayers === 2 && p2d[i]) {
                     const h = (p2d[i]/maxT)*gh;
                     ctx.fillStyle = '#b87333'; // Copper color
                     ctx.shadowColor = '#b87333'; // Copper Glow
@@ -1456,9 +2012,9 @@
             const rec = {
                 date: new Date().toLocaleString(),
                 winner: winner,
-                time: formatTime(players.find(p => document.getElementById(p.nameId).value === winner).totalTime),
+                time: formatTime(players[0].totalTime), // Simplificado para historial basico
                 p1Best: formatTime(players[0].bestLap),
-                p2Best: formatTime(players[1].bestLap)
+                p2Best: activePlayers===2 ? formatTime(players[1].bestLap) : "N/A"
             };
             let hist = JSON.parse(localStorage.getItem('krono_twin_hist') || '[]');
             hist.unshift(rec);
@@ -1498,16 +2054,23 @@
             setTimeout(()=>document.getElementById('resultsModal').classList.add('hidden'),300);
             document.getElementById('race-time').textContent = "00:00.000";
             isRaceActive=false; clearInterval(raceIntervalId); startRaceBtn.disabled=false;
+            pauseRaceBtn.disabled = true; // DISABLE PAUSE
+            isPaused = false;
+            yellowFlagOverlay.classList.add('hidden'); // Ensure hidden on restart
         };
         calibrateBtn.onclick = runAutoCalibration;
         exportExcelBtn.onclick = exportToExcel;
+        pauseRaceBtn.onclick = togglePause;
         
         // Tutorial
         closeTutorialBtn.onclick = () => {
             tutorialModal.classList.remove('open');
-            // Play a little sound to confirm readiness
-            polySynth.triggerAttackRelease(["C5", "E5"], "0.3");
+            // Guardamos que ya se ha visto
+            localStorage.setItem('krono_tutorial_seen', 'true');
+            // Sonido eliminado
         };
+
+        // helpBtn onclick eliminado
 
         // --- DRAG AND RESIZE LOGIC ---
         let actRoi = null;
@@ -1592,6 +2155,7 @@
         resetRaceBtn.onclick = () => { 
             isRaceActive=false; clearInterval(raceIntervalId); 
             startRaceBtn.disabled=false; falseStartAlert.classList.remove('show'); 
+            yellowFlagOverlay.classList.add('hidden'); // Ensure hidden on full reset
         };
         centralConfigBtn.onclick = () => configPanel.classList.toggle('open');
         cameraOnBtn.onclick = startWebcam; cameraOffBtn.onclick = stopWebcam;
@@ -1603,11 +2167,19 @@
              totalLapsTarget = lapLimitSelect.value==='Infinity'?Infinity:parseInt(lapLimitSelect.value);
              players.forEach(p => updatePlayerUI(p));
 
-             startWebcam();
-             // SHOW TUTORIAL AUTOMATICALLY ON LOAD
-             setTimeout(() => {
-                 tutorialModal.classList.add('open');
-             }, 500);
+             // Check saved language
+             const savedLang = localStorage.getItem('krono_lang');
+             if(savedLang) {
+                 languageSelect.value = savedLang;
+                 setLanguage(savedLang);
+             }
+
+             // SHOW TUTORIAL AUTOMATICALLY ON LOAD (Only if not seen)
+             if (!localStorage.getItem('krono_tutorial_seen')) {
+                 setTimeout(() => {
+                     tutorialModal.classList.add('open');
+                 }, 500);
+             }
         };
     </script>
 </body>
