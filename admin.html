@@ -33,7 +33,16 @@
         .history-table td { padding: 10px; border-bottom: 1px solid #1e293b; }
     </style>
 </head>
-<body class="min-h-screen p-2">
+<body class="min-h-screen p-2 relative">
+
+    <!-- ALERTA PERSONALIZADA (Reemplazo de alert() nativo para el visor) -->
+    <div id="custom-alert" class="hidden fixed inset-0 bg-slate-900/90 z-[100] flex flex-col items-center justify-center p-4">
+        <div class="glass p-6 rounded-xl border border-red-500/50 w-full max-w-sm text-center shadow-2xl">
+            <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
+            <p id="custom-alert-msg" class="text-white text-sm mb-6"></p>
+            <button onclick="document.getElementById('custom-alert').classList.add('hidden')" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 rounded-lg transition border border-slate-500">ACEPTAR</button>
+        </div>
+    </div>
 
     <!-- 1. PANTALLA DE BLOQUEO -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-4">
@@ -130,6 +139,12 @@
         import { getFirestore, collection, addDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+        // Función personalizada para alertas (necesaria en entornos integrados)
+        window.showAlert = function(msg) {
+            document.getElementById('custom-alert-msg').textContent = msg;
+            document.getElementById('custom-alert').classList.remove('hidden');
+        };
+
         // CONFIGURACIÓN KRONODUAL
         const APP_ID = "app_kronodual";
         const PRECIO = "10€";
@@ -181,10 +196,20 @@
 
         function initStats() {
             try {
-                onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats'), (docSnap) => {
-                    document.getElementById('clicks-counter').textContent = docSnap.data()?.purchase_clicks || 0;
+                // CORRECCIÓN: doc() necesita un número par de segmentos apuntando a un documento específico (añadido 'general')
+                onSnapshot(doc(db, 'artifacts', APP_ID, 'public', 'data', 'stats', 'general'), (docSnap) => {
+                    if (docSnap.exists()) {
+                        document.getElementById('clicks-counter').textContent = docSnap.data()?.purchase_clicks || 0;
+                    } else {
+                        document.getElementById('clicks-counter').textContent = "0";
+                    }
+                }, (error) => {
+                    console.error("Error cargando estadísticas:", error);
+                    document.getElementById('clicks-counter').textContent = "Err";
                 });
-            } catch(e) {}
+            } catch(e) {
+                console.error("Excepción en initStats:", e);
+            }
         }
 
         function loadHistory() {
@@ -202,7 +227,7 @@
 
         window.sendPaymentRequest = function() {
             const email = document.getElementById('client-email-1').value;
-            if(!email) return alert("Escribe el correo.");
+            if(!email) return showAlert("Escribe el correo.");
             const subject = encodeURIComponent("Instrucciones Pago KronoDual GOLD");
             const body = `Hola ${email},%0D%0A%0D%0APara activar tu licencia GOLD de KronoDual (10€), los pasos son:%0D%0A%0D%0A1. Importe: ${PRECIO}%0D%0A2. Realiza el pago (Bizum/Transferencia) según lo acordado.%0D%0A%0D%0AEnvíame el justificante respondiendo a este correo y recibirás tu clave de activación inmediata.%0D%0A%0D%0AGracias.`;
             window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
@@ -212,7 +237,7 @@
         window.generateAndSave = async function() {
             const email = document.getElementById('client-email-2').value.trim();
             const btn = document.getElementById('btn-save');
-            if(!email) return alert("Falta el correo.");
+            if(!email) return showAlert("Falta el correo.");
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GENERANDO...';
 
             const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -234,7 +259,7 @@
                 document.getElementById('delivery-section').classList.remove('hidden');
             } catch (error) { 
                 console.error(error);
-                alert("Error al guardar: " + error.message); 
+                showAlert("Error al guardar: " + error.message); 
                 document.getElementById('status').innerText = "❌ Error";
             }
             btn.disabled = false; btn.innerHTML = '<i class="fas fa-cogs mr-1"></i> GUARDAR Y PREPARAR ENTREGA';
